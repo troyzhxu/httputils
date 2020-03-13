@@ -116,24 +116,18 @@ DELETE 请求（同步异步请求方法一致）
 
 ```
 	HttpUtils.async("http://api.demo.com/users/1", User.class, Error.class)
-			
-			// 成功回调,状态码在[200, 300)之间（根据 User.class 自动解析出 user 对象）
 			.setOnSuccess((int status, Headers headers, User user) -> {
-	
+				// 成功回调,状态码在[200, 300)之间（根据 User.class 自动解析出 user 对象）
 			})
-			// 失败回调,状态码不在[200, 300)之间（根据 Error.class 自动解析出 error 对象）
 			.setOnFailure((int status, Headers headers, Error error) -> {
-	
+				// 失败回调,状态码在[200, 300)之外（根据 Error.class 自动解析出 error 对象）
 			})
-			// 异常回调
 			.setOnException((Exception e) -> {
-	
+				// 异常回调
 			})
-			// 完成回调，无论成功失败都会执行
 			.setOnComplete((int state) -> {
-	
+				// 完成回调，无论成功失败都会执行
 			})
-			// 发起  GET 请求
 			.get();
 ```
 
