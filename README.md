@@ -30,7 +30,16 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 
 ## 使用说明
 
-1.  xxxx
+1.  同步请求
+
+```
+		HttpResult<User, ?> result = HttpUtils.sync("http://api.demo.com/users/{id}", User.class)
+				// 设置路径参数
+				.addPathParam("id", 1)
+				// 发起  GET 请求
+				.get();
+```
+
 2.  xxxx
 3.  xxxx
 
