@@ -91,8 +91,9 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 
 #### 4.异步回调函数
 
+只有异步请求才可以设置回调函数
+
 ```
-	// 只有异步请求才可以设置回调函数
 	HttpUtils.async("http://api.demo.com/users/1", User.class, Error.class)
 			
 			// 成功回调,状态码在[200, 300)之间（根据 User.class 自动解析出 user 对象）
@@ -116,7 +117,6 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 ```
 
 ```
-	// 只有异步请求才可以设置回调函数
 	HttpUtils.async("http://api.demo.com/users/1", User.class, Error.class)
 			
 			// 请求返回回调（设置了OnResponse，就不可以再设置 OnSuccess 和 OnFailure 回调）
@@ -137,8 +137,9 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 
 #### 5.异步请求数据自动解析
 
+请求成功返回数据 解析为 Book 对象
+
 ```
-	// 请求成功返回数据 解析为 Book 对象
 	HttpUtils.async("http://api.demo.com/book/1", Book.class)
 			.setOnSuccess((int status, Headers headers, Book book) -> {
 	
@@ -146,8 +147,9 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 			.get();
 ```
 
+请求成功返回数据 解析为 Book 对象，请求失败返回数据 解析为 String 对象
+
 ```
-	// 请求成功返回数据 解析为 Book 对象，请求失败返回数据 解析为 String 对象
 	HttpUtils.async("http://api.demo.com/book/1", Book.class, String.class)
 			.setOnSuccess((int status, Headers headers, Book book) -> {
 	
@@ -158,8 +160,9 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 			.get();
 ```
 
+请求成功返回数据 解析为 Book 列表
+
 ```
-	// 请求成功返回数据 解析为 Book 列表
 	HttpUtils.async("http://api.demo.com/books", new TypeReference<List<Book>>(){})
 			.setOnSuccess((int status, Headers headers, List<Book> books) -> {
 
@@ -169,21 +172,24 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 
 #### 5.同步请求数据自动解析
 
+请求成功返回数据 解析为 Book 对象
+
 ```
-	// 请求成功返回数据 解析为 Book 对象
 	Book book = HttpUtils.sync("http://api.demo.com/book/1", Book.class).get().getOkData();
 ```
-	
+
+请求成功返回数据 解析为 Book 对象，请求失败返回数据 解析为 String 对象
+
 ```
-	// 请求成功返回数据 解析为 Book 对象，请求失败返回数据 解析为 String 对象
 	HttpResult<User, String> result = HttpUtils.sync("http://api.demo.com/book/1", Book.class, String.class).get();
 	
 	Book book = result.getOkData();
 	String error = result.getFailData();
 ```
 
+请求成功返回数据 解析为 Book 列表
+
 ```
-	// 请求成功返回数据 解析为 Book 列表
 	List<Book> books = HttpUtils.sync("http://api.demo.com/books", new TypeReference<List<Book>>(){}).get().getOkData();
 ```
 
