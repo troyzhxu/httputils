@@ -77,7 +77,7 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 
 ```
 	// 只要异步请求才可以取消
-	HttpCall call = HttpUtils.async("http://api.demo.com/users/{id}", new TypeReference<List<User>>(){})
+	HttpCall call = HttpUtils.async("http://api.demo.com/users", new TypeReference<List<User>>(){})
 			
 			// 设置回调函数
 			.setOnSuccess((int status, Headers headers, List<User> users) -> {
