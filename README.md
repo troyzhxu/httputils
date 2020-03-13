@@ -206,7 +206,8 @@ HttpUtils.sync(...) 和 HttpUtils.async(...) 最多有三个参数：第一个�
 同步请求成功返回数据 解析为 Book 对象，请求失败返回数据 解析为 String 对象
 
 ```
-	HttpResult<User, String> result = HttpUtils.sync("/books/1", Book.class, String.class).get();
+	HttpResult<User, String> result = HttpUtils.sync("/books/1", 
+				Book.class, String.class).get();
 	
 	Book book = result.getOkData();
 	String error = result.getFailData();
@@ -214,7 +215,8 @@ HttpUtils.sync(...) 和 HttpUtils.async(...) 最多有三个参数：第一个�
 同步请求成功返回数据 解析为 Book 列表
 
 ```
-	List<Book> books = HttpUtils.sync("/books", new TypeReference<List<Book>>(){}).get().getOkData();
+	List<Book> books = HttpUtils.sync("/books", new TypeReference<List<Book>>(){})
+			.get().getOkData();
 ```
 
 #### 8.添加请求头
