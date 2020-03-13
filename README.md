@@ -70,7 +70,37 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 ```
 
 
-#### 3.取消异步请求
+#### 3.请求方法
+
+GET 请求（同步异步请求方法一致）
+
+```
+	HttpUtils.sync("http://api.demo.com/users").get()
+```
+POST 请求（同步异步请求方法一致）
+
+```
+	HttpUtils.sync("http://api.demo.com/users")
+			.addJsonParam("name", "Jack")
+			.addJsonParam("age", 20)
+			.post()
+```
+PUT 请求（同步异步请求方法一致）
+
+```
+	HttpUtils.sync("http://api.demo.com/users/1")
+			.addJsonParam("name", "Jack")
+			.put()
+```
+DELETE 请求（同步异步请求方法一致）
+
+```
+	HttpUtils.sync("http://api.demo.com/users/1")
+			.delete()
+```
+
+
+#### 4.取消异步请求
 
 只有异步请求才可以被取消
 
@@ -90,7 +120,7 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 	System.out.println("是否取消: " + call.isCanceled());	 // true
 ```
 
-#### 4.异步回调函数
+#### 5.异步回调函数
 
 只有异步请求才可以设置回调函数
 
@@ -136,7 +166,7 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 			.get();
 ```
 
-#### 5.异步请求数据自动解析
+#### 6.异步请求数据自动解析
 
 请求成功返回数据 解析为 Book 对象
 
@@ -171,7 +201,7 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 			.get();
 ```
 
-#### 6.同步请求数据自动解析
+#### 7.同步请求数据自动解析
 
 请求成功返回数据 解析为 Book 对象
 
@@ -194,7 +224,7 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 	List<Book> books = HttpUtils.sync("http://api.demo.com/books", new TypeReference<List<Book>>(){}).get().getOkData();
 ```
 
-#### 7.添加请求头
+#### 8.添加请求头
 
 单个添加（同步异步添加方法一样）
 
@@ -218,7 +248,7 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 			...
 ```
 
-#### 8.路径参数
+#### 9.路径参数
 
 路径参数用于替换URL字符串中的占位符
 
@@ -244,7 +274,7 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 			...
 ```
 
-#### 9.查询参数
+#### 10.查询参数
 
 查询参数（URL参数）用于拼接在 url 字符串的 ? 之后
 
@@ -271,7 +301,7 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 ```
 
 
-#### 10.报文体参数
+#### 11.报文体参数
 
 报文体参数（Budy参数）以 key=value& 的形式携带与请求报文体内
 
@@ -296,7 +326,7 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 			...
 ```
 
-#### 11. JSON参数
+#### 12. JSON参数
 
 JSON参数 json 字符串的形式携带与请求报文体内
 
