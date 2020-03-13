@@ -90,7 +90,6 @@ DELETE 请求（同步异步请求方法一致）
 			.delete()
 ```
 
-
 #### 4.取消异步请求
 
 只有异步请求才可以被取消
@@ -145,9 +144,11 @@ DELETE 请求（同步异步请求方法一致）
 			.get();
 ```
 
-#### 6.异步请求数据自动解析
+#### 6.响应数据自动解析
 
-请求成功返回数据 解析为 Book 对象
+HttpUtils.sync(...) 和 HttpUtils.async(...) 最多有三个参数：第一个为url字符串，第二个为响应成功数据的目标解析类型，第三个为响应失败数据的目标解析类型
+
+异步请求成功返回数据 解析为 Book 对象
 
 ```
 	HttpUtils.async("http://api.demo.com/book/1", Book.class)
@@ -156,8 +157,7 @@ DELETE 请求（同步异步请求方法一致）
 			})
 			.get();
 ```
-
-请求成功返回数据 解析为 Book 对象，请求失败返回数据 解析为 String 对象
+异步请求成功返回数据 解析为 Book 对象，请求失败返回数据 解析为 String 对象
 
 ```
 	HttpUtils.async("http://api.demo.com/book/1", Book.class, String.class)
@@ -169,8 +169,7 @@ DELETE 请求（同步异步请求方法一致）
 			})
 			.get();
 ```
-
-请求成功返回数据 解析为 Book 列表
+异步请求成功返回数据 解析为 Book 列表
 
 ```
 	HttpUtils.async("http://api.demo.com/books", new TypeReference<List<Book>>(){})
@@ -179,16 +178,12 @@ DELETE 请求（同步异步请求方法一致）
 			})
 			.get();
 ```
-
-#### 7.同步请求数据自动解析
-
-请求成功返回数据 解析为 Book 对象
+同步请求成功返回数据 解析为 Book 对象
 
 ```
 	Book book = HttpUtils.sync("http://api.demo.com/book/1", Book.class).get().getOkData();
 ```
-
-请求成功返回数据 解析为 Book 对象，请求失败返回数据 解析为 String 对象
+同步请求成功返回数据 解析为 Book 对象，请求失败返回数据 解析为 String 对象
 
 ```
 	HttpResult<User, String> result = HttpUtils.sync("http://api.demo.com/book/1", Book.class, String.class).get();
@@ -196,14 +191,13 @@ DELETE 请求（同步异步请求方法一致）
 	Book book = result.getOkData();
 	String error = result.getFailData();
 ```
-
-请求成功返回数据 解析为 Book 列表
+同步请求成功返回数据 解析为 Book 列表
 
 ```
 	List<Book> books = HttpUtils.sync("http://api.demo.com/books", new TypeReference<List<Book>>(){}).get().getOkData();
 ```
 
-#### 8.添加请求头
+#### 7.添加请求头
 
 单个添加（同步异步添加方法一样）
 
@@ -225,7 +219,7 @@ DELETE 请求（同步异步请求方法一致）
 			.get();
 ```
 
-#### 9.路径参数
+#### 8.路径参数
 
 路径参数用于替换URL字符串中的占位符
 
@@ -249,7 +243,7 @@ DELETE 请求（同步异步请求方法一致）
 			.get();
 ```
 
-#### 10.查询参数
+#### 9.查询参数
 
 查询参数（URL参数）用于拼接在 url 字符串的 ? 之后
 
@@ -273,10 +267,9 @@ DELETE 请求（同步异步请求方法一致）
 			.get();
 ```
 
+#### 10.表单参数
 
-#### 11.报文体参数
-
-报文体参数（Budy参数）以 key=value& 的形式携带与请求报文体内
+表单参数（Budy参数）以 key=value& 的形式携带与请求报文体内
 
 单个添加（同步异步添加方法一样）
 
@@ -298,7 +291,7 @@ DELETE 请求（同步异步请求方法一致）
 			.post();
 ```
 
-#### 12. JSON参数
+#### 11. JSON参数
 
 JSON参数 json 字符串的形式携带与请求报文体内
 
@@ -340,8 +333,7 @@ Java Bean 自动转 JSON
 			.post();
 ```
 
-#### 13. 上传文件
-
+#### 12. 文件参数
 
 同步和异步添加文件方法是一样的
 
@@ -376,7 +368,16 @@ Java Bean 自动转 JSON
 			.addFileParam("image", "jpg", content)
 			.post();
 ```
+文件参数和表单参数可以一起添加
 
+```
+	File file = new File("D:/1.jpg");
+	
+	HttpUtils.sync("http://api.demo.com/messages")
+		.addBodyParam("name", "广告图")
+		.addFileParam("image", file)
+		.post();
+```
 
 
 ## 参与贡献
