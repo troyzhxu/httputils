@@ -73,7 +73,7 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 #### 3.取消请求
 
 ```
-	// 只要异步请求才可以取消
+	// 只有异步请求才可以被取消
 	HttpCall call = HttpUtils.async("http://api.demo.com/users", new TypeReference<List<User>>(){})
 			
 			// 设置回调函数
@@ -92,7 +92,7 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 #### 4.回调函数
 
 ```
-	// 只要异步请求才可以设置回调函数
+	// 只有异步请求才可以设置回调函数
 	HttpUtils.async("http://api.demo.com/users/1", User.class, Error.class)
 			
 			// 成功回调,状态码在[200, 300)之间（根据 User.class 自动解析出 user 对象）
@@ -114,8 +114,8 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 			// 发起  GET 请求
 			.get();
 			
-			
-	// 只要异步请求才可以设置回调函数
+
+	// 只有异步请求才可以设置回调函数
 	HttpUtils.async("http://api.demo.com/users/1", User.class, Error.class)
 			
 			// 请求返回回调（设置了OnResponse，就不可以再设置 OnSuccess 和 OnFailure 回调）
