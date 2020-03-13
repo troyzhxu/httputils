@@ -37,6 +37,7 @@ public class AsyncHttpClient<S, F> extends HttpClient<S, F, AsyncHttpClient<S, F
 
 	/**
 	 * 设置请求成功（HTTP状态码在[200, 300)之间）后的回调函数
+	 * 设置了OnSuccess，就不可以再设置 OnResponse 回调
 	 * @param onSuccess 请求成功回调
 	 * @return HttpClient 实例
 	 */
@@ -47,6 +48,7 @@ public class AsyncHttpClient<S, F> extends HttpClient<S, F, AsyncHttpClient<S, F
 
 	/**
 	 * 设置请求失败（HTTP状态码在[200, 300)之外）后的回调函数
+	 * 设置了OnFailure，就不可以再设置 OnResponse 回调
 	 * @param onFailure 请求失败回调
 	 * @return HttpClient 实例
 	 */
@@ -76,7 +78,8 @@ public class AsyncHttpClient<S, F> extends HttpClient<S, F, AsyncHttpClient<S, F
     }
     
 	/**
-	 * 设置请求返回后的回调函数，参数未经解析，可用于返回非文本的请求，例如下载文件
+	 * 设置请求响应后的回调函数，参数未经解析，可用于返回非文本的请求，例如下载文件
+	 * 设置了OnResponse，就不可以再设置 OnSuccess 和 OnFailure 回调
 	 * @param onResponse 请求返回回调
 	 * @return HttpClient 实例
 	 */
