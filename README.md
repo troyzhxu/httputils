@@ -64,12 +64,9 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 			
 			// 设置回调函数
 			.setOnSuccess((int status, Headers headers, User user) -> {
-				// 接收到解析好的 user 对象
 	
 			})
-			
-			// 发起  GET 请求
-			.get();
+			.get();	  // 发起  GET 请求
 ```
 
 
@@ -84,9 +81,7 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 				// 接收到解析好的 users 列表
 	
 			})
-			
-			// 发起  GET 请求
-			.get();
+			.get();	 // 发起  GET 请求
 
 	call.cancel();   // 取消请求
 
