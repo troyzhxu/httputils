@@ -92,7 +92,51 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 
 	System.out.println("是否完成: " + call.isDone());		 // false
 	System.out.println("是否取消: " + call.isCanceled());	 // true
+```
+
+#### 4.回调函数
+
+```
+	// 只要异步请求才可以设置回调函数
+	HttpUtils.async("http://api.demo.com/users/1", User.class, Error.class)
+			
+			// 成功回调,状态码在[200, 300)之间（根据 User.class 自动解析出 user 对象）
+			.setOnSuccess((int status, Headers headers, User user) -> {
 	
+			})
+			// 失败回调,状态码不在[200, 300)之间（根据 Error.class 自动解析出 error 对象）
+			.setOnFailure((int status, Headers headers, Error error) -> {
+	
+			})
+			// 异常回调
+			.setOnException((Exception e) -> {
+	
+			})
+			// 完成回调，无论成功失败都会执行
+			.setOnComplete((int state) -> {
+	
+			})
+			// 发起  GET 请求
+			.get();
+			
+			
+	// 只要异步请求才可以设置回调函数
+	HttpUtils.async("http://api.demo.com/users/1", User.class, Error.class)
+			
+			// 请求返回回调（设置了OnResponse，就不可以再设置 OnSuccess 和 OnFailure 回调）
+			.setOnResponse((int status, Headers headers, ResponseBody body) -> {
+	
+			})
+			// 异常回调
+			.setOnException((Exception e) -> {
+	
+			})
+			// 完成回调，无论成功失败都会执行
+			.setOnComplete((int state) -> {
+	
+			})
+			// 发起  GET 请求
+			.get();
 ```
 
 ## 参与贡献
