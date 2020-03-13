@@ -59,13 +59,7 @@ public abstract class HttpClient<S, F, C extends HttpClient<S, F, ?>> {
     protected boolean nothrow;
 
     public HttpClient(String urlPath, Type okType, Type failType) {
-    	if (baseUrl == null 
-    			|| urlPath.startsWith("https://") 
-    			|| urlPath.startsWith("http://")) {
-    		this.urlPath = urlPath;
-    	} else {
-    		this.urlPath = baseUrl + urlPath;
-    	}
+    	this.urlPath = urlPath(urlPath);
     	this.okType = okType;
     	this.failType = failType;
         if (httpClient == null) {
@@ -89,6 +83,19 @@ public abstract class HttpClient<S, F, C extends HttpClient<S, F, ?>> {
         	mediaTypes.put("html", "text/html");
         }
     }
+
+	private String urlPath(String urlPath) {
+		boolean isFullPath = urlPath.startsWith("https://") 
+    			|| urlPath.startsWith("http://");
+		if (isFullPath) {
+			return urlPath;
+		}
+		if (baseUrl != null) {
+			return baseUrl + urlPath;
+		}
+		throw new HttpException("在设置 BaseUrl 之前，您必须使用全路径URL发起请求，当前URL为：" + urlPath 
+				+ "\n若要设置 BaseUrl，请使用 HttpClient.setBaseUrl() 方法");
+	}
 
     /**
      * 配置 httpClient
