@@ -57,7 +57,7 @@ public class AsyncHttpClient<S, F> extends HttpClient<S, F, AsyncHttpClient<S, F
     }
 
 	/**
-	 * 设置请求异常后的回调函数
+	 * 设置请求异常后的回调函数，设置后，与HttpClient有关的异常将不再向上抛出
 	 * @param onException 请求异常回调
 	 * @return HttpClient 实例
 	 */

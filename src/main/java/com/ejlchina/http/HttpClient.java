@@ -139,7 +139,7 @@ public abstract class HttpClient<S, F, C extends HttpClient<S, F, ?>> {
     
     /**
      * 设置在发生异常时不向上抛出，设置后：
-     * 异步请求可以再异常回调内捕获异常，同步请求返回结果中找到异常
+     * 异步请求可以在异常回调内捕获异常，同步请求在返回结果中找到该异常
      * @return HttpClient 实例
      */
     public C nothrow() {
