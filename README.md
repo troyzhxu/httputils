@@ -10,6 +10,7 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
  * 请求拦截器
  * Http2
  * 回调线程配置
+ * GET|POST|PUT|DELETE
  * 文件上传下载
 
 ## 安装教程
@@ -55,11 +56,11 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 #### 2.异步请求
 
 ```
-	// 最终路径 http://api.demo.com/users/2
-	HttpUtils.async("/users/{id}", User.class)
+	// 最终路径 http://api.demo.com/users?name=Jack
+	HttpUtils.async("http://api.demo.com/users", User.class)
 	
-			// 设置路径参数
-			.addPathParam("id", 2)
+			// 设置URL参数
+			.addUrlParam("name", "Jack")
 			
 			// 设置回调函数
 			.setOnSuccess((int status, Headers headers, User user) -> {
