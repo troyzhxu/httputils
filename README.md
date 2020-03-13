@@ -70,7 +70,7 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 ```
 
 
-#### 3.取消请求
+#### 3.取消异步请求
 
 ```
 	// 只有异步请求才可以被取消
@@ -89,7 +89,7 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 	System.out.println("是否取消: " + call.isCanceled());	 // true
 ```
 
-#### 4.回调函数
+#### 4.异步回调函数
 
 ```
 	// 只有异步请求才可以设置回调函数
@@ -113,8 +113,9 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 			})
 			// 发起  GET 请求
 			.get();
-			
+```
 
+```
 	// 只有异步请求才可以设置回调函数
 	HttpUtils.async("http://api.demo.com/users/1", User.class, Error.class)
 			
@@ -132,6 +133,58 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 			})
 			// 发起  GET 请求
 			.get();
+```
+
+#### 5.异步请求数据自动解析
+
+```
+	// 请求成功返回数据 解析为 Book 对象
+	HttpUtils.async("http://api.demo.com/book/1", Book.class)
+			.setOnSuccess((int status, Headers headers, Book book) -> {
+	
+			})
+			.get();
+```
+
+```
+	// 请求成功返回数据 解析为 Book 对象，请求失败返回数据 解析为 String 对象
+	HttpUtils.async("http://api.demo.com/book/1", Book.class, String.class)
+			.setOnSuccess((int status, Headers headers, Book book) -> {
+	
+			})
+			.setOnFailure((int status, Headers headers, String error) -> {
+	
+			})
+			.get();
+```
+
+```
+	// 请求成功返回数据 解析为 Book 列表
+	HttpUtils.async("http://api.demo.com/books", new TypeReference<List<Book>>(){})
+			.setOnSuccess((int status, Headers headers, List<Book> books) -> {
+
+			})
+			.get();
+```
+
+#### 5.同步请求数据自动解析
+
+```
+	// 请求成功返回数据 解析为 Book 对象
+	Book book = HttpUtils.sync("http://api.demo.com/book/1", Book.class).get().getOkData();
+```
+	
+```
+	// 请求成功返回数据 解析为 Book 对象，请求失败返回数据 解析为 String 对象
+	HttpResult<User, String> result = HttpUtils.sync("http://api.demo.com/book/1", Book.class, String.class).get();
+	
+	Book book = result.getOkData();
+	String error = result.getFailData();
+```
+
+```
+	// 请求成功返回数据 解析为 Book 列表
+	List<Book> books = HttpUtils.sync("http://api.demo.com/books", new TypeReference<List<Book>>(){}).get().getOkData();
 ```
 
 ## 参与贡献
