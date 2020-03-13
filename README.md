@@ -1,17 +1,32 @@
-# httputils
+# HttpUtils
 
 #### 介绍
-Http工具包，封装 OkHttp
+Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前后端通用
 
-#### 软件架构
-软件架构说明
-
+ * 支持异步、同步请求
+ * 支持Restfull风格
+ * JSON自动封装与解析
+ * TCP连接池
+ * 请求拦截器
+ * Http2
+ * 回调线程配置
+ * 文件上传下载
 
 #### 安装教程
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
+##### Maven
+
+```
+<dependency>
+     <groupId>com.ejlchina</groupId>
+     <artifactId>httputils</artifactId>
+     <version>0.0.1</version>
+</dependency>
+```
+
+##### Gradle
+
+`compile 'com.ejlchina:httputils:0.0.1'`
 
 #### 使用说明
 
