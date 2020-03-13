@@ -374,9 +374,30 @@ Java Bean 自动转 JSON
 	File file = new File("D:/1.jpg");
 	
 	HttpUtils.sync("http://api.demo.com/messages")
-		.addBodyParam("name", "广告图")
-		.addFileParam("image", file)
-		.post();
+			.addBodyParam("name", "广告图")
+			.addFileParam("image", file)
+			.post();
+```
+
+#### 12. BaseUrl 配置
+
+```
+	HttpClient.setBaseUrl("http://api.demo.com");
+```
+在配置了 BaseUrl 之后，具体的请求便可以省略 BaseUrl 部分，例如：
+
+```
+	HttpUtils.sync("/users").get()					// http://api.demo.com/users
+	
+	HttpUtils.sync("/auth/signin")					// http://api.demo.com/auth/signin
+			.addBodyParam("username", "Jackson")
+			.addBodyParam("password", "xxxxxx")
+			.post()
+```
+在配置了 BaseUrl 之后，仍然可以请求全路径接口，如：
+
+```
+	HttpUtils.sync("https://www.baidu.com").get()
 ```
 
 
