@@ -43,6 +43,7 @@ public abstract class HttpClient<S, F, C extends HttpClient<S, F, ?>> {
     private static Map<String, String> mediaTypes;
     private static String PATH_PARAM_REGEX = "[A-Za-z0-9_\\-/]*\\{[A-Za-z0-9_\\-]+\\}[A-Za-z0-9_\\-/]*";
     private static OkHttpClient httpClient;
+    private static String baseUrl;
 
     private String urlPath;
     protected Type okType;
@@ -58,7 +59,7 @@ public abstract class HttpClient<S, F, C extends HttpClient<S, F, ?>> {
     protected boolean nothrow;
 
     public HttpClient(String urlPath, Type okType, Type failType) {
-    	this.urlPath = urlPath;
+    	this.urlPath = baseUrl != null ? baseUrl + urlPath : urlPath;
     	this.okType = okType;
     	this.failType = failType;
         if (httpClient == null) {
@@ -88,7 +89,7 @@ public abstract class HttpClient<S, F, C extends HttpClient<S, F, ?>> {
      */
     public static void config(Configurator configurator) {
     	Builder builder = new Builder();
-    	configurator.config(builder);
+    	HttpClient.baseUrl = configurator.config(builder);
         HttpClient.httpClient = builder.build();
     }
     
@@ -99,9 +100,10 @@ public abstract class HttpClient<S, F, C extends HttpClient<S, F, ?>> {
     public static interface Configurator {
     	
     	/**
-    	 * 配置 HttpClient
+    	 * 使用 builder 配置 HttpClient
+    	 * @return BaseUrl
     	 */
-    	void config(Builder builder);
+    	String config(Builder builder);
     	
     }
     

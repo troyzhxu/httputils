@@ -43,6 +43,9 @@ public class HttpTest {
 			builder.connectTimeout(20, TimeUnit.SECONDS);
 
 			// 其它配置: 拦截器、SSL、缓存、代理...
+			
+			// 返回一个 BaseUrl
+			return "http://api.demo.com";
 		});
 		
 	}
@@ -52,7 +55,8 @@ public class HttpTest {
 	private static void syncHttpExample() {
 		
 		// 同步请求
-		HttpResult<User, ?> result = HttpUtils.sync("http://api.cn/users/{id}", User.class)
+		// 最终路径 http://api.demo.com/users/1
+		HttpResult<User, ?> result = HttpUtils.sync("/users/{id}", User.class)
 				// 设置路径参数
 				.addPathParam("id", 1)
 				// 发起  GET 请求
@@ -79,9 +83,10 @@ public class HttpTest {
 	private static void asyncHttpExample() throws InterruptedException {
 		
 		// 异步请求
-		HttpCall call = HttpUtils.async("http://api.cn/users/{id}", User.class)
+		// 最终路径 http://api.demo.com/users/2
+		HttpCall call = HttpUtils.async("/users/{id}", User.class)
 				// 设置路径参数
-				.addPathParam("id", 1)
+				.addPathParam("id", 2)
 				// 设置回调函数
 				.setOnSuccess((int status, Headers headers, User user) -> {
 					// 接收到解析好的 user 对象
