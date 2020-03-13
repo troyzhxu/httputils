@@ -75,7 +75,7 @@ public class HttpResult<S, F> {
 	}
 
 	/**
-	 * HTTP状态码不在 [200, 300) 之间 时
+	 * HTTP状态码在 [200, 300) 之外 时
 	 * @return 请求失败时报文体解析出的数据
 	 */
 	public F getFailData() {

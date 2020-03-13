@@ -46,7 +46,7 @@ public class AsyncHttpClient<S, F> extends HttpClient<S, F, AsyncHttpClient<S, F
     }
 
 	/**
-	 * 设置请求失败（HTTP状态码不在[200, 300)之间）后的回调函数
+	 * 设置请求失败（HTTP状态码在[200, 300)之外）后的回调函数
 	 * @param onFailure 请求失败回调
 	 * @return HttpClient 实例
 	 */
