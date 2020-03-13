@@ -125,7 +125,7 @@ public class AsyncHttpClient<S, F> extends HttpClient<S, F, AsyncHttpClient<S, F
     }
     
     
-    public static class HttpCallStatus implements HttpCall {
+    class HttpCallStatus implements HttpCall {
 
     	private Call call;
     	private boolean done;
@@ -193,18 +193,14 @@ public class AsyncHttpClient<S, F> extends HttpClient<S, F, AsyncHttpClient<S, F
     
     @SuppressWarnings("unchecked")
     protected void processResponse(int code, Headers headers, String body) {
-        if (code >= 200 && code < 300) {
-            try {
-                doOnSuccess(code, headers, (S) parseObject(body, okType));
-            } catch (Exception e) {
-                doOnException(e);
-            }
-        } else {
-            try {
-                doOnFailure(code, headers, (F) parseObject(body, failType));
-            } catch (Exception e) {
-                doOnException(e);
-            }
+    	try {
+	        if (code >= 200 && code < 300) {
+	            doOnSuccess(code, headers, (S) parseObject(body, okType));
+	        } else {
+	            doOnFailure(code, headers, (F) parseObject(body, failType));
+	        }
+    	} catch (Exception e) {
+            doOnException(e);
         }
     }
     
