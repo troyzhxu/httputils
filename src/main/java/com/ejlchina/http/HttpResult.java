@@ -44,8 +44,13 @@ public class HttpResult<S, F> {
 	}
 
 	/**
-	 * 
-	 * @return 请求状态
+	 * @return 执行状态
+	 * @see OnComplete#EXCEPTION
+     * @see OnComplete#CANCELED
+     * @see OnComplete#SUCCESS
+     * @see OnComplete#FAILURE
+     * @see OnComplete#TIMEOUT
+     * @see OnComplete#NETWORK_ERROR
 	 */
 	public int getState() {
 		return state;
@@ -53,7 +58,7 @@ public class HttpResult<S, F> {
 
 	/**
 	 * 
-	 * @return HTTP 状态码
+	 * @return HTTP状态码
 	 */
 	public int getStatus() {
 		return status;
@@ -68,7 +73,7 @@ public class HttpResult<S, F> {
 
 	/**
 	 * HTTP状态码在 [200, 300) 之间 时
-	 * @return 请求成功时报文体解析出的数据
+	 * @return 响应成功时报文体解析出的数据
 	 */
 	public S getOkData() {
 		return okData;
@@ -76,7 +81,7 @@ public class HttpResult<S, F> {
 
 	/**
 	 * HTTP状态码在 [200, 300) 之外 时
-	 * @return 请求失败时报文体解析出的数据
+	 * @return 响应失败时报文体解析出的数据
 	 */
 	public F getFailData() {
 		return failData;
