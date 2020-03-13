@@ -171,7 +171,7 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 			.get();
 ```
 
-#### 5.同步请求数据自动解析
+#### 6.同步请求数据自动解析
 
 请求成功返回数据 解析为 Book 对象
 
@@ -193,6 +193,29 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 ```
 	List<Book> books = HttpUtils.sync("http://api.demo.com/books", new TypeReference<List<Book>>(){}).get().getOkData();
 ```
+
+#### 7.添加请求头
+
+
+```
+	HttpUtils.async("http://api.demo.com/orders", Order.class)
+			
+			.addHeader("Access-Token", "xxxxxx")
+			.addHeader("Content-Type", "application/json")
+			...
+```
+
+```
+	Map<String, String> headers = new HashMap<>()
+	headers.put("Access-Token", "xxxxxx");
+	headers.put("Content-Type", "application/json");
+	
+	HttpUtils.async("http://api.demo.com/orders", Order.class)
+			
+			.addHeader(headers)
+			...
+```
+
 
 ## 参与贡献
 
