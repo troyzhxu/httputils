@@ -65,6 +65,8 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 ```
 	HttpClient.setBaseUrl("http://api.demo.com");
 ```
+该配置全局生效
+
 在配置了 BaseUrl 之后，具体的请求便可以省略 BaseUrl 部分，例如：
 
 ```
@@ -415,7 +417,21 @@ Java Bean 自动转 JSON
 		// 其它配置: 拦截器、SSL、缓存、代理...
 	});
 ```
+该配置全局生效
 
+#### 15. 配置回调函数执行器
+
+如何想改变执行回调函数的线程时，可以配置回调函数执行器，例如在Android里，使得所有的回调函数都在UI线程里执行
+
+```
+	HttpClient.setExecutor((Runnable callback) -> {
+		// 配置所有回调再UI线程执行
+		runOnUiThread(() -> {
+			callback.run();
+		});
+	});
+```
+该配置全局生效
 
 ## 参与贡献
 
