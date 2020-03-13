@@ -60,7 +60,7 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 			.get();	  // GET请求
 ```
 
-#### 3. BaseUrl 配置
+#### 3.BaseUrl 配置
 
 ```
 	HttpClient.setBaseUrl("http://api.demo.com");
@@ -400,6 +400,21 @@ Java Bean 自动转 JSON
 			.post();
 ```
 
+#### 14. HttpClient 配置
+
+```
+	// HttpClient 全局配置
+	HttpClient.config((Builder builder) -> {
+		
+		// 配置连接池 最小10个连接（不配置默认为 5）
+		builder.connectionPool(new ConnectionPool(10, 5, TimeUnit.MINUTES));
+		
+		// 配置连接超时时间
+		builder.connectTimeout(20, TimeUnit.SECONDS);
+
+		// 其它配置: 拦截器、SSL、缓存、代理...
+	});
+```
 
 
 ## 参与贡献
