@@ -134,7 +134,7 @@ DELETE 请求（同步异步请求方法一致）
 ```
 	HttpUtils.async("http://api.demo.com/files/report.xlsx")
 			.setOnResponse((int status, Headers headers, ResponseBody body) -> {
-				// 请求返回回调（设置了OnResponse，就不可以再设置 OnSuccess 和 OnFailure 回调）
+				// 请求响应回调（设置了OnResponse，就不可以再设置 OnSuccess 和 OnFailure 回调）
 			})
 			.setOnException((Exception e) -> {
 				// 异常回调
