@@ -72,6 +72,30 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 			.get();
 ```
 
+
+#### 3.取消请求
+
+只要异步请求才可以取消
+
+```
+	HttpCall call = HttpUtils.async("http://api.demo.com/users/{id}", new TypeReference<List<User>>(){})
+			
+			// 设置回调函数
+			.setOnSuccess((int status, Headers headers, List<User> users) -> {
+				// 接收到解析好的 users 列表
+	
+			})
+			
+			// 发起  GET 请求
+			.get();
+
+	call.cancel();   // 取消请求
+
+	System.out.println("是否完成: " + call.isDone());		 // false
+	System.out.println("是否取消: " + call.isCanceled());	 // true
+	
+```
+
 ## 参与贡献
 
 1.  Fork 本仓库
