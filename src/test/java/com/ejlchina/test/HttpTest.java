@@ -49,12 +49,10 @@ public class HttpTest {
 		HttpClient.setBaseUrl("http://api.demo.com");
 		
 		// 配置回调函数执行器
-		HttpClient.setExecutor((Runnable callback) -> {
+		HttpClient.setExecutor((Runnable run) -> {
 		
 			// 配置所有回调再UI线程执行
-			runOnUiThread(() -> {
-				callback.run();
-			});
+			runOnUiThread(run);
 		});
 
 	}
