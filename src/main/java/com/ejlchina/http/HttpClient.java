@@ -11,6 +11,7 @@ import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Executor;
 
 import org.apache.commons.io.IOUtils;
 
@@ -85,12 +86,26 @@ public abstract class HttpClient<S, F, C extends HttpClient<S, F, ?>> {
     }
 
     /**
-     * 全局配置
+     * 配置 httpClient
      */
     public static void config(Configurator configurator) {
     	Builder builder = new Builder();
-    	HttpClient.baseUrl = configurator.config(builder);
+    	configurator.config(builder);
         HttpClient.httpClient = builder.build();
+    }
+    
+    /**
+     * 设置 baseUrl
+     */
+    public static void setBaseUrl(String baseUrl) {
+    	HttpClient.baseUrl = baseUrl;
+    }
+    
+    /**
+     * 设置回调执行器，例如切换线程
+     */
+    public static void setExecutor(Executor executor) {
+    	AsyncHttpClient.executor = executor;
     }
     
     /**
@@ -101,9 +116,8 @@ public abstract class HttpClient<S, F, C extends HttpClient<S, F, ?>> {
     	
     	/**
     	 * 使用 builder 配置 HttpClient
-    	 * @return BaseUrl
     	 */
-    	String config(Builder builder);
+    	void config(Builder builder);
     	
     }
     

@@ -2,6 +2,7 @@ package com.ejlchina.http;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.util.concurrent.Executor;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -22,6 +23,7 @@ import okhttp3.ResponseBody;
  */
 public class AsyncHttpClient<S, F> extends HttpClient<S, F, AsyncHttpClient<S, F>> {
 
+	protected static Executor executor;
 	
     private OnCallback<S> onSuccess;
     private OnCallback<F> onFailure;
@@ -150,11 +152,12 @@ public class AsyncHttpClient<S, F> extends HttpClient<S, F, AsyncHttpClient<S, F
             public void onResponse(Call call, Response response) throws IOException {
             	httpCall.setDone(true);
             	if (onResponse != null) {
-            		onResponse.on(response.code(), response.headers(), response.body());
+            		doOnResponse(response);
             	} else {
             		AsyncHttpClient.this.onResponse(response);
             	}
             }
+			
         });
 		return httpCall;
     }
@@ -203,7 +206,58 @@ public class AsyncHttpClient<S, F> extends HttpClient<S, F, AsyncHttpClient<S, F
         }
     }
 
+	private void doOnResponse(Response response) {
+		if (executor != null) {
+			executor.execute(() -> {
+				exeOnResponse(response);
+			});
+		} else {
+			exeOnResponse(response);
+		}
+	}
+	
 	private void doOnSuccess(int status, Headers headers, S body) {
+		if (executor != null) {
+			executor.execute(() -> {
+				exeOnSuccess(status, headers, body);
+			});
+		} else {
+			exeOnSuccess(status, headers, body);
+		}
+	}
+
+	
+	private void doOnFailure(int status, Headers headers, F body) {
+		if (executor != null) {
+			executor.execute(() -> {
+				exeOnFailure(status, headers, body);
+			});
+		} else {
+			exeOnFailure(status, headers, body);
+		}
+	}
+
+
+	private void doOnException(Exception e) {
+		if (executor != null) {
+			executor.execute(() -> {
+				exeOnException(e);
+			});
+		} else {
+			exeOnException(e);
+		}
+	}
+    
+	private void exeOnResponse(Response response) {
+		if (onResponse != null) {
+			onResponse.on(response.code(), response.headers(), response.body());
+		}
+		if (onComplete != null) {
+		    onComplete.onComplete(OnComplete.SUCCESS);
+		}
+	}
+	
+	private void exeOnSuccess(int status, Headers headers, S body) {
 		if (onComplete != null) {
             onComplete.onComplete(OnComplete.SUCCESS);
         }
@@ -211,8 +265,8 @@ public class AsyncHttpClient<S, F> extends HttpClient<S, F, AsyncHttpClient<S, F
             onSuccess.on(status, headers, body);
         }
 	}
-	
-	private void doOnFailure(int status, Headers headers, F body) {
+
+	private void exeOnFailure(int status, Headers headers, F body) {
 		if (onComplete != null) {
             onComplete.onComplete(OnComplete.FAILURE);
         }
@@ -221,7 +275,7 @@ public class AsyncHttpClient<S, F> extends HttpClient<S, F, AsyncHttpClient<S, F
 		}
 	}
 
-	private void doOnException(Exception e) {
+	private void exeOnException(Exception e) {
 		int state = toState(e);
 		if (onComplete != null) {
             onComplete.onComplete(state);
@@ -232,5 +286,8 @@ public class AsyncHttpClient<S, F> extends HttpClient<S, F, AsyncHttpClient<S, F
 			throw new HttpException(e.getMessage(), e);
 		}
 	}
-    
+	
+	
+	
+	
 }

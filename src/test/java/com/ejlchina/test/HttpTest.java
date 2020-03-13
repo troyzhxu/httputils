@@ -43,11 +43,20 @@ public class HttpTest {
 			builder.connectTimeout(20, TimeUnit.SECONDS);
 
 			// 其它配置: 拦截器、SSL、缓存、代理...
-			
-			// 返回一个 BaseUrl
-			return "http://api.demo.com";
 		});
 		
+		// 配置 BaseUrl
+		HttpClient.setBaseUrl("http://api.demo.com");
+		
+		// 配置回调函数执行器
+		HttpClient.setExecutor((Runnable callback) -> {
+		
+			// 配置所有回调再UI线程执行
+			runOnUiThread(() -> {
+				callback.run();
+			});
+		});
+
 	}
 	
 
@@ -107,7 +116,9 @@ public class HttpTest {
 	}
 
 
-
+	static void runOnUiThread(Runnable run) {
+		run.run();
+	}
 	
 	
 	static class User {
