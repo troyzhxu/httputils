@@ -205,7 +205,7 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 			.addHeader("Content-Type", "application/json")
 			...
 ```
-一起添加
+多个添加
 
 ```
 	Map<String, String> headers = new HashMap<>()
