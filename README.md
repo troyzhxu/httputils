@@ -72,8 +72,9 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 
 #### 3.取消异步请求
 
+只有异步请求才可以被取消
+
 ```
-	// 只有异步请求才可以被取消
 	HttpCall call = HttpUtils.async("http://api.demo.com/users", new TypeReference<List<User>>(){})
 			
 			// 设置回调函数
