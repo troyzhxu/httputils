@@ -196,28 +196,79 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 
 #### 7.添加请求头
 
-单个添加
+单个添加（同步异步添加方法一样）
 
 ```
-	HttpUtils.async("http://api.demo.com/orders", Order.class)
+	HttpUtils.sync("http://api.demo.com/orders")
 			
 			.addHeader("Access-Token", "xxxxxx")
 			.addHeader("Content-Type", "application/json")
 			...
 ```
-多个添加
+多个添加（同步异步添加方法一样）
 
 ```
 	Map<String, String> headers = new HashMap<>()
 	headers.put("Access-Token", "xxxxxx");
 	headers.put("Content-Type", "application/json");
 	
-	HttpUtils.async("http://api.demo.com/orders", Order.class)
+	HttpUtils.sync("http://api.demo.com/orders")
 			
 			.addHeader(headers)
 			...
 ```
 
+#### 7.路径参数
+
+路径参数用于替换URL字符串中的占位符
+
+单个添加（同步异步添加方法一样）
+
+```
+	HttpUtils.sync("http://api.demo.com/shops/{shopName}/products/{productId}")
+			
+			.addPathParam("shopName", "taobao")
+			.addPathParam("productId", 20)
+			...
+```
+多个添加（同步异步添加方法一样）
+
+```
+	Map<String, String> params = new HashMap<>()
+	params.put("shopName", "taobao");
+	params.put("productId", 20);
+	
+	HttpUtils.sync("http://api.demo.com/shops/{shopName}/products/{productId}")
+			
+			.addPathParam(params)
+			...
+```
+
+#### 7.查询参数
+
+查询参数（URL参数）用于拼接在 url 字符串的 ? 之后
+
+单个添加（同步异步添加方法一样）
+
+```
+	HttpUtils.sync("http://api.demo.com/products")
+			
+			.addUrlParam("name", "手机")
+			.addUrlParam("tag", "5G")
+			...
+```
+多个添加（同步异步添加方法一样）
+
+```
+	Map<String, String> params = new HashMap<>()
+	params.put("name", "手机");
+	params.put("tag", 5G);
+	
+	HttpUtils.sync("http://api.demo.com/products")
+			
+			.addUrlParam(params)
+			...
+```
 
 ## 参与贡献
 
