@@ -54,6 +54,22 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 
 #### 2.异步请求
 
+```
+	// 最终路径 http://api.demo.com/users/2
+	HttpUtils.async("/users/{id}", User.class)
+	
+			// 设置路径参数
+			.addPathParam("id", 2)
+			
+			// 设置回调函数
+			.setOnSuccess((int status, Headers headers, User user) -> {
+				// 接收到解析好的 user 对象
+	
+			})
+			
+			// 发起  GET 请求
+			.get();
+```
 
 ## 参与贡献
 
