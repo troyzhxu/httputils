@@ -118,7 +118,7 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 ```
 
 ```
-	HttpUtils.async("http://api.demo.com/users/1", User.class, Error.class)
+	HttpUtils.async("http://api.demo.com/files/report.xlsx")
 			
 			// 请求返回回调（设置了OnResponse，就不可以再设置 OnSuccess 和 OnFailure 回调）
 			.setOnResponse((int status, Headers headers, ResponseBody body) -> {
@@ -196,6 +196,7 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 
 #### 7.添加请求头
 
+单个添加
 
 ```
 	HttpUtils.async("http://api.demo.com/orders", Order.class)
@@ -204,6 +205,7 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 			.addHeader("Content-Type", "application/json")
 			...
 ```
+一起添加
 
 ```
 	Map<String, String> headers = new HashMap<>()
