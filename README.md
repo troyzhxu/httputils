@@ -36,12 +36,8 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 ```
 	// 最终路径 http://api.demo.com/users?name=Jack
 	HttpResult<User, ?> result = HttpUtils.sync("http://api.demo.com/users", User.class)
-	
-			// 设置URL参数
 			.addUrlParam("name", "Jack")
-			
-			// 发起  GET 请求
-			.get();
+			.get();		// 发起  GET 请求
 	
 	// 得到状态码
 	int status = result.getStatus();
@@ -58,10 +54,8 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 ```
 	// 最终路径为 http://api.demo.com/users/1
 	HttpUtils.async("http://api.demo.com/users/{id}", User.class)
-	
 			// 设置路径参数
 			.addPathParam("id", 1)
-			
 			// 设置回调函数
 			.setOnSuccess((int status, Headers headers, User user) -> {
 	
@@ -186,7 +180,7 @@ DELETE 请求（同步异步请求方法一致）
 	
 			})
 			.setOnFailure((int status, Headers headers, String error) -> {
-	
+			
 			})
 			.get();
 ```
@@ -230,7 +224,6 @@ DELETE 请求（同步异步请求方法一致）
 
 ```
 	HttpUtils.sync("http://api.demo.com/orders")
-			
 			.addHeader("Access-Token", "xxxxxx")
 			.addHeader("Content-Type", "application/json")
 			...
@@ -240,12 +233,11 @@ DELETE 请求（同步异步请求方法一致）
 ```
 	Map<String, String> headers = new HashMap<>()
 	headers.put("Access-Token", "xxxxxx");
-	headers.put("Content-Type", "application/json");
+	headers.put("Accept", "application/json");
 	
 	HttpUtils.sync("http://api.demo.com/orders")
-			
 			.addHeader(headers)
-			...
+			.get();
 ```
 
 #### 9.路径参数
@@ -256,10 +248,9 @@ DELETE 请求（同步异步请求方法一致）
 
 ```
 	HttpUtils.sync("http://api.demo.com/shops/{shopName}/products/{productId}")
-			
 			.addPathParam("shopName", "taobao")
 			.addPathParam("productId", 20)
-			...
+			.get();
 ```
 多个添加（同步异步添加方法一样）
 
@@ -269,9 +260,8 @@ DELETE 请求（同步异步请求方法一致）
 	params.put("productId", 20);
 	
 	HttpUtils.sync("http://api.demo.com/shops/{shopName}/products/{productId}")
-			
 			.addPathParam(params)
-			...
+			.get();
 ```
 
 #### 10.查询参数
@@ -282,10 +272,9 @@ DELETE 请求（同步异步请求方法一致）
 
 ```
 	HttpUtils.sync("http://api.demo.com/products")
-			
 			.addUrlParam("name", "手机")
 			.addUrlParam("tag", "5G")
-			...
+			.get();
 ```
 多个添加（同步异步添加方法一样）
 
@@ -295,9 +284,8 @@ DELETE 请求（同步异步请求方法一致）
 	params.put("tag", 5G);
 	
 	HttpUtils.sync("http://api.demo.com/products")
-			
 			.addUrlParam(params)
-			...
+			.get();
 ```
 
 
@@ -311,7 +299,7 @@ DELETE 请求（同步异步请求方法一致）
 	HttpUtils.sync("http://api.demo.com/signin")
 			.addBodyParam("username", "Jackson")
 			.addBodyParam("password", "xxxxxx")
-			...
+			.post();
 ```
 多个添加（同步异步添加方法一样）
 
@@ -321,9 +309,8 @@ DELETE 请求（同步异步请求方法一致）
 	params.put("password", "xxxxxx");
 	
 	HttpUtils.sync("http://api.demo.com/signin")
-
 			.addBodyParam(params)
-			...
+			.post();
 ```
 
 #### 12. JSON参数
@@ -336,7 +323,7 @@ JSON参数 json 字符串的形式携带与请求报文体内
 	HttpUtils.sync("http://api.demo.com/signin")
 			.addJsonParam("username", "Jackson")
 			.addJsonParam("password", "xxxxxx")
-			...
+			.post();
 ```
 多个添加（同步异步添加方法一样）
 
@@ -346,17 +333,15 @@ JSON参数 json 字符串的形式携带与请求报文体内
 	params.put("password", "xxxxxx");
 	
 	HttpUtils.sync("http://api.demo.com/signin")
-
 			.addJsonParam(params)
-			...
+			.post();
 ```
 添加JSON字符串
 
 ```
 	HttpUtils.sync("http://api.demo.com/signin")
-
 			.setRequestJson("\"username\":\"Jackson\",\"password\":\"xxxxxx\"")
-			...
+			.post();
 ```
 Java Bean 自动转 JSON
 
@@ -366,10 +351,47 @@ Java Bean 自动转 JSON
 	login.setPassword("xxxxxx");
 	
 	HttpUtils.sync("http://api.demo.com/signin")
-
 			.setRequestJson(login)
-			...
+			.post();
 ```
+
+#### 13. 上传文件
+
+
+同步和异步添加文件方法是一样的
+
+上传本地文件
+
+```
+	File file1 = new File("D:/1.jpg");
+	File file2 = new File("D:/2.jpg");
+	
+	HttpUtils.sync("http://api.demo.com/upload")
+			.addFileParam("image1", file1)
+			.addFileParam("image2", file2)
+			.post();
+```
+使用文件输入流上传
+
+```
+	// 获得文件的输入流
+	InputStream input = ...
+	
+	HttpUtils.sync("http://api.demo.com/upload")
+			.addFileParam("image", "jpg", input)
+			.post();
+```
+使用文件字节数组上传
+
+```
+	// 获得文件的字节数组
+	byte[] content = ...
+	
+	HttpUtils.sync("http://api.demo.com/upload")
+			.addFileParam("image", "jpg", content)
+			.post();
+```
+
 
 
 ## 参与贡献
