@@ -218,7 +218,7 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 			...
 ```
 
-#### 7.路径参数
+#### 8.路径参数
 
 路径参数用于替换URL字符串中的占位符
 
@@ -244,7 +244,7 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 			...
 ```
 
-#### 7.查询参数
+#### 9.查询参数
 
 查询参数（URL参数）用于拼接在 url 字符串的 ? 之后
 
@@ -269,6 +269,78 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 			.addUrlParam(params)
 			...
 ```
+
+
+#### 10.报文体参数
+
+报文体参数（Budy参数）以 key=value& 的形式携带与请求报文体内
+
+单个添加（同步异步添加方法一样）
+
+```
+	HttpUtils.sync("http://api.demo.com/signin")
+			.addBodyParam("username", "Jackson")
+			.addBodyParam("password", "xxxxxx")
+			...
+```
+多个添加（同步异步添加方法一样）
+
+```
+	Map<String, String> params = new HashMap<>()
+	params.put("username", "Jackson");
+	params.put("password", "xxxxxx");
+	
+	HttpUtils.sync("http://api.demo.com/signin")
+
+			.addBodyParam(params)
+			...
+```
+
+#### 11. JSON参数
+
+JSON参数 json 字符串的形式携带与请求报文体内
+
+单个添加（同步异步添加方法一样）
+
+```
+	HttpUtils.sync("http://api.demo.com/signin")
+			.addJsonParam("username", "Jackson")
+			.addJsonParam("password", "xxxxxx")
+			...
+```
+多个添加（同步异步添加方法一样）
+
+```
+	Map<String, String> params = new HashMap<>()
+	params.put("username", "Jackson");
+	params.put("password", "xxxxxx");
+	
+	HttpUtils.sync("http://api.demo.com/signin")
+
+			.addJsonParam(params)
+			...
+```
+添加JSON字符串
+
+```
+	HttpUtils.sync("http://api.demo.com/signin")
+
+			.setRequestJson("\"username\":\"Jackson\",\"password\":\"xxxxxx\"")
+			...
+```
+Java Bean 自动转 JSON
+
+```
+	Login login = new Login();
+	login.setUsername("Jackson");
+	login.setPassword("xxxxxx");
+	
+	HttpUtils.sync("http://api.demo.com/signin")
+
+			.setRequestJson(login)
+			...
+```
+
 
 ## 参与贡献
 
