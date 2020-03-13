@@ -86,6 +86,7 @@ public abstract class HttpClient<S, F, C extends HttpClient<S, F, ?>> {
 
     /**
      * 配置 httpClient
+     * @param configurator 配置器
      */
     public static void config(Configurator configurator) {
     	Builder builder = new Builder();
@@ -95,13 +96,15 @@ public abstract class HttpClient<S, F, C extends HttpClient<S, F, ?>> {
     
     /**
      * 设置 baseUrl
+     * @param baseUrl 全局URL前缀
      */
     public static void setBaseUrl(String baseUrl) {
     	HttpClient.baseUrl = baseUrl;
     }
     
     /**
-     * 设置回调执行器，例如切换线程
+     * 设置回调执行器，例如实现切换线程功能
+     * @param executor 回调执行器
      */
     public static void setExecutor(Executor executor) {
     	AsyncHttpClient.executor = executor;
@@ -115,13 +118,16 @@ public abstract class HttpClient<S, F, C extends HttpClient<S, F, ?>> {
     	
     	/**
     	 * 使用 builder 配置 HttpClient
+    	 * @param builder OkHttpClient 构建器
     	 */
     	void config(Builder builder);
     	
     }
     
     /**
-     * 发生异常时不抛出
+     * 设置在发生异常时不向上抛出，设置后：
+     * 异步请求可以再异常回调内捕获异常，同步请求返回结果中找到异常
+     * @return HttpClient 实例
      */
     public C nothrow() {
     	this.nothrow = true;
@@ -130,6 +136,9 @@ public abstract class HttpClient<S, F, C extends HttpClient<S, F, ?>> {
     
     /**
      * 添加请求头
+     * @param name 请求头名
+     * @param value 请求头值
+     * @return HttpClient 实例
      */
 	public C addHeader(String name, String value) {
     	if (name != null && value != null) {
@@ -143,6 +152,8 @@ public abstract class HttpClient<S, F, C extends HttpClient<S, F, ?>> {
 
     /**
      * 添加请求头
+     * @param headers 请求头集合
+     * @return HttpClient 实例
      */
     public C addHeader(Map<String, String> headers) {
     	if (headers != null) {
@@ -156,6 +167,9 @@ public abstract class HttpClient<S, F, C extends HttpClient<S, F, ?>> {
     
     /**
      * 路径参数：替换URL里的{name}
+     * @param name 参数名
+     * @param value 参数值
+     * @return HttpClient 实例
      **/
     public C addPathParam(String name, String value) {
     	if (name != null && value != null) {
@@ -169,6 +183,9 @@ public abstract class HttpClient<S, F, C extends HttpClient<S, F, ?>> {
     
     /**
      * 路径参数：替换URL里的{name}
+     * @param name 参数名
+     * @param value 参数值
+     * @return HttpClient 实例
      **/
     public C addPathParam(String name, Number value) {
     	if (value != null) {
@@ -179,6 +196,8 @@ public abstract class HttpClient<S, F, C extends HttpClient<S, F, ?>> {
 
     /**
      * 路径参数：替换URL里的{name}
+     * @param params 参数集合
+     * @return HttpClient 实例
      **/
     public C addPathParam(Map<String, ?> params) {
         if (params != null) {
@@ -196,6 +215,9 @@ public abstract class HttpClient<S, F, C extends HttpClient<S, F, ?>> {
     
     /**
      * URL参数：拼接在URL后的参数
+     * @param name 参数名
+     * @param value 参数值
+     * @return HttpClient 实例
      **/
     public C addUrlParam(String name, String value) {
     	if (name != null && value != null) {
@@ -209,6 +231,9 @@ public abstract class HttpClient<S, F, C extends HttpClient<S, F, ?>> {
 
     /**
      * URL参数：拼接在URL后的参数
+     * @param name 参数名
+     * @param value 参数值
+     * @return HttpClient 实例
      **/
     public C addUrlParam(String name, Number value) {
     	if (value != null) {
@@ -219,6 +244,8 @@ public abstract class HttpClient<S, F, C extends HttpClient<S, F, ?>> {
 
     /**
      * URL参数：拼接在URL后的参数
+     * @param params 参数集合
+     * @return HttpClient 实例
      **/
     public C addUrlParam(Map<String, ?> params) {
         if (params != null) {
@@ -236,6 +263,9 @@ public abstract class HttpClient<S, F, C extends HttpClient<S, F, ?>> {
 
     /**
      * Body参数：放在Body里的参数
+     * @param name 参数名
+     * @param value 参数值
+     * @return HttpClient 实例
      **/
     public C addBodyParam(String name, String value) {
     	if (name != null && value != null) {
@@ -249,6 +279,9 @@ public abstract class HttpClient<S, F, C extends HttpClient<S, F, ?>> {
 
     /**
      * Body参数：放在Body里的参数
+     * @param name 参数名
+     * @param value 参数值
+     * @return HttpClient 实例
      **/
     public C addBodyParam(String name, Number value) {
     	if (value != null) {
@@ -259,6 +292,8 @@ public abstract class HttpClient<S, F, C extends HttpClient<S, F, ?>> {
 
     /**
      * Body参数：放在Body里的参数
+     * @param params 参数集合
+     * @return HttpClient 实例
      **/
     public C addBodyParam(Map<String, ?> params) {
     	if (params != null) {
@@ -277,6 +312,9 @@ public abstract class HttpClient<S, F, C extends HttpClient<S, F, ?>> {
     /**
      * Json参数：请求体为Json，只支持单层Json
      * 若请求json为多层结构，请使用setRequestJson方法
+     * @param name JSON键名
+     * @param value JSON键值
+     * @return HttpClient 实例
      */
     public C addJsonParam(String name, String value) {
     	if (name != null && value != null) {
@@ -291,6 +329,9 @@ public abstract class HttpClient<S, F, C extends HttpClient<S, F, ?>> {
     /**
      * Json参数：请求体为Json，只支持单层Json
      * 若请求json为多层结构，请使用setRequestJson方法
+     * @param name JSON键名
+     * @param value JSON键值
+     * @return HttpClient 实例
      */
     public C addJsonParam(String name, Number value) {
     	if (value != null) {
@@ -302,6 +343,8 @@ public abstract class HttpClient<S, F, C extends HttpClient<S, F, ?>> {
     /**
      * Json参数：请求体为Json，只支持单层Json
      * 若请求json为多层结构，请使用setRequestJson方法
+     * @param params JSON键值集合
+     * @return HttpClient 实例
      */
     public C addJsonParam(Map<String, Object> params) {
     	if (params != null) {
@@ -319,6 +362,8 @@ public abstract class HttpClient<S, F, C extends HttpClient<S, F, ?>> {
 
     /**
      * 请求体为json
+     * @param json JSON字符串
+     * @return HttpClient 实例
      **/
     public C setRequestJson(String json) {
         if (json != null) {
@@ -329,20 +374,25 @@ public abstract class HttpClient<S, F, C extends HttpClient<S, F, ?>> {
 
     /**
      * 请求体为json
+     * @param bean Java对象，将跟换 bean的get方法序列化程 json 字符串
+     * @return HttpClient 实例
      **/
-    public C setRequestJson(Object json) {
-        if (json != null) {
-            requestJson = JSON.toJSONString(json);
+    public C setRequestJson(Object bean) {
+        if (bean != null) {
+            requestJson = JSON.toJSONString(bean);
         }
         return (C) this;
     }
 
     /**
      * 请求体为json
+     * @param bean Java对象，将跟换 bean的get方法序列化程 json 字符串
+     * @param dateFormat 序列化json时对日期类型字段的处理格式
+     * @return HttpClient 实例
      **/
-    public C setRequestJson(Object json, String dateFormat) {
-        if (json != null) {
-            requestJson = JSON.toJSONStringWithDateFormat(json, dateFormat);
+    public C setRequestJson(Object bean, String dateFormat) {
+        if (bean != null) {
+            requestJson = JSON.toJSONStringWithDateFormat(bean, dateFormat);
         }
         return (C) this;
     }
@@ -351,6 +401,7 @@ public abstract class HttpClient<S, F, C extends HttpClient<S, F, ?>> {
      * 添加文件参数
      * @param name 参数名
      * @param file 文件
+     * @return HttpClient 实例
      */
     public C addFileParam(String name, File file) {
         if (name != null && file != null && file.exists()) {
@@ -370,6 +421,7 @@ public abstract class HttpClient<S, F, C extends HttpClient<S, F, ?>> {
      * @param name 参数名
      * @param type 文件类型: 如 png、jpg、jpeg 等
      * @param inputStream 文件输入流
+     * @return HttpClient 实例
      */
     public C addFileParam(String name, String type, InputStream inputStream) {
     	String fileName = System.currentTimeMillis() + "." + type;
@@ -381,7 +433,8 @@ public abstract class HttpClient<S, F, C extends HttpClient<S, F, ?>> {
      * @param name 参数名
      * @param type 文件类型: 如 png、jpg、jpeg 等
      * @param fileName 文件名
-     * @param inputStream 文件输入流
+     * @param input 文件输入流
+     * @return HttpClient 实例
      */
     public C addFileParam(String name, String type, String fileName, InputStream input) {
         if (name != null && input != null) {
@@ -402,8 +455,8 @@ public abstract class HttpClient<S, F, C extends HttpClient<S, F, ?>> {
      * 添加文件参数
      * @param name 参数名
      * @param type 文件类型: 如 png、jpg、jpeg 等
-     * @param fileName 文件名
      * @param content 文件内容
+     * @return HttpClient 实例
      */
     public C addFileParam(String name, String type, byte[] content) {
     	String fileName = System.currentTimeMillis() + "." + type;
@@ -416,6 +469,7 @@ public abstract class HttpClient<S, F, C extends HttpClient<S, F, ?>> {
      * @param type 文件类型: 如 png、jpg、jpeg 等
      * @param fileName 文件名
      * @param content 文件内容
+     * @return HttpClient 实例
      */
     public C addFileParam(String name, String type, String fileName, byte[] content) {
         if (name != null && content != null) {

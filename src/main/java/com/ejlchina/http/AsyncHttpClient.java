@@ -19,7 +19,6 @@ import okhttp3.ResponseBody;
  * @param <S> 请求成功时返回的数据类型
  * @param <F> 请求失败时返回的数据类型
  * 
- * @since 0.3.5
  */
 public class AsyncHttpClient<S, F> extends HttpClient<S, F, AsyncHttpClient<S, F>> {
 
@@ -38,6 +37,8 @@ public class AsyncHttpClient<S, F> extends HttpClient<S, F, AsyncHttpClient<S, F
 
 	/**
 	 * 设置请求成功（HTTP状态码在[200, 300)之间）后的回调函数
+	 * @param onSuccess 请求成功回调
+	 * @return HttpClient 实例
 	 */
     public AsyncHttpClient<S, F> setOnSuccess(OnCallback<S> onSuccess) {
         this.onSuccess = onSuccess;
@@ -46,6 +47,8 @@ public class AsyncHttpClient<S, F> extends HttpClient<S, F, AsyncHttpClient<S, F
 
 	/**
 	 * 设置请求失败（HTTP状态码不在[200, 300)之间）后的回调函数
+	 * @param onFailure 请求失败回调
+	 * @return HttpClient 实例
 	 */
     public AsyncHttpClient<S, F> setOnFailure(OnCallback<F> onFailure) {
         this.onFailure = onFailure;
@@ -54,6 +57,8 @@ public class AsyncHttpClient<S, F> extends HttpClient<S, F, AsyncHttpClient<S, F
 
 	/**
 	 * 设置请求发生异常后的回调函数
+	 * @param onException 请求异常回调
+	 * @return HttpClient 实例
 	 */
     public AsyncHttpClient<S, F> setOnException(OnException onException) {
         this.onException = onException;
@@ -62,6 +67,8 @@ public class AsyncHttpClient<S, F> extends HttpClient<S, F, AsyncHttpClient<S, F
 
 	/**
 	 * 设置请求完成后的回调函数，无论成功|失败|异常 都会被执行
+	 * @param onComplete 请求完成回调
+	 * @return HttpClient 实例
 	 */
     public AsyncHttpClient<S, F> setOnComplete(OnComplete onComplete) {
         this.onComplete = onComplete;
@@ -70,6 +77,8 @@ public class AsyncHttpClient<S, F> extends HttpClient<S, F, AsyncHttpClient<S, F
     
 	/**
 	 * 设置请求返回后的回调函数，参数未经解析，可用于返回非文本的请求，例如下载文件
+	 * @param onResponse 请求返回回调
+	 * @return HttpClient 实例
 	 */
     public AsyncHttpClient<S, F> setOnResponse(OnCallback<ResponseBody> onResponse) {
         this.onResponse = onResponse;
@@ -78,6 +87,7 @@ public class AsyncHttpClient<S, F> extends HttpClient<S, F, AsyncHttpClient<S, F
     
     /**
      * 发起 GET 请求
+     * @return HttpCall
      */
     public HttpCall get() {
         return request("GET");
@@ -85,6 +95,7 @@ public class AsyncHttpClient<S, F> extends HttpClient<S, F, AsyncHttpClient<S, F
 
     /**
      * 发起 POST 请求
+     * @return HttpCall
      */
     public HttpCall post() {
         return request("POST");
@@ -92,6 +103,7 @@ public class AsyncHttpClient<S, F> extends HttpClient<S, F, AsyncHttpClient<S, F
 
     /**
      * 发起 PUT 请求
+     * @return HttpCall
      */
     public HttpCall put() {
         return request("PUT");
@@ -99,6 +111,7 @@ public class AsyncHttpClient<S, F> extends HttpClient<S, F, AsyncHttpClient<S, F
 
     /**
      * 发起 DELETE 请求
+     * @return HttpCall
      */
     public HttpCall delete() {
         return request("DELETE");

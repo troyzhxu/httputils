@@ -5,20 +5,20 @@ import okhttp3.Headers;
 /**
  * Http 请求结果
  *
- * @param <T>
- * @param <M>
+ * @param <S> 请求成功时返回的数据类型
+ * @param <F> 请求失败时返回的数据类型
  */
-public class HttpResult<T, M> {
+public class HttpResult<S, F> {
 
 	private int state;
 	private int status;
 	private Headers headers;
-	private T okData;
-	private M failData;
+	private S okData;
+	private F failData;
 	private Exception e;
 	
 	
-	private HttpResult(int state, int status, Headers headers, T okData, M failData, Exception e) {
+	private HttpResult(int state, int status, Headers headers, S okData, F failData, Exception e) {
 		this.state = state;
 		this.status = status;
 		this.headers = headers;
@@ -70,7 +70,7 @@ public class HttpResult<T, M> {
 	 * HTTP状态码在 [200, 300) 之间 时
 	 * @return 请求成功时报文体解析出的数据
 	 */
-	public T getOkData() {
+	public S getOkData() {
 		return okData;
 	}
 
@@ -78,7 +78,7 @@ public class HttpResult<T, M> {
 	 * HTTP状态码不在 [200, 300) 之间 时
 	 * @return 请求失败时报文体解析出的数据
 	 */
-	public M getFailData() {
+	public F getFailData() {
 		return failData;
 	}
 

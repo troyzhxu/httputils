@@ -27,7 +27,10 @@ public class SyncHttpClient<S, F> extends HttpClient<S, F, SyncHttpClient<S, F>>
 
 	
     /**
+     * 
      * 发起 GET 请求
+     * @return 请求结果  
+     * @see HttpResult
      */
     public HttpResult<S, F> get() {
         return request("GET");
@@ -35,6 +38,8 @@ public class SyncHttpClient<S, F> extends HttpClient<S, F, SyncHttpClient<S, F>>
 
     /**
      * 发起 POST 请求
+     * @return 请求结果  
+     * @see HttpResult
      */
     public HttpResult<S, F> post() {
         return request("POST");
@@ -42,6 +47,8 @@ public class SyncHttpClient<S, F> extends HttpClient<S, F, SyncHttpClient<S, F>>
 
     /**
      * 发起 PUT 请求
+     * @return 请求结果  
+     * @see HttpResult
      */
     public HttpResult<S, F> put() {
         return request("PUT");
@@ -49,6 +56,8 @@ public class SyncHttpClient<S, F> extends HttpClient<S, F, SyncHttpClient<S, F>>
     
     /**
      * 发起 DELETE 请求
+     * @return 请求结果  
+     * @see HttpResult
      */
     public HttpResult<S, F> delete() {
         return request("DELETE");
