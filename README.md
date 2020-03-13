@@ -34,11 +34,11 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 #### 1.同步请求
 
 ```
-	// 最终路径为 http://api.demo.com/users/1
-	HttpResult<User, ?> result = HttpUtils.sync("http://api.demo.com/users/{id}", User.class)
+	// 最终路径 http://api.demo.com/users?name=Jack
+	HttpResult<User, ?> result = HttpUtils.sync("http://api.demo.com/users", User.class)
 	
-			// 设置路径参数
-			.addPathParam("id", 1)
+			// 设置URL参数
+			.addUrlParam("name", "Jack")
 			
 			// 发起  GET 请求
 			.get();
@@ -56,11 +56,11 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 #### 2.异步请求
 
 ```
-	// 最终路径 http://api.demo.com/users?name=Jack
-	HttpUtils.async("http://api.demo.com/users", User.class)
+	// 最终路径为 http://api.demo.com/users/1
+	HttpUtils.async("http://api.demo.com/users/{id}", User.class)
 	
-			// 设置URL参数
-			.addUrlParam("name", "Jack")
+			// 设置路径参数
+			.addPathParam("id", 1)
 			
 			// 设置回调函数
 			.setOnSuccess((int status, Headers headers, User user) -> {
