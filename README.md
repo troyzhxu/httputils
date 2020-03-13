@@ -33,11 +33,23 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 1.  同步请求
 
 ```
-		HttpResult<User, ?> result = HttpUtils.sync("http://api.demo.com/users/{id}", User.class)
-				// 设置路径参数
-				.addPathParam("id", 1)
-				// 发起  GET 请求
-				.get();
+	// 最终路径为 http://api.demo.com/users/1
+	HttpResult<User, ?> result = HttpUtils.sync("http://api.demo.com/users/{id}", User.class)
+	
+			// 设置路径参数
+			.addPathParam("id", 1)
+			
+			// 发起  GET 请求
+			.get();
+	
+	// 得到状态码
+	int status = result.getStatus();
+
+	// 得到返回头
+	Headers headers = result.getHeaders();
+
+	// 得到目标数据
+	User user = result.getOkData();
 ```
 
 2.  xxxx
