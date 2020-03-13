@@ -86,12 +86,12 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 GET 请求（同步异步请求方法一致）
 
 ```
-	HttpUtils.sync("http://api.demo.com/users").get()
+	HttpUtils.sync("/users").get()
 ```
 POST 请求（同步异步请求方法一致）
 
 ```
-	HttpUtils.sync("http://api.demo.com/users")
+	HttpUtils.sync("/users")
 			.addJsonParam("name", "Jack")
 			.addJsonParam("age", 20)
 			.post()
@@ -99,14 +99,14 @@ POST 请求（同步异步请求方法一致）
 PUT 请求（同步异步请求方法一致）
 
 ```
-	HttpUtils.sync("http://api.demo.com/users/1")
+	HttpUtils.sync("/users/1")
 			.addJsonParam("name", "Jack")
 			.put()
 ```
 DELETE 请求（同步异步请求方法一致）
 
 ```
-	HttpUtils.sync("http://api.demo.com/users/1")
+	HttpUtils.sync("/users/1")
 			.delete()
 ```
 
@@ -117,7 +117,7 @@ DELETE 请求（同步异步请求方法一致）
 异步请求的 get、post、put、delete方法返回一个HttpCall对象，该对象可以查看请求执行的状态，也可以取消请求
 
 ```
-	HttpCall call = HttpUtils.async("http://api.demo.com/users/1")
+	HttpCall call = HttpUtils.async("/users/1")
 			.setOnSuccess((int status, Headers headers, Object user) -> {
 				
 			})
@@ -134,7 +134,7 @@ DELETE 请求（同步异步请求方法一致）
 只有异步请求才可以设置回调函数
 
 ```
-	HttpUtils.async("http://api.demo.com/users/1", User.class, Error.class)
+	HttpUtils.async("/users/1", User.class, Error.class)
 			.setOnSuccess((int status, Headers headers, User user) -> {
 				// 成功回调,状态码在[200, 300)之间（根据 User.class 自动解析出 user 对象）
 			})
@@ -151,7 +151,7 @@ DELETE 请求（同步异步请求方法一致）
 ```
 
 ```
-	HttpUtils.async("http://api.demo.com/files/report.xlsx")
+	HttpUtils.async("/files/report.xlsx")
 			.setOnResponse((int status, Headers headers, ResponseBody body) -> {
 				// 响应回调（设置了OnResponse，就不可以再设置 OnSuccess 和 OnFailure 回调）
 			})
@@ -171,7 +171,7 @@ HttpUtils.sync(...) 和 HttpUtils.async(...) 最多有三个参数：第一个�
 异步请求成功返回数据 解析为 Book 对象
 
 ```
-	HttpUtils.async("http://api.demo.com/book/1", Book.class)
+	HttpUtils.async("/books/1", Book.class)
 			.setOnSuccess((int status, Headers headers, Book book) -> {
 	
 			})
@@ -180,7 +180,7 @@ HttpUtils.sync(...) 和 HttpUtils.async(...) 最多有三个参数：第一个�
 异步请求成功返回数据 解析为 Book 对象，请求失败返回数据 解析为 String 对象
 
 ```
-	HttpUtils.async("http://api.demo.com/book/1", Book.class, String.class)
+	HttpUtils.async("/books/1", Book.class, String.class)
 			.setOnSuccess((int status, Headers headers, Book book) -> {
 	
 			})
@@ -192,7 +192,7 @@ HttpUtils.sync(...) 和 HttpUtils.async(...) 最多有三个参数：第一个�
 异步请求成功返回数据 解析为 Book 列表
 
 ```
-	HttpUtils.async("http://api.demo.com/books", new TypeReference<List<Book>>(){})
+	HttpUtils.async("/books", new TypeReference<List<Book>>(){})
 			.setOnSuccess((int status, Headers headers, List<Book> books) -> {
 
 			})
@@ -201,12 +201,12 @@ HttpUtils.sync(...) 和 HttpUtils.async(...) 最多有三个参数：第一个�
 同步请求成功返回数据 解析为 Book 对象
 
 ```
-	Book book = HttpUtils.sync("http://api.demo.com/book/1", Book.class).get().getOkData();
+	Book book = HttpUtils.sync("/books/1", Book.class).get().getOkData();
 ```
 同步请求成功返回数据 解析为 Book 对象，请求失败返回数据 解析为 String 对象
 
 ```
-	HttpResult<User, String> result = HttpUtils.sync("http://api.demo.com/book/1", Book.class, String.class).get();
+	HttpResult<User, String> result = HttpUtils.sync("/books/1", Book.class, String.class).get();
 	
 	Book book = result.getOkData();
 	String error = result.getFailData();
@@ -214,7 +214,7 @@ HttpUtils.sync(...) 和 HttpUtils.async(...) 最多有三个参数：第一个�
 同步请求成功返回数据 解析为 Book 列表
 
 ```
-	List<Book> books = HttpUtils.sync("http://api.demo.com/books", new TypeReference<List<Book>>(){}).get().getOkData();
+	List<Book> books = HttpUtils.sync("/books", new TypeReference<List<Book>>(){}).get().getOkData();
 ```
 
 #### 8.添加请求头
@@ -222,7 +222,7 @@ HttpUtils.sync(...) 和 HttpUtils.async(...) 最多有三个参数：第一个�
 单个添加（同步异步添加方法一样）
 
 ```
-	HttpUtils.sync("http://api.demo.com/orders")
+	HttpUtils.sync("/orders")
 			.addHeader("Access-Token", "xxxxxx")
 			.addHeader("Content-Type", "application/json")
 			.get();
@@ -234,7 +234,7 @@ HttpUtils.sync(...) 和 HttpUtils.async(...) 最多有三个参数：第一个�
 	headers.put("Access-Token", "xxxxxx");
 	headers.put("Accept", "application/json");
 	
-	HttpUtils.sync("http://api.demo.com/orders")
+	HttpUtils.sync("/orders")
 			.addHeader(headers)
 			.get();
 ```
@@ -246,7 +246,7 @@ HttpUtils.sync(...) 和 HttpUtils.async(...) 最多有三个参数：第一个�
 单个添加（同步异步添加方法一样）
 
 ```
-	HttpUtils.sync("http://api.demo.com/shops/{shopName}/products/{productId}")
+	HttpUtils.sync("/shops/{shopName}/products/{productId}")
 			.addPathParam("shopName", "taobao")
 			.addPathParam("productId", 20)
 			.get();
@@ -258,7 +258,7 @@ HttpUtils.sync(...) 和 HttpUtils.async(...) 最多有三个参数：第一个�
 	params.put("shopName", "taobao");
 	params.put("productId", 20);
 	
-	HttpUtils.sync("http://api.demo.com/shops/{shopName}/products/{productId}")
+	HttpUtils.sync("/shops/{shopName}/products/{productId}")
 			.addPathParam(params)
 			.get();
 ```
@@ -270,7 +270,7 @@ HttpUtils.sync(...) 和 HttpUtils.async(...) 最多有三个参数：第一个�
 单个添加（同步异步添加方法一样）
 
 ```
-	HttpUtils.sync("http://api.demo.com/products")
+	HttpUtils.sync("/products")
 			.addUrlParam("name", "手机")
 			.addUrlParam("tag", "5G")
 			.get();
@@ -282,7 +282,7 @@ HttpUtils.sync(...) 和 HttpUtils.async(...) 最多有三个参数：第一个�
 	params.put("name", "手机");
 	params.put("tag", 5G);
 	
-	HttpUtils.sync("http://api.demo.com/products")
+	HttpUtils.sync("/products")
 			.addUrlParam(params)
 			.get();
 ```
@@ -294,7 +294,7 @@ HttpUtils.sync(...) 和 HttpUtils.async(...) 最多有三个参数：第一个�
 单个添加（同步异步添加方法一样）
 
 ```
-	HttpUtils.sync("http://api.demo.com/signin")
+	HttpUtils.sync("/signin")
 			.addBodyParam("username", "Jackson")
 			.addBodyParam("password", "xxxxxx")
 			.post();
@@ -306,7 +306,7 @@ HttpUtils.sync(...) 和 HttpUtils.async(...) 最多有三个参数：第一个�
 	params.put("username", "Jackson");
 	params.put("password", "xxxxxx");
 	
-	HttpUtils.sync("http://api.demo.com/signin")
+	HttpUtils.sync("/signin")
 			.addBodyParam(params)
 			.post();
 ```
@@ -318,7 +318,7 @@ JSON参数 json 字符串的形式携带与请求报文体内
 单个添加（同步异步添加方法一样）
 
 ```
-	HttpUtils.sync("http://api.demo.com/signin")
+	HttpUtils.sync("/signin")
 			.addJsonParam("username", "Jackson")
 			.addJsonParam("password", "xxxxxx")
 			.post();
@@ -330,14 +330,14 @@ JSON参数 json 字符串的形式携带与请求报文体内
 	params.put("username", "Jackson");
 	params.put("password", "xxxxxx");
 	
-	HttpUtils.sync("http://api.demo.com/signin")
+	HttpUtils.sync("/signin")
 			.addJsonParam(params)
 			.post();
 ```
 添加JSON字符串
 
 ```
-	HttpUtils.sync("http://api.demo.com/signin")
+	HttpUtils.sync("/signin")
 			.setRequestJson("\"username\":\"Jackson\",\"password\":\"xxxxxx\"")
 			.post();
 ```
@@ -348,7 +348,7 @@ Java Bean 自动转 JSON
 	login.setUsername("Jackson");
 	login.setPassword("xxxxxx");
 	
-	HttpUtils.sync("http://api.demo.com/signin")
+	HttpUtils.sync("/signin")
 			.setRequestJson(login)
 			.post();
 ```
@@ -363,7 +363,7 @@ Java Bean 自动转 JSON
 	File file1 = new File("D:/1.jpg");
 	File file2 = new File("D:/2.jpg");
 	
-	HttpUtils.sync("http://api.demo.com/upload")
+	HttpUtils.sync("/upload")
 			.addFileParam("image1", file1)
 			.addFileParam("image2", file2)
 			.post();
@@ -374,7 +374,7 @@ Java Bean 自动转 JSON
 	// 获得文件的输入流
 	InputStream input = ...
 	
-	HttpUtils.sync("http://api.demo.com/upload")
+	HttpUtils.sync("/upload")
 			.addFileParam("image", "jpg", input)
 			.post();
 ```
@@ -384,16 +384,16 @@ Java Bean 自动转 JSON
 	// 获得文件的字节数组
 	byte[] content = ...
 	
-	HttpUtils.sync("http://api.demo.com/upload")
+	HttpUtils.sync("/upload")
 			.addFileParam("image", "jpg", content)
 			.post();
 ```
 文件参数和表单参数可以一起添加
 
 ```
-	File file = new File("D:/1.jpg");
+	File file = new File("D:/首页广告.jpg");
 	
-	HttpUtils.sync("http://api.demo.com/messages")
+	HttpUtils.sync("/messages")
 			.addBodyParam("name", "广告图")
 			.addFileParam("image", file)
 			.post();
