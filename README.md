@@ -75,7 +75,7 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 	HttpUtils.sync("/auth/signin")					// http://api.demo.com/auth/signin
 			.addBodyParam("username", "Jackson")
 			.addBodyParam("password", "xxxxxx")
-			.post()		// POST请求
+			.post()									// POST请求
 ```
 在配置了 BaseUrl 之后，仍然可以请求全路径的接口，如：
 
