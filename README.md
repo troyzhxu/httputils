@@ -205,7 +205,7 @@ HttpUtils.sync(...) 和 HttpUtils.async(...) 最多有三个参数：第一个�
 	HttpUtils.sync("http://api.demo.com/orders")
 			.addHeader("Access-Token", "xxxxxx")
 			.addHeader("Content-Type", "application/json")
-			...
+			.get();
 ```
 多个添加（同步异步添加方法一样）
 
