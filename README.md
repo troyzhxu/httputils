@@ -55,9 +55,9 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 	HttpUtils.async("http://api.demo.com/users/{id}", User.class)
 			.addPathParam("id", 1)
 			.setOnSuccess((int status, Headers headers, User user) -> {
-				// 请求成功处理
+						// 请求成功处理
 			})
-			.get();	  // GET请求
+			.get();	  	// GET请求
 ```
 
 #### 3.BaseUrl 配置
@@ -75,7 +75,7 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 	HttpUtils.sync("/auth/signin")					// http://api.demo.com/auth/signin
 			.addBodyParam("username", "Jackson")
 			.addBodyParam("password", "xxxxxx")
-			.post()
+			.post()		// POST请求
 ```
 在配置了 BaseUrl 之后，仍然可以请求全路径的接口，如：
 
@@ -122,7 +122,7 @@ DELETE 请求（同步异步请求方法一致）
 			.setOnSuccess((int status, Headers headers, Object user) -> {
 				
 			})
-			.get();	 // 发起  GET 请求
+			.get();
 
 	call.cancel();   // 取消请求
 
