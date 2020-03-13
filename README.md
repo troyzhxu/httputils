@@ -33,6 +33,8 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 
 #### 1.同步请求
 
+HttpUtils.sync 为同步请求方法
+
 ```
 	// 最终路径 http://api.demo.com/users?name=Jack
 	HttpResult<User, ?> result = HttpUtils.sync("http://api.demo.com/users", User.class)
@@ -45,6 +47,8 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 ```
 
 #### 2.异步请求
+
+HttpUtils.async 为异步请求方法
 
 ```
 	// 最终路径为 http://api.demo.com/users/1
