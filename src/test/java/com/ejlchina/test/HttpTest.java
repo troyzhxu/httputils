@@ -1,6 +1,7 @@
 package com.ejlchina.test;
 
 
+import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 import com.ejlchina.http.HttpCall;
@@ -16,7 +17,7 @@ import okhttp3.OkHttpClient.Builder;
 public class HttpTest {
 
 	
-	public static void main(String[] args) throws InterruptedException {
+	public static void main(String[] args) throws InterruptedException, IOException {
 		
 		// 全局配置
 		configHttpClient();
@@ -26,7 +27,6 @@ public class HttpTest {
 		
 		// 异步请求示例
 		asyncHttpExample();
-		
 		
 	}
 

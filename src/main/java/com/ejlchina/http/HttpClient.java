@@ -13,8 +13,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Executor;
 
-import org.apache.commons.io.IOUtils;
-
 import com.alibaba.fastjson.JSON;
 
 import okhttp3.Call;
@@ -27,6 +25,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
+import okio.Buffer;
 
 
 /**
@@ -384,11 +383,13 @@ public abstract class HttpClient<S, F, C extends HttpClient<S, F, ?>> {
      * @param fileName 文件名
      * @param inputStream 文件输入流
      */
-    public C addFileParam(String name, String type, String fileName, InputStream inputStream) {
-        if (name != null && inputStream != null) {
+    public C addFileParam(String name, String type, String fileName, InputStream input) {
+        if (name != null && input != null) {
             byte[] content = null;
 			try {
-				content = IOUtils.toByteArray(inputStream);
+				Buffer buffer = new Buffer();
+				content = buffer.readFrom(input).readByteArray();
+				buffer.close();
 			} catch (IOException e) {
 				throw new HttpException("读取文件输入流出错：", e);
 			}
