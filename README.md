@@ -95,13 +95,12 @@ DELETE 请求（同步异步请求方法一致）
 
 只有异步请求才可以被取消
 
+异步请求的 get、post、put、delete方法返回一个HttpCall对象，该对象可以查看请求的状态，也可以取消请求
+
 ```
-	HttpCall call = HttpUtils.async("http://api.demo.com/users", new TypeReference<List<User>>(){})
-			
-			// 设置回调函数
-			.setOnSuccess((int status, Headers headers, List<User> users) -> {
-				// 接收到解析好的 users 列表
-	
+	HttpCall call = HttpUtils.async("http://api.demo.com/users/1")
+			.setOnSuccess((int status, Headers headers, Object user) -> {
+				
 			})
 			.get();	 // 发起  GET 请求
 
