@@ -108,8 +108,7 @@ PUT 请求（同步异步请求方法一致）
 DELETE 请求（同步异步请求方法一致）
 
 ```
-	HttpUtils.sync("/users/1")
-			.delete()
+	HttpUtils.sync("/users/1").delete()
 ```
 
 #### 5.取消异步请求
