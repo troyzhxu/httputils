@@ -29,8 +29,7 @@ public class AsyncHttpClient<S, F> extends HttpClient<S, F, AsyncHttpClient<S, F
     private OnException onException;
     private OnComplete onComplete;
     private OnCallback<ResponseBody> onResponse;
-	
-    
+
 	public AsyncHttpClient(String urlPath, Type okType, Type failType) {
 		super(urlPath, okType, failType);
 	}
@@ -124,7 +123,6 @@ public class AsyncHttpClient<S, F> extends HttpClient<S, F, AsyncHttpClient<S, F
     	return enqueueCall(prepareCall(method));
     }
     
-    
     class HttpCallStatus implements HttpCall {
 
     	private Call call;
@@ -167,43 +165,39 @@ public class AsyncHttpClient<S, F> extends HttpClient<S, F, AsyncHttpClient<S, F
             @Override
             public void onResponse(Call call, Response response) throws IOException {
             	httpCall.setDone(true);
-            	if (onResponse != null) {
-            		doOnResponse(response);
-            	} else {
-            		AsyncHttpClient.this.onResponse(response);
-            	}
+            	doWithResponse(response);
             }
 			
         });
 		return httpCall;
     }
     
-    
-    private void onResponse(Response response) {
-        try {
-            int code = response.code();
-            Headers headers = response.headers();
-        	String body = toString(response);
-            processResponse(code, headers, body);
-        } catch (IOException e) {
-        	doOnException(e);
-        }
-    }
-    
-    
     @SuppressWarnings("unchecked")
-    protected void processResponse(int code, Headers headers, String body) {
-    	try {
-	        if (code >= 200 && code < 300) {
-	            doOnSuccess(code, headers, (S) parseObject(body, okType));
+	private void doWithResponse(Response response) {
+    	if (onResponse != null) {
+    		doOnResponse(response);
+    		return;
+    	}
+    	int code = response.code();
+        Headers headers = response.headers();
+        Object result = null;
+        try {
+        	String body = toString(response);
+        	if (code >= 200 && code < 300) {
+        		result = parseObject(body, okType);
 	        } else {
-	            doOnFailure(code, headers, (F) parseObject(body, failType));
+	        	result = parseObject(body, failType);
 	        }
-    	} catch (Exception e) {
-            doOnException(e);
+        } catch (Exception e) {
+        	doOnException(e);
+        	return;
+        }
+        if (code >= 200 && code < 300) {
+        	doOnSuccess(code, headers, (S) result);
+        } else {
+        	doOnFailure(code, headers, (F) result);
         }
     }
-    
     
     @Override
     protected void assertNotConflict(boolean isGetRequest) {
@@ -238,7 +232,6 @@ public class AsyncHttpClient<S, F> extends HttpClient<S, F, AsyncHttpClient<S, F
 		}
 	}
 
-	
 	private void doOnFailure(int status, Headers headers, F body) {
 		if (executor != null) {
 			executor.execute(() -> {
@@ -248,7 +241,6 @@ public class AsyncHttpClient<S, F> extends HttpClient<S, F, AsyncHttpClient<S, F
 			exeOnFailure(status, headers, body);
 		}
 	}
-
 
 	private void doOnException(Exception e) {
 		if (executor != null) {
@@ -298,8 +290,5 @@ public class AsyncHttpClient<S, F> extends HttpClient<S, F, AsyncHttpClient<S, F
 			throw new HttpException(e.getMessage(), e);
 		}
 	}
-	
-	
-	
 	
 }
