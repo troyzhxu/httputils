@@ -20,11 +20,9 @@ import okhttp3.Response;
  */
 public class SyncHttpClient<S, F> extends HttpClient<S, F, SyncHttpClient<S, F>> {
 
-	
 	public SyncHttpClient(String urlPath, Type okType, Type failType) {
 		super(urlPath, okType, failType);
 	}
-
 	
     /**
      * 
@@ -64,12 +62,9 @@ public class SyncHttpClient<S, F> extends HttpClient<S, F, SyncHttpClient<S, F>>
     }
     
     private HttpResult<S, F> request(String method) {
-    	Call call = prepareCall(method);
-    	return executeCall(call);
+    	return executeCall(prepareCall(method));
     }
-    
 
-    @SuppressWarnings("unchecked")
     protected HttpResult<S, F> executeCall(Call call) {
         Response response = null;
         try {
@@ -80,7 +75,12 @@ public class SyncHttpClient<S, F> extends HttpClient<S, F, SyncHttpClient<S, F>>
         	}
         	throw new HttpException("请求执行异常", e);
         }
-        int code = response.code();
+        return doWithResponse(response);
+    }
+
+	@SuppressWarnings("unchecked")
+	private HttpResult<S, F> doWithResponse(Response response) {
+		int code = response.code();
         Headers headers = response.headers();
         String body = null;
         try {
@@ -105,6 +105,6 @@ public class SyncHttpClient<S, F> extends HttpClient<S, F, SyncHttpClient<S, F>>
         	}
             throw new HttpException("数据解析异常: " + body, e);
         }
-    }
+	}
 	
 }

@@ -120,7 +120,7 @@ public class AsyncHttpClient<S, F> extends HttpClient<S, F, AsyncHttpClient<S, F
     }
     
     private HttpCall request(String method) {
-    	return enqueueCall(prepareCall(method));
+    	return executeCall(prepareCall(method));
     }
     
     class HttpCallStatus implements HttpCall {
@@ -153,7 +153,7 @@ public class AsyncHttpClient<S, F> extends HttpClient<S, F, AsyncHttpClient<S, F
 		
     }
 	
-    private HttpCall enqueueCall(Call call) {
+    private HttpCall executeCall(Call call) {
         HttpCallStatus httpCall = new HttpCallStatus(call);
         call.enqueue(new Callback() {
             @Override
