@@ -59,7 +59,13 @@ public abstract class HttpClient<S, F, C extends HttpClient<S, F, ?>> {
     protected boolean nothrow;
 
     public HttpClient(String urlPath, Type okType, Type failType) {
-    	this.urlPath = baseUrl != null ? baseUrl + urlPath : urlPath;
+    	if (baseUrl == null 
+    			|| urlPath.startsWith("https://") 
+    			|| urlPath.startsWith("http://")) {
+    		this.urlPath = urlPath;
+    	} else {
+    		this.urlPath = baseUrl + urlPath;
+    	}
     	this.okType = okType;
     	this.failType = failType;
         if (httpClient == null) {
