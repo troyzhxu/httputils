@@ -421,14 +421,13 @@ Java Bean 自动转 JSON
 
 #### 15. 回调执行器
 
-如何想改变执行回调函数的线程时，可以配置回调函数执行器，例如在Android里，使得所有的回调函数都在UI线程里执行
+如何想改变执行回调函数的线程时，可以配置回调函数执行器例如在Android里，使得所有的回调函数都在UI线程里执行
 
 ```
-	HttpClient.setExecutor((Runnable callback) -> {
+	// 在 BaseActivity 的 onCreate 方法内
+	HttpClient.setExecutor((Runnable run) -> {
 		// 配置所有回调再UI线程执行
-		runOnUiThread(() -> {
-			callback.run();
-		});
+		runOnUiThread(run);
 	});
 ```
 该配置只对异步请求生效
