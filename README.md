@@ -1,6 +1,6 @@
 # HttpUtils
 
-#### 介绍
+## 介绍
 Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前后端通用
 
  * 支持异步、同步请求
@@ -12,9 +12,9 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
  * 回调线程配置
  * 文件上传下载
 
-#### 安装教程
+## 安装教程
 
-##### Maven
+### Maven
 
 ```
 <dependency>
@@ -24,17 +24,17 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 </dependency>
 ```
 
-##### Gradle
+### Gradle
 
 `compile 'com.ejlchina:httputils:0.0.1'`
 
-#### 使用说明
+## 使用说明
 
 1.  xxxx
 2.  xxxx
 3.  xxxx
 
-#### 参与贡献
+## 参与贡献
 
 1.  Fork 本仓库
 2.  新建 Feat_xxx 分支
@@ -42,7 +42,7 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 4.  新建 Pull Request
 
 
-#### 码云特技
+## 码云特技
 
 1.  使用 Readme\_XXX.md 来支持不同的语言，例如 Readme\_en.md, Readme\_zh.md
 2.  码云官方博客 [blog.gitee.com](https://blog.gitee.com)
