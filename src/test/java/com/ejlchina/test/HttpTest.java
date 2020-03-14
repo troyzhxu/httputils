@@ -11,7 +11,9 @@ import com.ejlchina.http.HttpUtils;
 
 import okhttp3.ConnectionPool;
 import okhttp3.Headers;
+import okhttp3.Interceptor.Chain;
 import okhttp3.OkHttpClient.Builder;
+import okhttp3.Request;
 
 
 public class HttpTest {
@@ -42,6 +44,17 @@ public class HttpTest {
 			// 配置连接超时时间
 			builder.connectTimeout(20, TimeUnit.SECONDS);
 
+			builder.addInterceptor((Chain chain) -> {
+				Request request = chain.request();
+				
+				request = request.newBuilder()
+						.addHeader("Access-Token", "****")
+						.build();
+				
+				return chain.proceed(request);
+			});
+			
+			
 			// 其它配置: 拦截器、SSL、缓存、代理...
 		});
 		
