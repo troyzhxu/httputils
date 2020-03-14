@@ -1,7 +1,11 @@
 # HttpUtils
 
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.ejlchina/httputils/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.ejlchina/httputils/)
+[![GitHub release](https://img.shields.io/github/release/ejlchina/httputils.svg)](https://github.com/ejlchina/httputils/releases)
 [![License](https://img.shields.io/badge/license-Apache%202-4EB1BA.svg)](https://www.apache.org/licenses/LICENSE-2.0.html)
+[![Troy.Zhou](https://img.shields.io/badge/%E4%BD%9C%E8%80%85-jeasonlzy-orange.svg)](https://github.com/ejlchina)
+
+
 
 ## 介绍
 Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前后端通用
