@@ -1,58 +1,82 @@
 package com.ejlchina.http;
 
 import okhttp3.Headers;
+import okhttp3.ResponseBody;
 
 /**
  * Http 请求结果
  *
- * @param <S> 请求成功时返回的数据类型
- * @param <F> 请求失败时返回的数据类型
  */
-public class HttpResult<S, F> {
+public class HttpResult {
 
-	private int state;
+	private State state;
 	private int status;
 	private Headers headers;
-	private S okData;
-	private F failData;
+	private ResponseBody body;
 	private Exception e;
 	
 	
-	private HttpResult(int state, int status, Headers headers, S okData, F failData, Exception e) {
+	public static enum State {
+		
+		/**
+		 * 执行异常
+		 */
+	    EXCEPTION,
+	    
+	    /**
+	     * 请求被取消
+	     */
+	    CANCELED,
+	    
+	    /**
+	     * 请求已响应
+	     */
+	    RESPONSED,
+	    
+	    /**
+	     * 网络超时
+	     */
+	    TIMEOUT,
+	    
+	    /**
+	     * 网络出错
+	     */
+	    NETWORK_ERROR
+		
+	}
+	
+	
+	HttpResult(State state, Exception e) {
+		this.state = state;
+		this.e = e;
+	}
+	
+	HttpResult(State state, int status, Headers headers, ResponseBody body) {
 		this.state = state;
 		this.status = status;
 		this.headers = headers;
-		this.okData = okData;
-		this.failData = failData;
-		this.e = e;
-	}
-
-	public static <T, M> HttpResult<T, M> exception(int compCode, Exception e) {
-		return new HttpResult<>(compCode, 0, null, null, null, e);
+		this.body = body;
 	}
 	
-	public static <T, M> HttpResult<T, M> exception(int status, Headers headers, int compCode, Exception e) {
-		return new HttpResult<>(compCode, status, headers, null, null, e);
-	}
 	
-	public static <T, M> HttpResult<T, M> success(int status, Headers headers, T okData) {
-		return new HttpResult<>(OnComplete.SUCCESS, status, headers, okData, null, null);
-	}
-	
-	public static <T, M> HttpResult<T, M> fail(int status, Headers headers, M failData) {
-		return new HttpResult<>(OnComplete.SUCCESS, status, headers, null, failData, null);
-	}
-
+//    protected Object parseObject(String body, Type type) throws Exception {
+//        Object result = body;
+//        if (type != null && !type.equals(STR_TYPE) && body != null) {
+//            result =JSON.parseObject(body, type);
+//        }
+//        return result;
+//    }
+//	
 	/**
 	 * @return 执行状态
 	 * @see OnComplete#EXCEPTION
      * @see OnComplete#CANCELED
-     * @see OnComplete#SUCCESS
+     * @see OnComplete#RESPONSED
      * @see OnComplete#FAILURE
      * @see OnComplete#TIMEOUT
      * @see OnComplete#NETWORK_ERROR
 	 */
-	public int getState() {
+	public State getState() {
 		return state;
 	}
 
@@ -72,26 +96,14 @@ public class HttpResult<S, F> {
 	}
 
 	/**
-	 * HTTP状态码在 [200, 300) 之间 时
-	 * @return 响应成功时报文体解析出的数据
-	 */
-	public S getOkData() {
-		return okData;
-	}
-
-	/**
-	 * HTTP状态码在 [200, 300) 之外 时
-	 * @return 响应失败时报文体解析出的数据
-	 */
-	public F getFailData() {
-		return failData;
-	}
-
-	/**
 	 * @return 请求中发生的异常
 	 */
 	public Exception getE() {
 		return e;
+	}
+
+	public ResponseBody getBody() {
+		return body;
 	}
 
 	@Override
@@ -99,8 +111,6 @@ public class HttpResult<S, F> {
 		return "HttpResult [\n  state = " + state + 
 				",\n  status = " + status + 
 				",\n  headers = " + headers + 
-				",\n  okData = " + okData + 
-				",\n  failData = " + failData + 
 				",\n  e = " + e + "\n]";
 	}
 	

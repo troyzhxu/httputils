@@ -7,13 +7,10 @@ import java.util.concurrent.TimeUnit;
 import com.ejlchina.http.HttpCall;
 import com.ejlchina.http.HttpClient;
 import com.ejlchina.http.HttpResult;
-import com.ejlchina.http.HttpUtils;
 
 import okhttp3.ConnectionPool;
 import okhttp3.Headers;
-import okhttp3.Interceptor.Chain;
 import okhttp3.OkHttpClient.Builder;
-import okhttp3.Request;
 
 
 public class HttpTest {
@@ -21,62 +18,46 @@ public class HttpTest {
 	
 	public static void main(String[] args) throws InterruptedException, IOException {
 		
-		// 全局配置
-		configHttpClient();
+		
+		HttpClient http = buildHttpClient();
+		
 		
 		// 同步请求示例
-		syncHttpExample();
+		syncHttpExample(http);
 		
 		// 异步请求示例
-		asyncHttpExample();
+		asyncHttpExample(http);
 		
 	}
 
 
-	private static void configHttpClient() {
+	static HttpClient buildHttpClient() {
 		
-		// HttpClient 全局配置
-		HttpClient.config((Builder builder) -> {
-			
-			// 配置连接池 最小10个连接（不配置默认为 5）
-			builder.connectionPool(new ConnectionPool(10, 5, TimeUnit.MINUTES));
-			
-			// 配置连接超时时间
-			builder.connectTimeout(20, TimeUnit.SECONDS);
-
-			builder.addInterceptor((Chain chain) -> {
-				Request request = chain.request();
-				
-				request = request.newBuilder()
-						.addHeader("Access-Token", "****")
-						.build();
-				
-				return chain.proceed(request);
-			});
-			
-			
-			// 其它配置: 拦截器、SSL、缓存、代理...
-		});
+		return HttpClient.builder()
+				.config((Builder builder) -> {
+					
+					// 配置连接池 最小10个连接（不配置默认为 5）
+					builder.connectionPool(new ConnectionPool(10, 5, TimeUnit.MINUTES));
+					
+					// 配置连接超时时间
+					builder.connectTimeout(20, TimeUnit.SECONDS);
 		
-		// 配置 BaseUrl
-		HttpClient.setBaseUrl("http://api.demo.com");
+				})
+				.baseUrl("http://api.demo.com")
+				.callbackExecutor((Runnable run) -> {
+					runOnUiThread(run);
+				})
+				.build();
 		
-		// 配置回调函数执行器
-		HttpClient.setExecutor((Runnable run) -> {
-		
-			// 配置所有回调再UI线程执行
-			runOnUiThread(run);
-		});
-
 	}
 	
 
 
-	private static void syncHttpExample() {
+	private static void syncHttpExample(HttpClient http) {
 		
 		// 同步请求
 		// 最终路径 http://api.demo.com/users/1
-		HttpResult<User, ?> result = HttpUtils.sync("/users/{id}", User.class)
+		HttpResult result = http.sync("/users/{id}")
 				// 设置路径参数
 				.addPathParam("id", 1)
 				// 发起  GET 请求
@@ -89,26 +70,26 @@ public class HttpTest {
 		Headers headers = result.getHeaders();
 
 		// 得到目标数据
-		User user = result.getOkData();
+
 
 		
 		System.out.println("status = " + status);
 		System.out.println("headers = " + headers);
-		System.out.println("user = " + user);
+//		System.out.println("user = " + user);
 		
 	}
 
 
 
-	private static void asyncHttpExample() throws InterruptedException {
+	private static void asyncHttpExample(HttpClient http) throws InterruptedException {
 		
 		// 异步请求
 		// 最终路径 http://api.demo.com/users/2
-		HttpCall call = HttpUtils.async("/users/{id}", User.class)
+		HttpCall call = http.async("/users/{id}")
 				// 设置路径参数
 				.addPathParam("id", 2)
 				// 设置回调函数
-				.setOnSuccess((int status, Headers headers, User user) -> {
+				.setOnResponse((HttpResult result) -> {
 					// 接收到解析好的 user 对象
 
 				})
