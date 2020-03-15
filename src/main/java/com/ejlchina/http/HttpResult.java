@@ -1,6 +1,7 @@
 package com.ejlchina.http;
 
 import okhttp3.Headers;
+import okhttp3.Response;
 import okhttp3.ResponseBody;
 
 /**
@@ -10,10 +11,8 @@ import okhttp3.ResponseBody;
 public class HttpResult {
 
 	private State state;
-	private int status;
-	private Headers headers;
-	private ResponseBody body;
-	private Exception e;
+	private Response response;
+	private Exception error;
 	
 	
 	public static enum State {
@@ -46,72 +45,51 @@ public class HttpResult {
 	}
 	
 	
-	HttpResult(State state, Exception e) {
+	HttpResult(State state, Exception error) {
 		this.state = state;
-		this.e = e;
+		this.error = error;
 	}
 	
-	HttpResult(State state, int status, Headers headers, ResponseBody body) {
+	HttpResult(State state, Response response) {
 		this.state = state;
-		this.status = status;
-		this.headers = headers;
-		this.body = body;
+		this.response = response;
 	}
 	
-	
-//    protected Object parseObject(String body, Type type) throws Exception {
-//        Object result = body;
-//        if (type != null && !type.equals(STR_TYPE) && body != null) {
-//            result =JSON.parseObject(body, type);
-//        }
-//        return result;
-//    }
-//	
 	/**
 	 * @return 执行状态
-	 * @see OnComplete#EXCEPTION
-     * @see OnComplete#CANCELED
-     * @see OnComplete#RESPONSED
-     * @see OnComplete#FAILURE
-     * @see OnComplete#TIMEOUT
-     * @see OnComplete#NETWORK_ERROR
 	 */
 	public State getState() {
 		return state;
 	}
 
 	/**
-	 * 
 	 * @return HTTP状态码
 	 */
 	public int getStatus() {
-		return status;
+		return response.code();
 	}
 
+	public boolean isSuccessful() {
+	    return response.isSuccessful();
+	}
+	
 	/**
 	 * @return 返回头信息
 	 */
 	public Headers getHeaders() {
-		return headers;
+		return response.headers();
 	}
 
 	/**
 	 * @return 请求中发生的异常
 	 */
-	public Exception getE() {
-		return e;
+	public Exception getError() {
+		return error;
 	}
 
 	public ResponseBody getBody() {
-		return body;
+		return response.body();
 	}
 
-	@Override
-	public String toString() {
-		return "HttpResult [\n  state = " + state + 
-				",\n  status = " + status + 
-				",\n  headers = " + headers + 
-				",\n  e = " + e + "\n]";
-	}
 	
 }

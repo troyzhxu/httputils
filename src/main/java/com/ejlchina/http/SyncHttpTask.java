@@ -70,8 +70,7 @@ public class SyncHttpTask extends HttpTask<SyncHttpTask> {
         	}
         	throw new HttpException("请求执行异常", e);
         }
-        return new HttpResult(State.RESPONSED, response.code(), 
-        		response.headers(), response.body());
+        return new HttpResult(State.RESPONSED, response);
     }
 
 }

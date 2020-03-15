@@ -136,9 +136,7 @@ public class AsyncHttpTask extends HttpTask<AsyncHttpTask> {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
             	httpCall.setDone(true);
-            	doOnResponse(new HttpResult(State.RESPONSED, 
-            			response.code(), response.headers(), 
-            			response.body()));
+            	doOnResponse(new HttpResult(State.RESPONSED, response));
             }
 			
         });
