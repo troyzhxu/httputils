@@ -13,7 +13,6 @@ package com.ejlchina.http;
  *   Http2
  *   
  * @author Troy.Zhou
- * @since 0.3.4
  */
 public class HttpUtils {
 	

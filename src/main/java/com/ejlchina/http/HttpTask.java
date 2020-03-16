@@ -27,10 +27,6 @@ import okio.Buffer;
 
 /**
  * Created by 周旭（Troy.Zhou） on 2020/3/11.
- * @since 0.3.4
- * 
- * @param <S> 请求成功时返回的数据类型
- * @param <F> 请求失败时返回的数据类型
  */
 @SuppressWarnings("unchecked")
 public abstract class HttpTask<C extends HttpTask<?>> {
