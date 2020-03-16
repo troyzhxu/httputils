@@ -91,15 +91,57 @@ public class AsyncHttpTask extends HttpTask<AsyncHttpTask> {
     }
     
     private HttpCall request(String method) {
-    	return executeCall(prepareCall(method));
+    	PreHttpCall call = new PreHttpCall();
+    	httpClient.preprocess(this, () -> {
+    		if (!call.isCanceled()) {
+				call.setCall(executeCall(prepareCall(method)));
+    		}
+    	});
+    	return call;
     }
     
-    class HttpCallStatus implements HttpCall {
+    
+    class PreHttpCall implements HttpCall {
+
+    	private boolean canceled = false;
+    	private HttpCall call;
+    	
+		@Override
+		public void cancel() {
+			if (call != null) {
+				call.cancel();
+			}
+			canceled = true;
+		}
+
+		@Override
+		public boolean isDone() {
+			if (call != null) {
+				return call.isDone();
+			}
+			return false;
+		}
+
+		@Override
+		public boolean isCanceled() {
+			if (call != null) {
+				return call.isCanceled();
+			}
+			return canceled;
+		}
+
+		public void setCall(HttpCall call) {
+			this.call = call;
+		}
+
+    }
+    
+    class OkHttpCall implements HttpCall {
 
     	private Call call;
     	private boolean done;
     	
-		public HttpCallStatus(Call call) {
+		public OkHttpCall(Call call) {
 			this.call = call;
 		}
 
@@ -125,7 +167,7 @@ public class AsyncHttpTask extends HttpTask<AsyncHttpTask> {
     }
 	
     private HttpCall executeCall(Call call) {
-        HttpCallStatus httpCall = new HttpCallStatus(call);
+        OkHttpCall httpCall = new OkHttpCall(call);
         call.enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {

@@ -7,6 +7,7 @@ import java.util.concurrent.TimeUnit;
 import com.ejlchina.http.HttpCall;
 import com.ejlchina.http.HttpClient;
 import com.ejlchina.http.HttpResult;
+import com.ejlchina.http.Preprocessor.Process;
 
 import okhttp3.ConnectionPool;
 import okhttp3.Headers;
@@ -46,6 +47,14 @@ public class HttpTest {
 				.baseUrl("http://api.demo.com")
 				.callbackExecutor((Runnable run) -> {
 					runOnUiThread(run);
+				})
+				.addPreprocessor((Process process) -> {
+					process.getHttpTask()
+							.addHeader("Token", "xxxx")
+							.addHeader("xx", "xxx")
+							.addHeader("xx", "xxx");
+					
+					process.proceed();
 				})
 				.build();
 		
