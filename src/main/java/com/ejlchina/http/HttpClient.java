@@ -1,6 +1,9 @@
 package com.ejlchina.http;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executor;
 
@@ -20,12 +23,15 @@ public class HttpClient {
 
 	private Executor callbackExecutor;
 
+	private Preprocessor[] preprocessors;
+	
 	
 	private HttpClient(Builder builder) {
 		this.client = builder.client;
 		this.baseUrl = builder.baseUrl;
 		this.mediaTypes = builder.mediaTypes;
 		this.callbackExecutor = builder.callbackExecutor;
+		this.preprocessors = builder.preprocessors.toArray(new Preprocessor[builder.preprocessors.size()]);
 	}
 	
 
@@ -34,7 +40,7 @@ public class HttpClient {
 	 * @param urlPath 请求地址
 	 * @return 异步 HttpClient
 	 */
-    public  AsyncHttpTask async(String urlPath) {
+    public AsyncHttpTask async(String urlPath) {
         return new AsyncHttpTask(this, urlPath(urlPath));
     }
 
@@ -43,7 +49,7 @@ public class HttpClient {
 	 * @param urlPath 请求地址
 	 * @return 同步 HttpClient
 	 */
-    public  SyncHttpTask sync(String urlPath) {
+    public SyncHttpTask sync(String urlPath) {
         return new SyncHttpTask(this, urlPath(urlPath));
     }
    
@@ -67,6 +73,58 @@ public class HttpClient {
     		callback.run();
     	}
     }
+    
+    
+    void preprocess(HttpTask<? extends HttpTask<?>> httpTask, Runnable request) {
+    	if (preprocessors.length > 0) {
+			preprocessors[0].beforeReqest(new HttpProcess(preprocessors, 
+    				httpTask, request));
+    	} else {
+    		request.run();
+    	}
+    }
+    
+    
+    class HttpProcess implements Preprocessor.Process {
+
+    	private int index;
+    	
+    	private Preprocessor[] preprocessors;
+    	
+    	private HttpTask<? extends HttpTask<?>> httpTask;
+    	
+    	private Runnable request;
+    	
+		public HttpProcess(Preprocessor[] preprocessors, 
+				HttpTask<? extends HttpTask<?>> httpTask, Runnable request) {
+			this.index = 1;
+			this.preprocessors = preprocessors;
+			this.httpTask = httpTask;
+			this.request = request;
+		}
+
+		@Override
+		public HttpTask<? extends HttpTask<?>> getHttpTask() {
+			return httpTask;
+		}
+
+		@Override
+		public HttpClient getHttpClient() {
+			return HttpClient.this;
+		}
+
+		@Override
+		public void proceed() {
+			if (index < preprocessors.length) {
+				Preprocessor preprocessor = preprocessors[index++];
+				preprocessor.beforeReqest(this);
+			} else {
+				request.run();
+			}
+		}
+
+    }
+    
     
 	public static Builder builder() {
 		return new Builder();
@@ -104,6 +162,8 @@ public class HttpClient {
 		
 		private Executor callbackExecutor;
 
+		private List<Preprocessor> preprocessors;
+		
 
 		public Builder() {
 			mediaTypes = new HashMap<>();
@@ -121,12 +181,15 @@ public class HttpClient {
         	mediaTypes.put("doc", "application/msword");
         	mediaTypes.put("pdf", "application/pdf");
         	mediaTypes.put("html", "text/html");
+        	preprocessors = new ArrayList<>();
 		}
 		
 		private Builder(HttpClient hc) {
 			this.client = hc.client; 
 			this.baseUrl = hc.baseUrl;
 			this.mediaTypes = hc.mediaTypes;
+			this.preprocessors = new ArrayList<>();
+			Collections.addAll(this.preprocessors, hc.preprocessors);
 		}
 		
 	    /**
@@ -158,7 +221,7 @@ public class HttpClient {
 		}
 		
 	    /**
-	     * 设置回调执行器，例如实现切换线程功能
+	     * 设置回调执行器，例如实现切换线程功能，只对异步请求有效
 	     * @param executor 回调执行器
 	     */
 		public Builder callbackExecutor(Executor callbackExecutor) {
@@ -166,7 +229,19 @@ public class HttpClient {
 			return this;
 		}
 		
-
+		/**
+		 * 添加预处理器
+		 * @param preprocessor 预处理器
+		 * @return Builder
+		 */
+		public Builder addPreprocessor(Preprocessor preprocessor) {
+			if (preprocessors == null) {
+				preprocessors = new ArrayList<>();
+			}
+			preprocessors.add(preprocessor);
+			return this;
+		}
+		
 		public HttpClient build() {
 			if (configurator != null || client == null) {
 				OkHttpClient.Builder builder = new OkHttpClient.Builder();

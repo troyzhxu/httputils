@@ -69,13 +69,13 @@ public class HttpTest {
 		// 得到返回头
 		Headers headers = result.getHeaders();
 
+		User user = result.getBody().toBean(User.class);
 		// 得到目标数据
-
 
 		
 		System.out.println("status = " + status);
 		System.out.println("headers = " + headers);
-//		System.out.println("user = " + user);
+		System.out.println("user = " + user);
 		
 	}
 
@@ -90,8 +90,10 @@ public class HttpTest {
 				.addPathParam("id", 2)
 				// 设置回调函数
 				.setOnResponse((HttpResult result) -> {
+					User user = result.getBody().toBean(User.class);
+				//	User user = result.bodyToBean(User.class);
 					// 接收到解析好的 user 对象
-
+					System.out.println("user = " + user);
 				})
 				// 发起  GET 请求
 				.get();
