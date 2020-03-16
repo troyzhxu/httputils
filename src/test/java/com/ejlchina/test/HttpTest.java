@@ -1,6 +1,7 @@
 package com.ejlchina.test;
 
 
+import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
@@ -10,7 +11,6 @@ import com.ejlchina.http.HttpResult;
 import com.ejlchina.http.Preprocessor.Process;
 
 import okhttp3.ConnectionPool;
-import okhttp3.Headers;
 import okhttp3.OkHttpClient.Builder;
 
 
@@ -27,7 +27,7 @@ public class HttpTest {
 		syncHttpExample(http);
 		
 		// 异步请求示例
-		asyncHttpExample(http);
+//		asyncHttpExample(http);
 		
 	}
 
@@ -44,15 +44,29 @@ public class HttpTest {
 					builder.connectTimeout(20, TimeUnit.SECONDS);
 		
 				})
-				.baseUrl("http://api.demo.com")
+				.baseUrl("http://localhost:8080")
 				.callbackExecutor((Runnable run) -> {
 					runOnUiThread(run);
 				})
 				.addPreprocessor((Process process) -> {
-					process.getHttpTask()
-							.addHeader("Token", "xxxx");
+					new Thread(() -> {
+
+						process.getHttpTask().addHeader("Token", "yyyyy");
+				
+						process.proceed();
+				
+					}).start();
 					
-					process.proceed();
+				})
+				.addPreprocessor((Process process) -> {
+					new Thread(() -> {
+
+						process.getHttpTask().addUrlParam("actor", "Alice");
+				
+						process.proceed();
+				
+					}).start();
+					
 				})
 				.build();
 		
@@ -63,26 +77,25 @@ public class HttpTest {
 	private static void syncHttpExample(HttpClient http) {
 		
 		// 同步请求
-		// 最终路径 http://api.demo.com/users/1
-		HttpResult result = http.sync("/users/{id}")
-				// 设置路径参数
-				.addPathParam("id", 1)
-				// 发起  GET 请求
+		HttpResult result = http.sync("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1584365400942&di=d9e7890f13b7bc4b76080fdd490ed5d5&imgtype=0&src=http%3A%2F%2Ft8.baidu.com%2Fit%2Fu%3D1484500186%2C1503043093%26fm%3D79%26app%3D86%26f%3DJPEG%3Fw%3D1280%26h%3D853")
 				.get();
 		
-		// 得到状态码
-		int status = result.getStatus();
-
-		// 得到返回头
-		Headers headers = result.getHeaders();
-
-		User user = result.getBody().toBean(User.class);
-		// 得到目标数据
-
+		result.getBody().toFile("E:/3.jpg");
+//		// 得到状态码
+//		int status = result.getStatus();
+//
+//		// 得到返回头
+//		Headers headers = result.getHeaders();
+//
+//		User user = result.getBody().toBean(User.class);
+//		// 得到目标数据
+//
+//		
+//		System.out.println("status = " + status);
+//		System.out.println("headers = " + headers);
+//		System.out.println("user = " + user);
 		
-		System.out.println("status = " + status);
-		System.out.println("headers = " + headers);
-		System.out.println("user = " + user);
+		System.out.println("status = " + result.getStatus());
 		
 	}
 
@@ -92,14 +105,13 @@ public class HttpTest {
 		
 		// 异步请求
 		// 最终路径 http://api.demo.com/users/2
-		HttpCall call = http.async("/users/{id}")
+		HttpCall call = http.async("/user/show/{id}")
 				// 设置路径参数
 				.addPathParam("id", 2)
 				// 设置回调函数
 				.setOnResponse((HttpResult result) -> {
+//					System.out.println("result = " + result);
 					User user = result.getBody().toBean(User.class);
-				//	User user = result.bodyToBean(User.class);
-					// 接收到解析好的 user 对象
 					System.out.println("user = " + user);
 				})
 				// 发起  GET 请求
