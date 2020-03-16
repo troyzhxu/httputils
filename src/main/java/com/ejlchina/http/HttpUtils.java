@@ -18,34 +18,43 @@ package com.ejlchina.http;
 public class HttpUtils {
 	
 	
-//	private static HttpClient httpClient;
-//	
-//	
-//	public static void of(HttpClient httpClient) {
-//		HttpUtils.httpClient = httpClient;
-//	}
+	private static HttpClient httpClient;
 	
-//	/**
-//	 * 异步请求
-//	 * @param <S> 请求成功时返回的数据类型
-//	 * @param <F> 请求失败时返回的数据类型
-//	 * @param urlPath 请求地址
-//	 * @return 异步 HttpClient
-//	 */
-//    public static <S, F> AsyncHttpTask<S, F> async(String urlPath) {
-//        return new AsyncHttpTask<>(httpClient, urlPath, null, null);
-//    }
-//
-//	/**
-//	 * 同步请求
-//	 * @param <S> 请求成功时返回的数据类型
-//	 * @param <F> 请求失败时返回的数据类型
-//	 * @param urlPath 请求地址
-//	 * @return 同步 HttpClient
-//	 */
-//    public static <S, F> SyncHttpTask<S, F> sync(String urlPath) {
-//        return new SyncHttpTask<>(httpClient, urlPath, null, null);
-//    }
-//   
+	
+	public static void of(HttpClient httpClient) {
+		HttpUtils.httpClient = httpClient;
+	}
+	
+	
+	static HttpClient getHttpClient() {
+		if (httpClient != null) {
+			return httpClient;
+		}
+		synchronized (HttpUtils.class) {
+			if (httpClient != null) {
+				return httpClient;
+			}
+			httpClient = HttpClient.builder().build();
+			return httpClient;
+		}
+	}
+	
+	/**
+	 * 异步请求
+	 * @param urlPath 请求地址
+	 * @return 异步 HttpClient
+	 */
+    public static AsyncHttpTask async(String urlPath) {
+    	return getHttpClient().async(urlPath);
+    }
+
+	/**
+	 * 同步请求
+	 * @param urlPath 请求地址
+	 * @return 同步 HttpClient
+	 */
+    public static SyncHttpTask sync(String urlPath) {
+    	return getHttpClient().sync(urlPath);
+    }
     
 }

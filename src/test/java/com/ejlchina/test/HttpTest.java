@@ -50,9 +50,7 @@ public class HttpTest {
 				})
 				.addPreprocessor((Process process) -> {
 					process.getHttpTask()
-							.addHeader("Token", "xxxx")
-							.addHeader("xx", "xxx")
-							.addHeader("xx", "xxx");
+							.addHeader("Token", "xxxx");
 					
 					process.proceed();
 				})
