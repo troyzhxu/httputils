@@ -116,5 +116,15 @@ public class HttpResult {
 	public Exception getError() {
 		return error;
 	}
+
+	@Override
+	public String toString() {
+		ResultBody body = getBody();
+		return "HttpResult [\n  state: " + state + ",\n  status: " + getStatus() 
+				+ ",\n  contentType: " + body.getContentType()
+				+ ",\n  body: " + body.toString() + ",\n  error: " 
+				+ error + "\n]";
+	}
+
 	
 }
