@@ -1,8 +1,12 @@
 package com.ejlchina.http;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.Reader;
 
 import com.alibaba.fastjson.JSON;
@@ -165,6 +169,22 @@ public class HttpResult {
 				throw new HttpException(
 						"Destination file [" + file.getAbsolutePath() + "] already exists and could not be deleted");
 			}
+			try {
+				file.createNewFile();
+			} catch (IOException e) {
+				throw new HttpException(
+						"Cannot create file [" + file.getAbsolutePath() + "]");
+			}
+			OutputStream output;
+			try {
+				output = new FileOutputStream(file);
+			} catch (FileNotFoundException e) {
+				throw new HttpException("无法获取文件[" + file.getAbsolutePath() + "]的输入流", e);
+			}
+			InputStream input = body.byteStream();
+			
+			
+			
 			
 			return file;
 		}
