@@ -44,6 +44,9 @@ public class HttpResult {
 	}
 	
 	
+	HttpResult() {
+	}
+	
 	HttpResult(State state, Exception error) {
 		this.state = state;
 		this.error = error;
@@ -51,6 +54,16 @@ public class HttpResult {
 	
 	HttpResult(State state, Response response) {
 		this.state = state;
+		this.response = response;
+	}
+	
+	void exception(State state, Exception error) {
+		this.state = state;
+		this.error = error;
+	}
+	
+	void response(Response response) {
+		this.state = State.RESPONSED;
 		this.response = response;
 	}
 	

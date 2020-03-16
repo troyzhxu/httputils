@@ -5,7 +5,6 @@ import java.io.IOException;
 import com.ejlchina.http.HttpResult.State;
 
 import okhttp3.Call;
-import okhttp3.Response;
 
 
 /**
@@ -59,18 +58,30 @@ public class SyncHttpTask extends HttpTask<SyncHttpTask> {
         return request("DELETE");
     }
     
-    private HttpResult request(String method) {
-    	Call call = prepareCall(method);
-        Response response = null;
-        try {
-            response = call.execute();
-        } catch (IOException e) {
-        	if (nothrow) {
-        		return new HttpResult(toState(e), e);
-        	}
-        	throw new HttpException("请求执行异常", e);
-        }
-        return new HttpResult(State.RESPONSED, response);
+    private synchronized HttpResult request(String method) {
+    	HttpResult result = new HttpResult();
+    	httpClient.preprocess(this, () -> {
+        	Call call = prepareCall(method);
+            try {
+                result.response(call.execute());
+            } catch (IOException e) {
+            	result.exception(toState(e), e);
+            }
+            SyncHttpTask.this.notify();
+    	});
+    	if (result.getState() == null) {
+    		try {
+    			SyncHttpTask.this.wait();
+			} catch (InterruptedException e) {
+				throw new HttpException("等待异常", e);
+			}
+    	}
+    	Exception e = result.getError();
+    	if (e != null && result.getState() != State.CANCELED 
+    			&& !nothrow) {
+    		throw new HttpException("请求执行异常", e);
+    	}
+        return result;
     }
 
 }
