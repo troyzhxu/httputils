@@ -136,7 +136,7 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 
 #### 3.2 HttpResult
 
-　　`HttpResult` 对象是HTTP请求执行完后的结果，它是同步请求方法（ `get`、`post`、`put`、`delete`）的返回值，也是异步请求响应回调（`OnResponse`）的参数，它有如下方法：
+　　`HttpResult`对象是HTTP请求执行完后的结果，它是同步请求方法（ `get`、`post`、`put`、`delete`）的返回值，也是异步请求响应回调（`OnResponse`）的参数，它有如下方法：
 
 * `getState()` 		得到请求执行状态枚举，它有以下取值：
 	* `State.CANCELED` 请求被取消
@@ -184,9 +184,9 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 　　`HttpCall` 对象是异步请求方法（ `get`、`post`、`put`、`delete`）的返回值，它有如下方法：
 
 * `cancel()` 取消本次请求
-* `isCanceled()` 请求是否被取消
-* `isDone()` 请求是否执行完成，包含取消和失败
-* `getResult()` 请求执行的结果，若请求未执行完，则挂起当前线程直到执行完成
+* `isCanceled()` 返回请求是否被取消
+* `isDone()` 返回请求是否执行完成，包含取消和失败
+* `getResult()` 返回请求执行的结果`HttpResult`对象，若请求未执行完，则挂起当前线程直到执行完成
 
 　　取消一个异步请求示例：
 
