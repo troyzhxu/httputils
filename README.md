@@ -56,10 +56,11 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 
 ```java
 	// 最终路径为 http://api.demo.com/users/1
-	HttpUtils.async("http://api.demo.com/users/{id}", User.class)
+	HttpUtils.async("http://api.demo.com/users/{id}")
 			.addPathParam("id", 1)
-			.setOnSuccess((int status, Headers headers, User user) -> {
-						// 请求成功处理
+			.setOnResponse((HttpResult result) -> {
+				// 得到目标数据
+				User user = result.getBody().toBean(User.class);
 			})
 			.get();	  	// GET请求
 ```
