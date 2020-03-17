@@ -405,7 +405,7 @@ Java Bean 自动转 JSON
 			.build();
 ```
 
-#### 2.3 原生`OkHttpClient`配置
+#### 2.3 配置`OkHttpClient`
 
 ```java
 	HttpClient http = HttpClient.builder()
