@@ -43,7 +43,7 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 ```java
 	HttpClient http = HttpClient.builder().build();		
 ```
-　　为了简化文档，后文中出现的`http`使用方法  
+　　为了简化文档，后文中出现的`http`均是已构建好的`HttpClient`对象。
 
 #### 1.2 同步请求
 
