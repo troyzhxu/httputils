@@ -463,6 +463,7 @@ Java Bean 自动转 JSON
 			})
 			.build();
 ```
+　　和`Interceptor`一样，`Preprocessor`也可以添加多个。
 
 该配置全局生效
 
