@@ -77,7 +77,7 @@ public class HttpClient {
     
     void preprocess(HttpTask<? extends HttpTask<?>> httpTask, Runnable request) {
     	if (preprocessors.length > 0) {
-			preprocessors[0].beforeReqest(new HttpProcess(preprocessors, 
+			preprocessors[0].doProcess(new HttpProcess(preprocessors, 
     				httpTask, request));
     	} else {
     		request.run();
@@ -117,8 +117,7 @@ public class HttpClient {
 		@Override
 		public void proceed() {
 			if (index < preprocessors.length) {
-				Preprocessor preprocessor = preprocessors[index++];
-				preprocessor.beforeReqest(this);
+				preprocessors[index++].doProcess(this);
 			} else {
 				request.run();
 			}

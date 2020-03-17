@@ -53,9 +53,9 @@ public class HttpTest {
 						process.getTask().addHeader("Token", "yyyyy");
 				
 						process.proceed();
-				
+						
 					}).start();
-					
+					return true;
 				})
 				.addPreprocessor((Process process) -> {
 					new Thread(() -> {
@@ -65,7 +65,7 @@ public class HttpTest {
 						process.proceed();
 				
 					}).start();
-					
+					return true;
 				})
 				.build();
 		
