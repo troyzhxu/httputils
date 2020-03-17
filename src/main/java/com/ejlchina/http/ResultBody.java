@@ -45,7 +45,7 @@ public class ResultBody {
 		}
 	}
 	
-	public Reader toCharReader() {
+	public Reader toCharStream() {
 		return body.charStream();
 	}
 	
