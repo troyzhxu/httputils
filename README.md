@@ -44,7 +44,7 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 
 #### 2.同步请求
 
-方法  sync(url) 发起同步请求
+　　使用方法  `sync(String url)` 发起同步请求
 
 ```java
 	// 最终路径 http://api.demo.com/users?name=Jack
@@ -58,7 +58,7 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 
 #### 3.异步请求
 
-方法  async(url) 发起异步请求
+　　使用方法 `async(String url)` 发起异步请求
 
 ```java
 	// 最终路径为 http://api.demo.com/users/1
@@ -78,9 +78,7 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 			.baseUrl("http://api.demo.com")		// 设置 BaseUrl
 			.build();
 ```
-该配置全局生效
-
-在配置了 BaseUrl 之后，具体的请求便可以省略 BaseUrl 部分，例如：
+　　该配置全局生效，在配置了 BaseUrl 之后，具体的请求便可以省略 BaseUrl 部分，例如：
 
 ```java
 	http.sync("/users").get()					// http://api.demo.com/users
@@ -90,7 +88,7 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 			.addBodyParam("password", "xxxxxx")
 			.post()								// POST请求
 ```
-在配置了 BaseUrl 之后，仍然可以请求全路径的接口，如：
+　　在配置了 BaseUrl 之后，仍然可以请求全路径的接口，如：
 
 ```java
 	http.sync("https://www.baidu.com").get()
@@ -140,7 +138,7 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 * 所有的同步请求方法均返回一个 HttpResult 对象
 * 所有的异步请求方法均返回一个 HttpCall 对象
 
-#### 6.HttpResult
+#### 6.HttpResult 对象
 
 　　`HttpResult` 对象是HTTP请求执行完后的结果，它是同步请求方法（ `get`、`post`、`put`、`delete`）的返回值，也是异步请求响应回调（`OnResponse`）的参数，它有如下方法：
 
@@ -169,7 +167,7 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 * `isRedirect()` 	是否是重定向（300、301、302、303、307、308）
 * `getError()` 		执行中发生的异常，自动捕获执行请求是发生的 网络超时、网络错误 和 其它请求异常
 
-#### 7.HttpCall
+#### 7.HttpCall 对象
 
 　　`HttpCall` 对象是异步请求方法（ `get`、`post`、`put`、`delete`）的返回值，它有如下方法：
 
@@ -192,7 +190,7 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 
 #### 8.异步请求回调
 
-只有异步请求才可以设置回调函数
+　　只有异步请求才可以设置回调函数：
 
 ```java
 	http.async("/users/1")
