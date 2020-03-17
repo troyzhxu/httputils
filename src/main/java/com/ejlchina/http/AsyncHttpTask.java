@@ -10,7 +10,7 @@ import okhttp3.Response;
 
 
 /**
- * 异步 Http 客户端
+ * 异步 Http 请求任务
  *  
  * @author Troy.Zhou
  * 
@@ -178,7 +178,7 @@ public class AsyncHttpTask extends HttpTask<AsyncHttpTask> {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
             	httpCall.setDone(true);
-            	doOnResponse(new HttpResult(State.RESPONSED, response));
+            	doOnResponse(new HttpResult(response));
             }
 			
         });

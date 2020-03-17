@@ -8,7 +8,7 @@ import okhttp3.Call;
 
 
 /**
- * 同步 Http 客户端
+ * 同步 Http 请求任务
  *  
  * @author Troy.Zhou
  *

@@ -47,13 +47,8 @@ public class HttpResult {
 	HttpResult() {
 	}
 	
-	HttpResult(State state, Exception error) {
-		this.state = state;
-		this.error = error;
-	}
-	
-	HttpResult(State state, Response response) {
-		this.state = state;
+	HttpResult(Response response) {
+		this.state = State.RESPONSED;
 		this.response = response;
 	}
 	
