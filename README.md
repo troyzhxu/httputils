@@ -137,6 +137,9 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 	http.async("/users/1").delete()	// 异步 DELETE 请求
 ```
 
+* 所有的同步请求方法均返回一个 HttpResult 对象
+* 所有的异步请求方法均返回一个 HttpCall 对象
+
 #### 5.取消异步请求
 
 只有异步请求才可以被取消
