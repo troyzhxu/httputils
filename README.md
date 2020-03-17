@@ -142,7 +142,7 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 
 #### 6.HttpResult
 
-HttpResult 是执行请求后的结果，它是同步请求方法（ get、post、put、delete）的返回值，也是异步请求的  OnResponse 回调的参数
+HttpResult 是执行请求后的结果，它是同步请求方法（ `java get`、`post`、`put`、`delete`）的返回值，也是异步请求的  OnResponse 回调的参数
 
 #### 7.HttpCall
 
