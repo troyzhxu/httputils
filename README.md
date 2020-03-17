@@ -96,14 +96,14 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 
 #### 5.请求方法
 
-* GET
+* GET 请求
 
 ```java
 	http.sync("/users").get()		// 同步 GET 请求
 
 	http.async("/users").get()		// 异步 GET 请求
 ```
-* POST
+* POST 请求
 
 ```java
 	http.sync("/users")
@@ -116,7 +116,7 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 			.addJsonParam("age", 20)
 			.post()					// 异步 POST 请求
 ```
-* PUT
+* PUT 请求
 
 ```java
 	http.sync("/users/1")
@@ -127,7 +127,7 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 			.addJsonParam("name", "Jack")
 			.put()					// 异步 PUT 请求
 ```
-* DELETE
+* DELETE 请求
 
 ```java
 	http.sync("/users/1").delete()	// 同步 DELETE 请求
