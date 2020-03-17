@@ -40,7 +40,7 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 
 所有 HttpUtils.sync(...) 均为同步请求方法
 
-```
+```java
 	// 最终路径 http://api.demo.com/users?name=Jack
 	User user = HttpUtils.sync("http://api.demo.com/users")
 			.addUrlParam("name", "Jack")				// 添加查询参数
@@ -54,7 +54,7 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 
 所有 HttpUtils.async(...) 均为异步请求方法
 
-```
+```java
 	// 最终路径为 http://api.demo.com/users/1
 	HttpUtils.async("http://api.demo.com/users/{id}", User.class)
 			.addPathParam("id", 1)
@@ -66,14 +66,14 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 
 #### 3.BaseUrl 配置
 
-```
+```java
 	HttpClient.setBaseUrl("http://api.demo.com");
 ```
 该配置全局生效
 
 在配置了 BaseUrl 之后，具体的请求便可以省略 BaseUrl 部分，例如：
 
-```
+```java
 	HttpUtils.sync("/users").get()					// http://api.demo.com/users
 	
 	HttpUtils.sync("/auth/signin")					// http://api.demo.com/auth/signin
@@ -83,7 +83,7 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 ```
 在配置了 BaseUrl 之后，仍然可以请求全路径的接口，如：
 
-```
+```java
 	HttpUtils.sync("https://www.baidu.com").get()
 ```
 
@@ -91,12 +91,12 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 
 GET 请求（同步异步请求方法一致）
 
-```
+```java
 	HttpUtils.sync("/users").get()
 ```
 POST 请求（同步异步请求方法一致）
 
-```
+```java
 	HttpUtils.sync("/users")
 			.addJsonParam("name", "Jack")
 			.addJsonParam("age", 20)
@@ -104,14 +104,14 @@ POST 请求（同步异步请求方法一致）
 ```
 PUT 请求（同步异步请求方法一致）
 
-```
+```java
 	HttpUtils.sync("/users/1")
 			.addJsonParam("name", "Jack")
 			.put()
 ```
 DELETE 请求（同步异步请求方法一致）
 
-```
+```java
 	HttpUtils.sync("/users/1").delete()
 ```
 
@@ -121,7 +121,7 @@ DELETE 请求（同步异步请求方法一致）
 
 异步请求的 get、post、put、delete方法返回一个HttpCall对象，该对象可以查看请求执行的状态，也可以取消请求
 
-```
+```java
 	HttpCall call = HttpUtils.async("/users/1")
 			.setOnSuccess((int status, Headers headers, Object user) -> {
 				
@@ -138,7 +138,7 @@ DELETE 请求（同步异步请求方法一致）
 
 只有异步请求才可以设置回调函数
 
-```
+```java
 	HttpUtils.async("/users/1", User.class, Error.class)
 			.setOnSuccess((int status, Headers headers, User user) -> {
 				// 成功回调,状态码在[200, 300)之间（根据 User.class 自动解析出 user 对象）
@@ -155,7 +155,7 @@ DELETE 请求（同步异步请求方法一致）
 			.get();
 ```
 
-```
+```java
 	HttpUtils.async("/files/report.xlsx")
 			.setOnResponse((int status, Headers headers, ResponseBody body) -> {
 				// 响应回调（设置了OnResponse，就不可以再设置 OnSuccess 和 OnFailure 回调）
@@ -175,7 +175,7 @@ HttpUtils.sync(...) 和 HttpUtils.async(...) 最多有三个参数：第一个�
 
 异步请求成功返回数据 解析为 Book 对象
 
-```
+```java
 	HttpUtils.async("/books/1", Book.class)
 			.setOnSuccess((int status, Headers headers, Book book) -> {
 	
@@ -184,7 +184,7 @@ HttpUtils.sync(...) 和 HttpUtils.async(...) 最多有三个参数：第一个�
 ```
 异步请求成功返回数据 解析为 Book 对象，请求失败返回数据 解析为 String 对象
 
-```
+```java
 	HttpUtils.async("/books/1", Book.class, String.class)
 			.setOnSuccess((int status, Headers headers, Book book) -> {
 	
@@ -196,7 +196,7 @@ HttpUtils.sync(...) 和 HttpUtils.async(...) 最多有三个参数：第一个�
 ```
 异步请求成功返回数据 解析为 Book 列表
 
-```
+```java
 	HttpUtils.async("/books", new TypeReference<List<Book>>(){})
 			.setOnSuccess((int status, Headers headers, List<Book> books) -> {
 
@@ -205,12 +205,12 @@ HttpUtils.sync(...) 和 HttpUtils.async(...) 最多有三个参数：第一个�
 ```
 同步请求成功返回数据 解析为 Book 对象
 
-```
+```java
 	Book book = HttpUtils.sync("/books/1", Book.class).get().getOkData();
 ```
 同步请求成功返回数据 解析为 Book 对象，请求失败返回数据 解析为 String 对象
 
-```
+```java
 	HttpResult<User, String> result = HttpUtils.sync("/books/1", Book.class, String.class).get();
 	
 	Book book = result.getOkData();
@@ -218,7 +218,7 @@ HttpUtils.sync(...) 和 HttpUtils.async(...) 最多有三个参数：第一个�
 ```
 同步请求成功返回数据 解析为 Book 列表
 
-```
+```java
 	List<Book> books = HttpUtils.sync("/books", new TypeReference<List<Book>>(){})
 			.get().getOkData();
 ```
@@ -227,7 +227,7 @@ HttpUtils.sync(...) 和 HttpUtils.async(...) 最多有三个参数：第一个�
 
 单个添加（同步异步添加方法一样）
 
-```
+```java
 	HttpUtils.sync("/orders")
 			.addHeader("Access-Token", "xxxxxx")
 			.addHeader("Content-Type", "application/json")
@@ -235,7 +235,7 @@ HttpUtils.sync(...) 和 HttpUtils.async(...) 最多有三个参数：第一个�
 ```
 多个添加（同步异步添加方法一样）
 
-```
+```java
 	Map<String, String> headers = new HashMap<>()
 	headers.put("Access-Token", "xxxxxx");
 	headers.put("Accept", "application/json");
@@ -251,7 +251,7 @@ HttpUtils.sync(...) 和 HttpUtils.async(...) 最多有三个参数：第一个�
 
 单个添加（同步异步添加方法一样）
 
-```
+```java
 	HttpUtils.sync("/shops/{shopName}/products/{productId}")
 			.addPathParam("shopName", "taobao")
 			.addPathParam("productId", 20)
@@ -259,7 +259,7 @@ HttpUtils.sync(...) 和 HttpUtils.async(...) 最多有三个参数：第一个�
 ```
 多个添加（同步异步添加方法一样）
 
-```
+```java
 	Map<String, String> params = new HashMap<>()
 	params.put("shopName", "taobao");
 	params.put("productId", 20);
@@ -275,7 +275,7 @@ HttpUtils.sync(...) 和 HttpUtils.async(...) 最多有三个参数：第一个�
 
 单个添加（同步异步添加方法一样）
 
-```
+```java
 	HttpUtils.sync("/products")
 			.addUrlParam("name", "手机")
 			.addUrlParam("tag", "5G")
@@ -283,7 +283,7 @@ HttpUtils.sync(...) 和 HttpUtils.async(...) 最多有三个参数：第一个�
 ```
 多个添加（同步异步添加方法一样）
 
-```
+```java
 	Map<String, String> params = new HashMap<>()
 	params.put("name", "手机");
 	params.put("tag", 5G);
@@ -299,7 +299,7 @@ HttpUtils.sync(...) 和 HttpUtils.async(...) 最多有三个参数：第一个�
 
 单个添加（同步异步添加方法一样）
 
-```
+```java
 	HttpUtils.sync("/signin")
 			.addBodyParam("username", "Jackson")
 			.addBodyParam("password", "xxxxxx")
@@ -307,7 +307,7 @@ HttpUtils.sync(...) 和 HttpUtils.async(...) 最多有三个参数：第一个�
 ```
 多个添加（同步异步添加方法一样）
 
-```
+```java
 	Map<String, String> params = new HashMap<>()
 	params.put("username", "Jackson");
 	params.put("password", "xxxxxx");
@@ -323,7 +323,7 @@ JSON参数 json 字符串的形式携带与请求报文体内
 
 单个添加（同步异步添加方法一样）
 
-```
+```java
 	HttpUtils.sync("/signin")
 			.addJsonParam("username", "Jackson")
 			.addJsonParam("password", "xxxxxx")
@@ -331,7 +331,7 @@ JSON参数 json 字符串的形式携带与请求报文体内
 ```
 多个添加（同步异步添加方法一样）
 
-```
+```java
 	Map<String, String> params = new HashMap<>()
 	params.put("username", "Jackson");
 	params.put("password", "xxxxxx");
@@ -342,14 +342,14 @@ JSON参数 json 字符串的形式携带与请求报文体内
 ```
 添加JSON字符串
 
-```
+```java
 	HttpUtils.sync("/signin")
 			.setRequestJson("\"username\":\"Jackson\",\"password\":\"xxxxxx\"")
 			.post();
 ```
 Java Bean 自动转 JSON
 
-```
+```java
 	Login login = new Login();
 	login.setUsername("Jackson");
 	login.setPassword("xxxxxx");
@@ -365,7 +365,7 @@ Java Bean 自动转 JSON
 
 上传本地文件
 
-```
+```java
 	File file1 = new File("D:/1.jpg");
 	File file2 = new File("D:/2.jpg");
 	
@@ -376,7 +376,7 @@ Java Bean 自动转 JSON
 ```
 使用文件输入流上传
 
-```
+```java
 	// 获得文件的输入流
 	InputStream input = ...
 	
@@ -386,7 +386,7 @@ Java Bean 自动转 JSON
 ```
 使用文件字节数组上传
 
-```
+```java
 	// 获得文件的字节数组
 	byte[] content = ...
 	
@@ -396,7 +396,7 @@ Java Bean 自动转 JSON
 ```
 文件参数和表单参数可以一起添加
 
-```
+```java
 	File file = new File("D:/首页广告.jpg");
 	
 	HttpUtils.sync("/messages")
@@ -407,7 +407,7 @@ Java Bean 自动转 JSON
 
 #### 14. 高级配置
 
-```
+```java
 	// HttpClient 全局配置
 	HttpClient.config((Builder builder) -> {
 		
@@ -428,7 +428,7 @@ Java Bean 自动转 JSON
 
 例如在Android里，配置所有的回调函数都在UI线程里执行（在BaseActivity 的 onCreate 方法内配置以下代码）
 
-```
+```java
 	HttpClient.setExecutor((Runnable run) -> {
 		runOnUiThread(run); 
 	});
