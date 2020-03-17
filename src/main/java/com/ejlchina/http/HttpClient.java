@@ -28,8 +28,8 @@ public class HttpClient {
 	private boolean[] concurrents;
 	// 预处理器的状态，n表示有n个执行器在同时执行
 	private short[] states;
-	
-	private List<Runnable>[] runs;
+	// 
+	private List<Runnable>[] pendedRuns;
 	
 	private HttpClient(Builder builder) {
 		this.client = builder.client;
