@@ -44,7 +44,7 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 
 #### 2.同步请求
 
-所有 HttpUtils.sync(...) 均为同步请求方法
+方法  sync(url) 发起同步请求
 
 ```java
 	// 最终路径 http://api.demo.com/users?name=Jack
@@ -58,7 +58,7 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 
 #### 3.异步请求
 
-所有 HttpUtils.async(...) 均为异步请求方法
+方法  async(url) 发起异步请求
 
 ```java
 	// 最终路径为 http://api.demo.com/users/1
@@ -98,30 +98,32 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 
 #### 4.请求方法
 
-GET 请求（同步异步请求方法一致）
+* GET
 
 ```java
-	HttpResult result = http.sync("/users").get()	// 同步请求，返回一个 HttpResult
-	
-	HttpCall call = http.async("/users").get()		// // 异步请求，返回一个 HttpCall
+	http.sync("/users").get()		// 同步 GET 请求
+	http.async("/users").get()		// 异步 GET 请求
 ```
-POST 请求（同步异步请求方法一致）
+* POST
 
 ```java
 	http.sync("/users")
 			.addJsonParam("name", "Jack")
 			.addJsonParam("age", 20)
-			.post()
-	// 
+			.post()					// 同步 POST 请求
+	http.async("/users")
+			.addJsonParam("name", "Jack")
+			.addJsonParam("age", 20)
+			.post()					// 异步 POST 请求
 ```
-PUT 请求（同步异步请求方法一致）
+* PUT
 
 ```java
 	http.sync("/users/1")
 			.addJsonParam("name", "Jack")
 			.put()
 ```
-DELETE 请求（同步异步请求方法一致）
+* DELETE
 
 ```java
 	http.sync("/users/1").delete()
