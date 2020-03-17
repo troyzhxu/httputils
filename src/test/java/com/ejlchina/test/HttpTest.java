@@ -10,7 +10,9 @@ import com.ejlchina.http.HttpResult;
 import com.ejlchina.http.Preprocessor.Process;
 
 import okhttp3.ConnectionPool;
+import okhttp3.Interceptor.Chain;
 import okhttp3.OkHttpClient.Builder;
+import okhttp3.Request;
 
 
 public class HttpTest {
@@ -42,6 +44,14 @@ public class HttpTest {
 					
 					// 配置连接超时时间
 					builder.connectTimeout(20, TimeUnit.SECONDS);
+					
+					builder.addInterceptor((Chain chain) -> {
+						
+						Request request = chain.request();
+
+						return chain.proceed(request);
+					});
+					
 		
 				})
 				.baseUrl("http://localhost:8080")

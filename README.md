@@ -43,11 +43,11 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 ```java
 	HttpClient http = HttpClient.builder().build();		
 ```
-　　为了简化文档，后文中出现的`http`均是已构建好的`HttpClient`对象。
+　　为了简化文档，下文中出现的`http`均是已构建好的`HttpClient`对象。
 
 #### 1.2 同步请求
 
-　　使用方法  `sync(String url)` 发起同步请求
+　　使用方法`sync(String url)`发起同步请求
 
 ```java
 	// 最终路径 http://api.demo.com/users?name=Jack
@@ -60,7 +60,7 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 
 #### 1.3 异步请求
 
-　　使用方法 `async(String url)` 发起异步请求
+　　使用方法`async(String url)`发起异步请求
 
 ```java
 	// 最终路径为 http://api.demo.com/users/1
@@ -72,78 +72,68 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 			})
 			.get();	  	// GET请求
 ```
+### 2 请求方法
 
-### 2 配置 HttpClient
-
-#### 2.1 BaseUrl 配置
-
-```java
-	HttpClient http = HttpClient.builder()
-			.baseUrl("http://api.demo.com")		// 设置 BaseUrl
-			.build();
-```
-　　该配置全局生效，在配置了 BaseUrl 之后，具体的请求便可以省略 BaseUrl 部分，例如：
+#### 2.1 GET
 
 ```java
-	http.sync("/users").get()					// http://api.demo.com/users
-	
-	http.sync("/auth/signin")					// http://api.demo.com/auth/signin
-			.addBodyParam("username", "Jackson")
-			.addBodyParam("password", "xxxxxx")
-			.post()								// POST请求
+	http.sync("http://api.demo.com/users").get()		// 同步 GET 请求
+
+	http.async("http://api.demo.com/users").get()		// 异步 GET 请求
 ```
-　　在配置了 BaseUrl 之后，仍然可以请求全路径的接口，如：
-
-```java
-	http.sync("https://www.baidu.com").get()
-```
-　　在配置了 BaseUrl 之后，仍然可以请求全路径的接口，如：
-
-### 3 请求方法
-
-#### 3.1 GET
-
-```java
-	http.sync("/users").get()		// 同步 GET 请求
-
-	http.async("/users").get()		// 异步 GET 请求
-```
-#### 3.2 POST
+#### 2.2 POST
 
 ```java
 	http.sync("/users")
 			.addJsonParam("name", "Jack")
 			.addJsonParam("age", 20)
-			.post()					// 同步 POST 请求
+			.post()										// 同步 POST 请求
 
-	http.async("/users")
+	http.async("http://api.demo.com/users")
 			.addJsonParam("name", "Jack")
 			.addJsonParam("age", 20)
-			.post()					// 异步 POST 请求
+			.post()										// 异步 POST 请求
 ```
-#### 3.3 PUT
+#### 2.3 PUT
 
 ```java
-	http.sync("/users/1")
+	http.sync("http://api.demo.com/users/1")
 			.addJsonParam("name", "Jack")
-			.put()					// 同步 PUT 请求
+			.put()										// 同步 PUT 请求
 
-	http.async("/users/1")
+	http.async("http://api.demo.com/users/1")
 			.addJsonParam("name", "Jack")
-			.put()					// 异步 PUT 请求
+			.put()										// 异步 PUT 请求
 ```
-#### 3.4 DELETE
+#### 2.4 DELETE
 
 ```java
-	http.sync("/users/1").delete()	// 同步 DELETE 请求
+	http.sync("http://api.demo.com/users/1").delete()	// 同步 DELETE 请求
 	
-	http.async("/users/1").delete()	// 异步 DELETE 请求
+	http.async("http://api.demo.com/users/1").delete()	// 异步 DELETE 请求
 ```
-### 4 HttpResult 与 HttpCall
+### 3 获取请求结果
 
+#### 3.1 请求回调
+
+　　只有异步请求才可以设置回调函数：
+
+```java
+	http.async("http://api.demo.com/users/1")
+			.setOnResponse((HttpResult result) -> {
+				// 响应回调
+			})
+			.setOnException((Exception e) -> {
+				// 异常回调
+			})
+			.setOnComplete((State state) -> {
+				// 完成回调，无论成功失败都会执行
+			})
+			.get();
+```
 　　所有的同步请求方法均返回一个 HttpResult 对象，所有的异步请求方法均返回一个 HttpCall 对象。
 
-#### 4.1 HttpResult 对象
+#### 3.2 HttpResult
 
 　　`HttpResult` 对象是HTTP请求执行完后的结果，它是同步请求方法（ `get`、`post`、`put`、`delete`）的返回值，也是异步请求响应回调（`OnResponse`）的参数，它有如下方法：
 
@@ -172,7 +162,7 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 * `isRedirect()` 	是否是重定向（300、301、302、303、307、308）
 * `getError()` 		执行中发生的异常，自动捕获执行请求是发生的 网络超时、网络错误 和 其它请求异常
 
-#### 4.1 HttpCall 对象
+#### 3.3 HttpCall
 
 　　`HttpCall` 对象是异步请求方法（ `get`、`post`、`put`、`delete`）的返回值，它有如下方法：
 
@@ -184,7 +174,7 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 　　取消一个异步请求示例：
 
 ```java
-	HttpCall call = http.async("/users/1").get();
+	HttpCall call = http.async("http://api.demo.com/users/1").get();
 
 	System.out.println(call.isCanceled());	 // false
 	
@@ -192,32 +182,15 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 
 	System.out.println(call.isCanceled());	 // true
 ```
-### 5 请求回调
 
-　　只有异步请求才可以设置回调函数：
+### 4 构建请求任务
 
-```java
-	http.async("/users/1")
-			.setOnResponse((HttpResult result) -> {
-				// 响应回调
-			})
-			.setOnException((Exception e) -> {
-				// 异常回调
-			})
-			.setOnComplete((State state) -> {
-				// 完成回调，无论成功失败都会执行
-			})
-			.get();
-```
-
-### 6 构建请求
-
-#### 6.1 添加请求头
+#### 4.1 添加请求头
 
 单个添加（同步异步添加方法一样）
 
 ```java
-	http.sync("/orders")
+	http.sync("http://api.demo.com/orders")
 			.addHeader("Access-Token", "xxxxxx")
 			.addHeader("Content-Type", "application/json")
 			.get();
@@ -229,19 +202,19 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 	headers.put("Access-Token", "xxxxxx");
 	headers.put("Accept", "application/json");
 	
-	http.sync("/orders")
+	http.sync("http://api.demo.com/orders")
 			.addHeader(headers)
 			.get();
 ```
 
-#### 6.2 添加路径参数
+#### 4.2 添加路径参数
 
 路径参数用于替换URL字符串中的占位符
 
 单个添加（同步异步添加方法一样）
 
 ```java
-	http.sync("/shops/{shopName}/products/{productId}")
+	http.sync("http://api.demo.com/shops/{shopName}/products/{productId}")
 			.addPathParam("shopName", "taobao")
 			.addPathParam("productId", 20)
 			.get();
@@ -253,19 +226,19 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 	params.put("shopName", "taobao");
 	params.put("productId", 20);
 	
-	http.sync("/shops/{shopName}/products/{productId}")
+	http.sync("http://api.demo.com/shops/{shopName}/products/{productId}")
 			.addPathParam(params)
 			.get();
 ```
 
-#### 6.3 添加查询参数
+#### 4.3 添加查询参数
 
 查询参数（URL参数）用于拼接在 url 字符串的 ? 之后
 
 单个添加（同步异步添加方法一样）
 
 ```java
-	http.sync("/products")
+	http.sync("http://api.demo.com/products")
 			.addUrlParam("name", "手机")
 			.addUrlParam("tag", "5G")
 			.get();
@@ -277,19 +250,19 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 	params.put("name", "手机");
 	params.put("tag", 5G);
 	
-	http.sync("/products")
+	http.sync("http://api.demo.com/products")
 			.addUrlParam(params)
 			.get();
 ```
 
-#### 6.4 添加表单参数
+#### 4.4 添加表单参数
 
 表单参数（Budy参数）以 key=value& 的形式携带与请求报文体内
 
 单个添加（同步异步添加方法一样）
 
 ```java
-	http.sync("/signin")
+	http.sync("http://api.demo.com/signin")
 			.addBodyParam("username", "Jackson")
 			.addBodyParam("password", "xxxxxx")
 			.post();
@@ -301,19 +274,19 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 	params.put("username", "Jackson");
 	params.put("password", "xxxxxx");
 	
-	http.sync("/signin")
+	http.sync("http://api.demo.com/signin")
 			.addBodyParam(params)
 			.post();
 ```
 
-#### 6.5 添加JSON参数
+#### 4.5 添加JSON参数
 
 JSON参数 json 字符串的形式携带与请求报文体内
 
 单个添加（同步异步添加方法一样）
 
 ```java
-	http.sync("/signin")
+	http.sync("http://api.demo.com/signin")
 			.addJsonParam("username", "Jackson")
 			.addJsonParam("password", "xxxxxx")
 			.post();
@@ -325,14 +298,14 @@ JSON参数 json 字符串的形式携带与请求报文体内
 	params.put("username", "Jackson");
 	params.put("password", "xxxxxx");
 	
-	http.sync("/signin")
+	http.sync("http://api.demo.com/signin")
 			.addJsonParam(params)
 			.post();
 ```
 添加JSON字符串
 
 ```java
-	http.sync("/signin")
+	http.sync("http://api.demo.com/signin")
 			.setRequestJson("\"username\":\"Jackson\",\"password\":\"xxxxxx\"")
 			.post();
 ```
@@ -343,12 +316,12 @@ Java Bean 自动转 JSON
 	login.setUsername("Jackson");
 	login.setPassword("xxxxxx");
 	
-	http.sync("/signin")
+	http.sync("http://api.demo.com/signin")
 			.setRequestJson(login)
 			.post();
 ```
 
-#### 6.6 添加文件参数
+#### 4.6 添加文件参数
 
 同步和异步添加文件方法是一样的
 
@@ -358,7 +331,7 @@ Java Bean 自动转 JSON
 	File file1 = new File("D:/1.jpg");
 	File file2 = new File("D:/2.jpg");
 	
-	http.sync("/upload")
+	http.sync("http://api.demo.com/upload")
 			.addFileParam("image1", file1)
 			.addFileParam("image2", file2)
 			.post();
@@ -369,7 +342,7 @@ Java Bean 自动转 JSON
 	// 获得文件的输入流
 	InputStream input = ...
 	
-	http.sync("/upload")
+	http.sync("http://api.demo.com/upload")
 			.addFileParam("image", "jpg", input)
 			.post();
 ```
@@ -379,7 +352,7 @@ Java Bean 自动转 JSON
 	// 获得文件的字节数组
 	byte[] content = ...
 	
-	http.sync("/upload")
+	http.sync("http://api.demo.com/upload")
 			.addFileParam("image", "jpg", content)
 			.post();
 ```
@@ -388,41 +361,89 @@ Java Bean 自动转 JSON
 ```java
 	File file = new File("D:/首页广告.jpg");
 	
-	http.sync("/messages")
+	http.sync("http://api.demo.com/messages")
 			.addBodyParam("name", "广告图")
 			.addFileParam("image", file)
 			.post();
 ```
 
-#### 14. 高级配置
+### 2 配置 HttpClient
+
+#### 2.1 BaseUrl
 
 ```java
-	// HttpClient 全局配置
-	HttpClient.config((Builder builder) -> {
-		
-		// 配置连接池 最小10个连接（不配置默认为 5）
-		builder.connectionPool(new ConnectionPool(10, 5, TimeUnit.MINUTES));
-		
-		// 配置连接超时时间
-		builder.connectTimeout(20, TimeUnit.SECONDS);
-
-		// 其它配置: 拦截器、SSL、缓存、代理...
-	});
+	HttpClient http = HttpClient.builder()
+			.baseUrl("http://api.demo.com")		// 设置 BaseUrl
+			.build();
 ```
+　　该配置全局生效，在配置了`BaseUr`之后，具体的请求便可以省略 BaseUrl 部分，例如：
+
+```java
+	http.sync("/users").get()					// http://api.demo.com/users
+	
+	http.sync("/auth/signin")					// http://api.demo.com/auth/signin
+			.addBodyParam("username", "Jackson")
+			.addBodyParam("password", "xxxxxx")
+			.post()								// POST请求
+```
+　　在配置了`BaseUrl`之后，仍然可以请求全路径的接口，如：
+
+```java
+	http.sync("https://www.baidu.com").get()
+```
+
+#### 2.2 回调执行器
+
+　　如何想改变执行回调函数的线程时，可以配置回调函数执行器。例如在Android里，让所有的回调函数都在UI线程里执行，则可以在构建`HttpClient`时配置回调执行器：
+
+```java
+	HttpClient http = HttpClient.builder()
+			.callbackExecutor((Runnable run) -> {
+				runOnUiThread(run);				// 在UI线程执行
+			})
+			.build();
+```
+
+#### 2.3 原生`OkHttpClient`配置
+
+```java
+	HttpClient http = HttpClient.builder()
+		.config((Builder builder) -> {
+					
+			// 配置连接池 最小10个连接（不配置默认为 5）
+			builder.connectionPool(new ConnectionPool(10, 5, TimeUnit.MINUTES));
+			
+			// 配置连接超时时间
+			builder.connectTimeout(20, TimeUnit.SECONDS);
+		
+			// 其它配置: 拦截器、SSL、缓存、代理...
+		})
+		.build();
+```
+
+#### 2.3 预处理器
+
+　　预处理器（`Preprocessor`）可以让我们在请求发出之前对请求本身做一些改变，但与 OkHttp 提供的拦截器（`Interceptor`）不同的是，预处理器可以让我们异步处理这些问题。
+
+　　例如，当我们想为请求自动添加`Token`，而有效的`Token`只能通过异步方法`checkExpirationAndRefreshToken`获取时，我们可以添加这样的预处理器：
+
+```java
+	HttpClient http = HttpClient.builder()
+			.addPreprocessor((Process process) -> {
+				// 异步获取 Token
+				checkExpirationAndRefreshToken((String token) -> {
+					// 获取当前的请求任务
+					HttpTask task = process.getHttpTask();
+					// 为请求任务添加 Token 头信息
+					task.addHeader("Token", token);
+					// 继续当前的请求任务
+					process.proceed();
+				});	
+			})
+			.build();
+```
+
 该配置全局生效
-
-#### 15. 回调执行器
-
-如何想改变执行回调函数的线程时，可以配置回调函数执行器
-
-例如在Android里，配置所有的回调函数都在UI线程里执行（在BaseActivity 的 onCreate 方法内配置以下代码）
-
-```java
-	HttpClient.setExecutor((Runnable run) -> {
-		runOnUiThread(run); 
-	});
-```
-该配置只对异步请求生效
 
 ## 参与贡献
 
