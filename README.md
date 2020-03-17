@@ -159,8 +159,8 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
     * `toString()` 						返回字符串
     * `toJsonObject()` 					返回Json对象
     * `toJsonArray()` 					返回Json数组
-    * `toBean(Class<T> type)` 			返回json解析后的JavaBean
-    * `toBean(TypeReference<T> typeRef)`返回json解析后的JavaBean
+    * `toBean(Class<T> type)` 			返回根据type自动json解析后的JavaBean
+    * `toBean(TypeReference<T> type)`	返回根据type自动json解析后的JavaBean
     * `toFile(String filePath)` 		下载到指定路径并返回保存后的文件（下载文件时非常有用）
     * `toFile(File file)` 				下载到指定文件并返回保存后的文件（下载文件时非常有用）
     * `getContentType()`				返回报文体的媒体类型
@@ -173,16 +173,12 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 
 　　`HttpCall` 对象是异步请求方法（ `get`、`post`、`put`、`delete`）的返回值，它有如下方法：
 
-* `cancel()` 取消请求
+* `cancel()` 取消本次请求
 * `isCanceled()` 请求是否被取消
 * `isDone()` 请求是否执行完成，包含取消和失败
 * `getState()` 请求执行的状态枚举，若请求未执行完，则返回 null
 
-#### 8.取消异步请求
-
-只有异步请求才可以被取消
-
-异步请求的 get、post、put、delete方法返回一个HttpCall对象，该对象可以查看请求执行的状态，也可以取消请求
+　　取消一个异步请求示例：
 
 ```java
 	HttpCall call = HttpUtils.async("/users/1")
@@ -197,36 +193,19 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 	System.out.println("是否取消: " + call.isCanceled());	 // true
 ```
 
-#### 6.异步回调函数
+#### 8.异步请求回调
 
 只有异步请求才可以设置回调函数
 
 ```java
-	HttpUtils.async("/users/1", User.class, Error.class)
-			.setOnSuccess((int status, Headers headers, User user) -> {
-				// 成功回调,状态码在[200, 300)之间（根据 User.class 自动解析出 user 对象）
-			})
-			.setOnFailure((int status, Headers headers, Error error) -> {
-				// 失败回调,状态码在[200, 300)之外（根据 Error.class 自动解析出 error 对象）
+	http.async("/users/1")
+			.setOnResponse((HttpResult result) -> {
+				// 响应回调
 			})
 			.setOnException((Exception e) -> {
 				// 异常回调
 			})
-			.setOnComplete((int state) -> {
-				// 完成回调，无论成功失败都会执行
-			})
-			.get();
-```
-
-```java
-	HttpUtils.async("/files/report.xlsx")
-			.setOnResponse((int status, Headers headers, ResponseBody body) -> {
-				// 响应回调（设置了OnResponse，就不可以再设置 OnSuccess 和 OnFailure 回调）
-			})
-			.setOnException((Exception e) -> {
-				// 异常回调
-			})
-			.setOnComplete((int state) -> {
+			.setOnComplete((State state) -> {
 				// 完成回调，无论成功失败都会执行
 			})
 			.get();
