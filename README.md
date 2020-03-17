@@ -149,7 +149,7 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 	* `State.RESPONSED` 已收到响应
 	* `State.TIMEOUT` 请求超时
 	* `State.NETWORK_ERROR` 网络错误
-	* `State.EXCEPTION` 请求异常
+	* `State.EXCEPTION` 其它请求异常
 * `getStatus()` 	得到HTTP状态码
 * `getHeaders()` 	得到HTTP响应头
 * `getBody()` 		得到响应报文体 `ResultBody` 对象，它有如下方法：
@@ -167,7 +167,7 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
     * `getContentLength()`				返回报文体的字节长度
 * `isSuccessful()` 	是否响应成功，状态码在 [200..300) 之间
 * `isRedirect()` 	是否是重定向（300、301、302、303、307、308）
-* `getError()` 		执行中发生的异常
+* `getError()` 		执行中发生的异常，自动捕获执行请求是发生的 网络超时、网络错误 和 其它请求异常
 
 
 
