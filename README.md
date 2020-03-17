@@ -71,7 +71,7 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 			.get();	  	// GET请求
 ```
 
-#### 3.BaseUrl 配置
+#### 4.BaseUrl 配置
 
 ```java
 	HttpClient http = HttpClient.builder()
@@ -96,7 +96,7 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 	http.sync("https://www.baidu.com").get()
 ```
 
-#### 4.请求方法
+#### 5.请求方法
 
 * GET
 
@@ -140,7 +140,13 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 * 所有的同步请求方法均返回一个 HttpResult 对象
 * 所有的异步请求方法均返回一个 HttpCall 对象
 
-#### 5.取消异步请求
+#### 6.HttpResult
+
+HttpResult 是执行请求后的结果，它是同步请求方法（ get、post、put、delete）的返回值，也是异步请求的  OnResponse 回调的参数
+
+#### 7.HttpCall
+
+#### 8.取消异步请求
 
 只有异步请求才可以被取消
 
