@@ -57,11 +57,11 @@ public class ResultBody {
 		}
 	}
 	
-	public JSONObject toJSONObject() {
+	public JSONObject toJsonObject() {
 		return JSON.parseObject(toString());
 	}
 	
-	public JSONArray toJSONArray() {
+	public JSONArray toJsonArray() {
 		return JSON.parseArray(toString());
 	}
 	
