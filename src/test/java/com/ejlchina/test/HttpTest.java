@@ -24,8 +24,9 @@ public class HttpTest {
 		
 		
 		// 同步请求示例
-		syncHttpExample(http);
+//		syncHttpExample(http);
 		
+		syncJsonExample(http);
 		// 异步请求示例
 //		asyncHttpExample(http);
 		
@@ -100,6 +101,17 @@ public class HttpTest {
 	}
 
 
+	private static void syncJsonExample(HttpClient http) {
+		
+		// 同步请求
+		HttpResult result = http.sync("/user/save")
+				.addJsonParam("name", "Tom")
+				.addJsonParam("age", 23)
+				.post();
+		
+		System.out.println("result = " + result);
+		System.out.println("isSuccessful = " + result.isSuccessful());
+	}
 
 	private static void asyncHttpExample(HttpClient http) throws InterruptedException {
 		
