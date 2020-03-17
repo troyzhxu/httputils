@@ -1,8 +1,9 @@
 package com.ejlchina.test;
 
 
-import java.io.IOException;
 import java.util.concurrent.TimeUnit;
+
+import org.junit.Test;
 
 import com.ejlchina.http.HttpCall;
 import com.ejlchina.http.HttpClient;
@@ -17,24 +18,8 @@ import okhttp3.Request;
 
 public class HttpTest {
 
-	
-	public static void main(String[] args) throws InterruptedException, IOException {
-		
-		
-		HttpClient http = buildHttpClient();
-		
-		
-		// 同步请求示例
-//		syncHttpExample(http);
-		
-//		syncJsonExample(http);
-		// 异步请求示例
-		asyncHttpExample(http);
-		
-	}
 
-
-	static HttpClient buildHttpClient() {
+	private HttpClient buildHttpClient() {
 		
 		return HttpClient.builder()
 				.config((Builder builder) -> {
@@ -87,9 +72,10 @@ public class HttpTest {
 	}
 	
 
-
-	private static void syncHttpExample(HttpClient http) {
+	@Test
+	public void syncHttpExample() {
 		
+		HttpClient http = buildHttpClient();
 		// 同步请求
 		HttpResult result = http.sync("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1584365400942&di=d9e7890f13b7bc4b76080fdd490ed5d5&imgtype=0&src=http%3A%2F%2Ft8.baidu.com%2Fit%2Fu%3D1484500186%2C1503043093%26fm%3D79%26app%3D86%26f%3DJPEG%3Fw%3D1280%26h%3D853")
 				.get();
@@ -114,8 +100,9 @@ public class HttpTest {
 	}
 
 
-	private static void syncJsonExample(HttpClient http) {
-		
+	@Test
+	public void syncJsonExample() {
+		HttpClient http = buildHttpClient();
 		// 同步请求
 		HttpResult result = http.sync("/user/save")
 				.addJsonParam("name", "Tom")
@@ -126,8 +113,9 @@ public class HttpTest {
 		System.out.println("isSuccessful = " + result.isSuccessful());
 	}
 
-	private static void asyncHttpExample(HttpClient http) throws InterruptedException {
-		
+	@Test
+	public void asyncHttpExample() throws InterruptedException {
+		HttpClient http = buildHttpClient();
 		// 异步请求
 		// 最终路径 http://api.demo.com/users/2
 		HttpCall call = http.async("/user/show/{id}")

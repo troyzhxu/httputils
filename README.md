@@ -420,7 +420,7 @@ Java Bean 自动转 JSON
 				// 必须同步返回，拦截器内无法执行异步操作
 				return chain.proceed(request);
 			});
-			// 其它配置: 拦截器、SSL、缓存、代理...
+			// 其它配置: SSL、缓存、代理...
 		})
 		.build();
 ```
