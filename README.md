@@ -26,13 +26,13 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 <dependency>
      <groupId>com.ejlchina</groupId>
      <artifactId>httputils</artifactId>
-     <version>1.0.0</version>
+     <version>2.0.0</version>
 </dependency>
 ```
 
 ### Gradle
 
-`compile 'com.ejlchina:httputils:1.0.0'`
+`compile 'com.ejlchina:httputils:2.0.0'`
 
 ## 使用说明
 
@@ -42,13 +42,12 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 
 ```
 	// 最终路径 http://api.demo.com/users?name=Jack
-	HttpResult<User, ?> result = HttpUtils.sync("http://api.demo.com/users", User.class)
-			.addUrlParam("name", "Jack")
-			.get();							// GET请求
+	User user = HttpUtils.sync("http://api.demo.com/users")
+			.addUrlParam("name", "Jack")				// 添加查询参数
+			.get()										// 发送GET请求
+			.getBody()									// 获取响应报文体
+			.toBean(User.class);						// 得到目标数据
 			
-	int status = result.getStatus();		// 得到HTTP状态码
-	Headers headers = result.getHeaders();	// 得到返回头
-	User user = result.getOkData();			// 得到目标数据
 ```
 
 #### 2.异步请求
