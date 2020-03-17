@@ -193,7 +193,7 @@ public class HttpClient {
 		}
 		
 	    /**
-	     * 配置 httpClient
+	     * 配置 OkHttpClient
 	     * @param configurator 配置器
 	     */
 		public Builder config(Configurator configurator) {
