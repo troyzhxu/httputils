@@ -25,9 +25,9 @@ public class HttpTest {
 		// 同步请求示例
 //		syncHttpExample(http);
 		
-		syncJsonExample(http);
+//		syncJsonExample(http);
 		// 异步请求示例
-//		asyncHttpExample(http);
+		asyncHttpExample(http);
 		
 	}
 
@@ -50,7 +50,11 @@ public class HttpTest {
 				})
 				.addPreprocessor((Process process) -> {
 					new Thread(() -> {
-
+						try {
+							Thread.sleep(100);
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
 						process.getHttpTask().addHeader("Token", "yyyyy");
 				
 						process.proceed();
@@ -125,17 +129,24 @@ public class HttpTest {
 					User user = result.getBody().toBean(User.class);
 					System.out.println("user = " + user);
 				})
+				.setOnException((Exception e) -> {
+					e.printStackTrace();
+				})
 				// 发起  GET 请求
 				.get();
- 
+		
+		Thread.sleep(150);
+		
 		System.out.println("是否完成: " + call.isDone());
 		System.out.println("是否取消: " + call.isCanceled());
+		System.out.println("执行状态: " + call.getState());
 		
 //		call.cancel();  // 取消请求
-		Thread.sleep(350);
+		Thread.sleep(100);
 		
 		System.out.println("是否完成: " + call.isDone());
 		System.out.println("是否取消: " + call.isCanceled());
+		System.out.println("执行状态: " + call.getState());
 		
 	}
 

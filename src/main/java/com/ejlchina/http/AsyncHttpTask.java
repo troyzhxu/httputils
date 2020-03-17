@@ -93,9 +93,11 @@ public class AsyncHttpTask extends HttpTask<AsyncHttpTask> {
     private HttpCall request(String method) {
     	PreHttpCall call = new PreHttpCall();
     	httpClient.preprocess(this, () -> {
-    		if (!call.isCanceled()) {
-				call.setCall(executeCall(prepareCall(method)));
-    		}
+    		synchronized (call) {
+    			if (!call.isCanceled()) {
+    				call.setCall(executeCall(prepareCall(method)));
+        		}
+			}
     	});
     	return call;
     }
@@ -107,9 +109,10 @@ public class AsyncHttpTask extends HttpTask<AsyncHttpTask> {
     	private HttpCall call;
     	
 		@Override
-		public void cancel() {
+		public synchronized void cancel() {
 			if (call != null) {
 				call.cancel();
+			} else {
 			}
 			canceled = true;
 		}
@@ -119,7 +122,7 @@ public class AsyncHttpTask extends HttpTask<AsyncHttpTask> {
 			if (call != null) {
 				return call.isDone();
 			}
-			return false;
+			return canceled;
 		}
 
 		@Override
@@ -134,12 +137,24 @@ public class AsyncHttpTask extends HttpTask<AsyncHttpTask> {
 			this.call = call;
 		}
 
+		@Override
+		public State getState() {
+			if (call != null) {
+				return call.getState();
+			}
+			if (canceled) {
+				return State.CANCELED;
+			}
+			return null;
+		}
+
     }
     
     class OkHttpCall implements HttpCall {
 
     	private Call call;
-    	private boolean done;
+    	private boolean done = false;
+    	private State state;
     	
 		public OkHttpCall(Call call) {
 			this.call = call;
@@ -160,10 +175,16 @@ public class AsyncHttpTask extends HttpTask<AsyncHttpTask> {
 			return call.isCanceled();
 		}
 
-		public void setDone(boolean done) {
-			this.done = done;
+		@Override
+		public State getState() {
+			return state;
 		}
-		
+
+		public void setState(State state) {
+			this.state = state;
+			this.done = true;
+		}
+
     }
 	
     private HttpCall executeCall(Call call) {
@@ -171,13 +192,14 @@ public class AsyncHttpTask extends HttpTask<AsyncHttpTask> {
         call.enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-            	httpCall.setDone(true);
-            	doOnException(e);
+            	State state = toState(e);
+            	httpCall.setState(state);
+            	doOnException(state, e);
             }
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-            	httpCall.setDone(true);
+            	httpCall.setState(State.RESPONSED);
             	doOnResponse(new HttpResult(response));
             }
 			
@@ -197,16 +219,18 @@ public class AsyncHttpTask extends HttpTask<AsyncHttpTask> {
 		});
 	}
 	
-	private void doOnException(Exception e) {
+	private void doOnException(State state, Exception e) {
 		httpClient.executeCallback(() -> {
-			State state = toState(e);
 			if (onComplete != null) {
 	            onComplete.on(state);
 	        }
-			if (onException != null) {
-			    onException.on(e);
-			} else if (state != State.CANCELED && !nothrow) {
-				throw new HttpException(e.getMessage(), e);
+			// 请求取消不作为一种异常来处理
+			if (state != State.CANCELED) {
+				if (onException != null) {
+				    onException.on(e);
+				} else if (!nothrow) {
+					throw new HttpException(e.getMessage(), e);
+				}
 			}
 		});
 	}
