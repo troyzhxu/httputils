@@ -36,13 +36,16 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 
 ## 使用说明
 
-#### 1.构建HttpClient
+### 1 简单示例
+
+#### 1.1 构建 HttpClient
 
 ```java
 	HttpClient http = HttpClient.builder().build();		
 ```
+　　为了简化文档，后文中出现的`http`使用方法  
 
-#### 2.同步请求
+#### 1.2 同步请求
 
 　　使用方法  `sync(String url)` 发起同步请求
 
@@ -53,10 +56,9 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 			.get()										// 发送GET请求
 			.getBody()									// 获取响应报文体
 			.toBean(User.class);						// 得到目标数据
-			
 ```
 
-#### 3.异步请求
+#### 1.3 异步请求
 
 　　使用方法 `async(String url)` 发起异步请求
 
@@ -71,7 +73,9 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 			.get();	  	// GET请求
 ```
 
-#### 4.BaseUrl 配置
+### 2 配置 HttpClient
+
+#### 2.1 BaseUrl 配置
 
 ```java
 	HttpClient http = HttpClient.builder()
@@ -93,17 +97,18 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 ```java
 	http.sync("https://www.baidu.com").get()
 ```
+　　在配置了 BaseUrl 之后，仍然可以请求全路径的接口，如：
 
-#### 5.请求方法
+### 3 请求方法
 
-* GET 请求
+#### 3.1 GET
 
 ```java
 	http.sync("/users").get()		// 同步 GET 请求
 
 	http.async("/users").get()		// 异步 GET 请求
 ```
-* POST 请求
+#### 3.2 POST
 
 ```java
 	http.sync("/users")
@@ -116,7 +121,7 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 			.addJsonParam("age", 20)
 			.post()					// 异步 POST 请求
 ```
-* PUT 请求
+#### 3.3 PUT
 
 ```java
 	http.sync("/users/1")
@@ -127,18 +132,18 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 			.addJsonParam("name", "Jack")
 			.put()					// 异步 PUT 请求
 ```
-* DELETE 请求
+#### 3.4 DELETE
 
 ```java
 	http.sync("/users/1").delete()	// 同步 DELETE 请求
 	
 	http.async("/users/1").delete()	// 异步 DELETE 请求
 ```
+### 4 HttpResult 与 HttpCall
 
-* 所有的同步请求方法均返回一个 HttpResult 对象
-* 所有的异步请求方法均返回一个 HttpCall 对象
+　　所有的同步请求方法均返回一个 HttpResult 对象，所有的异步请求方法均返回一个 HttpCall 对象。
 
-#### 6.HttpResult 对象
+#### 4.1 HttpResult 对象
 
 　　`HttpResult` 对象是HTTP请求执行完后的结果，它是同步请求方法（ `get`、`post`、`put`、`delete`）的返回值，也是异步请求响应回调（`OnResponse`）的参数，它有如下方法：
 
@@ -167,7 +172,7 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 * `isRedirect()` 	是否是重定向（300、301、302、303、307、308）
 * `getError()` 		执行中发生的异常，自动捕获执行请求是发生的 网络超时、网络错误 和 其它请求异常
 
-#### 7.HttpCall 对象
+#### 4.1 HttpCall 对象
 
 　　`HttpCall` 对象是异步请求方法（ `get`、`post`、`put`、`delete`）的返回值，它有如下方法：
 
@@ -187,8 +192,7 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 
 	System.out.println(call.isCanceled());	 // true
 ```
-
-#### 8.异步请求回调
+### 5 请求回调
 
 　　只有异步请求才可以设置回调函数：
 
@@ -206,66 +210,14 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 			.get();
 ```
 
-#### 7.响应数据自动解析
+### 6 构建请求
 
-HttpUtils.sync(...) 和 HttpUtils.async(...) 最多有三个参数：第一个为url字符串，第二个为响应成功数据的目标解析类型，第三个为响应失败数据的目标解析类型
-
-异步请求成功返回数据 解析为 Book 对象
-
-```java
-	HttpUtils.async("/books/1", Book.class)
-			.setOnSuccess((int status, Headers headers, Book book) -> {
-	
-			})
-			.get();
-```
-异步请求成功返回数据 解析为 Book 对象，请求失败返回数据 解析为 String 对象
-
-```java
-	HttpUtils.async("/books/1", Book.class, String.class)
-			.setOnSuccess((int status, Headers headers, Book book) -> {
-	
-			})
-			.setOnFailure((int status, Headers headers, String error) -> {
-			
-			})
-			.get();
-```
-异步请求成功返回数据 解析为 Book 列表
-
-```java
-	HttpUtils.async("/books", new TypeReference<List<Book>>(){})
-			.setOnSuccess((int status, Headers headers, List<Book> books) -> {
-
-			})
-			.get();
-```
-同步请求成功返回数据 解析为 Book 对象
-
-```java
-	Book book = HttpUtils.sync("/books/1", Book.class).get().getOkData();
-```
-同步请求成功返回数据 解析为 Book 对象，请求失败返回数据 解析为 String 对象
-
-```java
-	HttpResult<User, String> result = HttpUtils.sync("/books/1", Book.class, String.class).get();
-	
-	Book book = result.getOkData();
-	String error = result.getFailData();
-```
-同步请求成功返回数据 解析为 Book 列表
-
-```java
-	List<Book> books = HttpUtils.sync("/books", new TypeReference<List<Book>>(){})
-			.get().getOkData();
-```
-
-#### 8.添加请求头
+#### 6.1 添加请求头
 
 单个添加（同步异步添加方法一样）
 
 ```java
-	HttpUtils.sync("/orders")
+	http.sync("/orders")
 			.addHeader("Access-Token", "xxxxxx")
 			.addHeader("Content-Type", "application/json")
 			.get();
@@ -277,19 +229,19 @@ HttpUtils.sync(...) 和 HttpUtils.async(...) 最多有三个参数：第一个�
 	headers.put("Access-Token", "xxxxxx");
 	headers.put("Accept", "application/json");
 	
-	HttpUtils.sync("/orders")
+	http.sync("/orders")
 			.addHeader(headers)
 			.get();
 ```
 
-#### 9.路径参数
+#### 6.2 添加路径参数
 
 路径参数用于替换URL字符串中的占位符
 
 单个添加（同步异步添加方法一样）
 
 ```java
-	HttpUtils.sync("/shops/{shopName}/products/{productId}")
+	http.sync("/shops/{shopName}/products/{productId}")
 			.addPathParam("shopName", "taobao")
 			.addPathParam("productId", 20)
 			.get();
@@ -301,19 +253,19 @@ HttpUtils.sync(...) 和 HttpUtils.async(...) 最多有三个参数：第一个�
 	params.put("shopName", "taobao");
 	params.put("productId", 20);
 	
-	HttpUtils.sync("/shops/{shopName}/products/{productId}")
+	http.sync("/shops/{shopName}/products/{productId}")
 			.addPathParam(params)
 			.get();
 ```
 
-#### 10.查询参数
+#### 6.3 添加查询参数
 
 查询参数（URL参数）用于拼接在 url 字符串的 ? 之后
 
 单个添加（同步异步添加方法一样）
 
 ```java
-	HttpUtils.sync("/products")
+	http.sync("/products")
 			.addUrlParam("name", "手机")
 			.addUrlParam("tag", "5G")
 			.get();
@@ -325,19 +277,19 @@ HttpUtils.sync(...) 和 HttpUtils.async(...) 最多有三个参数：第一个�
 	params.put("name", "手机");
 	params.put("tag", 5G);
 	
-	HttpUtils.sync("/products")
+	http.sync("/products")
 			.addUrlParam(params)
 			.get();
 ```
 
-#### 11.表单参数
+#### 6.4 添加表单参数
 
 表单参数（Budy参数）以 key=value& 的形式携带与请求报文体内
 
 单个添加（同步异步添加方法一样）
 
 ```java
-	HttpUtils.sync("/signin")
+	http.sync("/signin")
 			.addBodyParam("username", "Jackson")
 			.addBodyParam("password", "xxxxxx")
 			.post();
@@ -349,19 +301,19 @@ HttpUtils.sync(...) 和 HttpUtils.async(...) 最多有三个参数：第一个�
 	params.put("username", "Jackson");
 	params.put("password", "xxxxxx");
 	
-	HttpUtils.sync("/signin")
+	http.sync("/signin")
 			.addBodyParam(params)
 			.post();
 ```
 
-#### 12. JSON参数
+#### 6.5 添加JSON参数
 
 JSON参数 json 字符串的形式携带与请求报文体内
 
 单个添加（同步异步添加方法一样）
 
 ```java
-	HttpUtils.sync("/signin")
+	http.sync("/signin")
 			.addJsonParam("username", "Jackson")
 			.addJsonParam("password", "xxxxxx")
 			.post();
@@ -373,14 +325,14 @@ JSON参数 json 字符串的形式携带与请求报文体内
 	params.put("username", "Jackson");
 	params.put("password", "xxxxxx");
 	
-	HttpUtils.sync("/signin")
+	http.sync("/signin")
 			.addJsonParam(params)
 			.post();
 ```
 添加JSON字符串
 
 ```java
-	HttpUtils.sync("/signin")
+	http.sync("/signin")
 			.setRequestJson("\"username\":\"Jackson\",\"password\":\"xxxxxx\"")
 			.post();
 ```
@@ -391,12 +343,12 @@ Java Bean 自动转 JSON
 	login.setUsername("Jackson");
 	login.setPassword("xxxxxx");
 	
-	HttpUtils.sync("/signin")
+	http.sync("/signin")
 			.setRequestJson(login)
 			.post();
 ```
 
-#### 13. 文件参数
+#### 6.6 添加文件参数
 
 同步和异步添加文件方法是一样的
 
@@ -406,7 +358,7 @@ Java Bean 自动转 JSON
 	File file1 = new File("D:/1.jpg");
 	File file2 = new File("D:/2.jpg");
 	
-	HttpUtils.sync("/upload")
+	http.sync("/upload")
 			.addFileParam("image1", file1)
 			.addFileParam("image2", file2)
 			.post();
@@ -417,7 +369,7 @@ Java Bean 自动转 JSON
 	// 获得文件的输入流
 	InputStream input = ...
 	
-	HttpUtils.sync("/upload")
+	http.sync("/upload")
 			.addFileParam("image", "jpg", input)
 			.post();
 ```
@@ -427,7 +379,7 @@ Java Bean 自动转 JSON
 	// 获得文件的字节数组
 	byte[] content = ...
 	
-	HttpUtils.sync("/upload")
+	http.sync("/upload")
 			.addFileParam("image", "jpg", content)
 			.post();
 ```
@@ -436,7 +388,7 @@ Java Bean 自动转 JSON
 ```java
 	File file = new File("D:/首页广告.jpg");
 	
-	HttpUtils.sync("/messages")
+	http.sync("/messages")
 			.addBodyParam("name", "广告图")
 			.addFileParam("image", file)
 			.post();
