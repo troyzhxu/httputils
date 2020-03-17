@@ -9,7 +9,7 @@ public interface HttpCall {
 	void cancel();
 
 	/**
-	 * @return 请求是否执行完成
+	 * @return 请求是否执行完成，包含取消和失败
 	 */
 	boolean isDone();
 
