@@ -410,13 +410,16 @@ Java Bean 自动转 JSON
 ```java
 	HttpClient http = HttpClient.builder()
 		.config((Builder builder) -> {
-					
 			// 配置连接池 最小10个连接（不配置默认为 5）
 			builder.connectionPool(new ConnectionPool(10, 5, TimeUnit.MINUTES));
-			
 			// 配置连接超时时间
 			builder.connectTimeout(20, TimeUnit.SECONDS);
-		
+			// 配置拦截器
+			builder.addInterceptor((Chain chain) -> {
+				Request request = chain.request();
+				// 必须同步返回，拦截器内无法执行异步操作
+				return chain.proceed(request);
+			});
 			// 其它配置: 拦截器、SSL、缓存、代理...
 		})
 		.build();
