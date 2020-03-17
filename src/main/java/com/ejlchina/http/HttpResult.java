@@ -47,9 +47,16 @@ public class HttpResult {
 	HttpResult() {
 	}
 	
+	HttpResult(State state) {
+		this.state = state;
+	}
+	
 	HttpResult(Response response) {
-		this.state = State.RESPONSED;
-		this.response = response;
+		response(response);
+	}
+	
+	HttpResult(State state, Exception error) {
+		exception(state, error);
 	}
 	
 	void exception(State state, Exception error) {
@@ -73,7 +80,10 @@ public class HttpResult {
 	 * @return HTTP状态码
 	 */
 	public int getStatus() {
-		return response.code();
+		if (response != null) {
+			return response.code();
+		}
+		return 0;
 	}
 
 	/**
@@ -81,28 +91,30 @@ public class HttpResult {
 	 * @return 是否响应成功，状态码在 [200..300) 之间
 	 */
 	public boolean isSuccessful() {
-	    return response.isSuccessful();
-	}
-	
-	/**
-	 * @return 是否是重定向（300、301、302、303、307、308）
-	 */
-	public boolean isRedirect() {
-		return response.isRedirect();
+	    if (response != null) {
+			return response.isSuccessful();
+		}
+		return false;
 	}
 	
 	/**
 	 * @return 响应头信息
 	 */
 	public Headers getHeaders() {
-		return response.headers();
+		if (response != null) {
+			return response.headers();
+		}
+		return null;
 	}
 
 	/**
 	 * @return 响应报文体
 	 */
 	public ResultBody getBody() {
-		return new ResultBody(response.body());
+		if (response != null) {
+			return new ResultBody(response.body());
+		}
+		return null;
 	}
 	
 	/**
@@ -115,10 +127,13 @@ public class HttpResult {
 	@Override
 	public String toString() {
 		ResultBody body = getBody();
-		return "HttpResult [\n  state: " + state + ",\n  status: " + getStatus() 
-				+ ",\n  contentType: " + body.getContentType()
-				+ ",\n  body: " + body.toString() + ",\n  error: " 
-				+ error + "\n]";
+		String str = "HttpResult [\n  state: " + state + ",\n  status: " + getStatus() 
+				+ ",\n  headers: " + getHeaders();
+		if (body != null) {
+			str += ",\n  contentType: " + body.getContentType()
+			+ ",\n  body: " + body.toString();
+		}
+		return str + ",\n  error: " + error + "\n]";
 	}
 
 	

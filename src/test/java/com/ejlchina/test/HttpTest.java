@@ -123,9 +123,9 @@ public class HttpTest {
 				.addPathParam("id", 2)
 				// 设置回调函数
 				.setOnResponse((HttpResult result) -> {
-//					System.out.println("result = " + result);
-					User user = result.getBody().toBean(User.class);
-					System.out.println("user = " + user);
+					System.out.println("000");
+//					User user = result.getBody().toBean(User.class);
+//					System.out.println("user = " + user);
 				})
 				.setOnException((Exception e) -> {
 					e.printStackTrace();
@@ -137,14 +137,18 @@ public class HttpTest {
 		
 		System.out.println("是否完成: " + call.isDone());
 		System.out.println("是否取消: " + call.isCanceled());
-		System.out.println("执行状态: " + call.getState());
 		
-//		call.cancel();  // 取消请求
-		Thread.sleep(100);
+		call.cancel();  // 取消请求
 		
-		System.out.println("是否完成: " + call.isDone());
 		System.out.println("是否取消: " + call.isCanceled());
-		System.out.println("执行状态: " + call.getState());
+		System.out.println("执行结果: " + call.getResult());
+		System.out.println("是否完成: " + call.isDone());
+//		
+		Thread.sleep(100);
+//		
+//		System.out.println("是否完成: " + call.isDone());
+//		System.out.println("是否取消: " + call.isCanceled());
+//		System.out.println("执行状态: " + call.getResult());
 		
 	}
 

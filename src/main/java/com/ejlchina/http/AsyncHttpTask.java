@@ -113,8 +113,9 @@ public class AsyncHttpTask extends HttpTask<AsyncHttpTask> {
 			if (call != null) {
 				call.cancel();
 			} else {
+				canceled = true;
 			}
-			canceled = true;
+			notify();
 		}
 
 		@Override
@@ -135,17 +136,25 @@ public class AsyncHttpTask extends HttpTask<AsyncHttpTask> {
 
 		public void setCall(HttpCall call) {
 			this.call = call;
+			notify();
 		}
 
 		@Override
-		public State getState() {
-			if (call != null) {
-				return call.getState();
-			}
+		public synchronized HttpResult getResult() {
 			if (canceled) {
-				return State.CANCELED;
+				return new HttpResult(State.CANCELED);
 			}
-			return null;
+			if (call == null) {
+				try {
+					wait();
+				} catch (InterruptedException e) {
+					throw new HttpException(e.getMessage(), e);
+				}
+			}
+			if (call != null) {
+				return call.getResult();
+			}
+			return new HttpResult(State.CANCELED);
 		}
 
     }
@@ -153,8 +162,7 @@ public class AsyncHttpTask extends HttpTask<AsyncHttpTask> {
     class OkHttpCall implements HttpCall {
 
     	private Call call;
-    	private boolean done = false;
-    	private State state;
+    	private HttpResult result;
     	
 		public OkHttpCall(Call call) {
 			this.call = call;
@@ -167,7 +175,7 @@ public class AsyncHttpTask extends HttpTask<AsyncHttpTask> {
 
 		@Override
 		public boolean isDone() {
-			return done;
+			return result != null;
 		}
 
 		@Override
@@ -176,13 +184,20 @@ public class AsyncHttpTask extends HttpTask<AsyncHttpTask> {
 		}
 
 		@Override
-		public State getState() {
-			return state;
+		public synchronized HttpResult getResult() {
+			if (result == null) {
+				try {
+					wait();
+				} catch (InterruptedException e) {
+					throw new HttpException(e.getMessage(), e);
+				}
+			}
+			return result;
 		}
 
-		public void setState(State state) {
-			this.state = state;
-			this.done = true;
+		public synchronized void setResult(HttpResult result) {
+			this.result = result;
+			notify();
 		}
 
     }
@@ -193,14 +208,19 @@ public class AsyncHttpTask extends HttpTask<AsyncHttpTask> {
             @Override
             public void onFailure(Call call, IOException e) {
             	State state = toState(e);
-            	httpCall.setState(state);
             	doOnException(state, e);
+            	if (state == State.CANCELED) {
+            		httpCall.setResult(new HttpResult(state));
+            	} else {
+            		httpCall.setResult(new HttpResult(state, e));
+            	}
             }
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-            	httpCall.setState(State.RESPONSED);
-            	doOnResponse(new HttpResult(response));
+            	HttpResult result = new HttpResult(response);
+            	doOnResponse(result);
+            	httpCall.setResult(result);
             }
 			
         });
