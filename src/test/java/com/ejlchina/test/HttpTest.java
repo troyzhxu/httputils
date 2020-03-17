@@ -19,6 +19,25 @@ import okhttp3.Request;
 public class HttpTest {
 
 
+	@Test
+	public void test() {
+		
+		short[] arr = new short[10];
+		
+		for (int i = 0; i < 10; i++) {
+			System.out.print(arr[i]++);
+		}
+		System.out.println();
+		for (int i = 0; i < 10; i++) {
+			System.out.print(arr[i]++);
+		}
+		System.out.println();
+		for (int i = 0; i < 10; i++) {
+			System.out.print(arr[i]++);
+		}
+		
+	}
+	
 	private HttpClient buildHttpClient() {
 		
 		return HttpClient.builder()

@@ -18,13 +18,18 @@ public class HttpClient {
 	private OkHttpClient client;
 	
 	private String baseUrl;
-	
+	// 媒体类型
 	private Map<String, String> mediaTypes;
-
+	// 回调执行器
 	private Executor callbackExecutor;
-
+	// 预处理器
 	private Preprocessor[] preprocessors;
+	// 预处理器的可并发性
+	private boolean[] concurrents;
+	// 预处理器的状态，n表示有n个执行器在同时执行
+	private short[] states;
 	
+	private List<Runnable>[] runs;
 	
 	private HttpClient(Builder builder) {
 		this.client = builder.client;
@@ -32,9 +37,11 @@ public class HttpClient {
 		this.mediaTypes = builder.mediaTypes;
 		this.callbackExecutor = builder.callbackExecutor;
 		this.preprocessors = builder.preprocessors.toArray(new Preprocessor[builder.preprocessors.size()]);
+		this.concurrents = new boolean[preprocessors.length];
+		this.states = new short[preprocessors.length];
 	}
 	
-
+	
 	/**
 	 * 异步请求
 	 * @param urlPath 请求地址
@@ -77,8 +84,15 @@ public class HttpClient {
     
     void preprocess(HttpTask<? extends HttpTask<?>> httpTask, Runnable request) {
     	if (preprocessors.length > 0) {
-			preprocessors[0].doProcess(new HttpProcess(preprocessors, 
-    				httpTask, request));
+    		HttpProcess process = new HttpProcess(preprocessors, 
+    				httpTask, request);
+    		// 该处理器当前执行的任务数为0，或者该处理器可并行处理任务
+    		if (states[0] == 0 || concurrents[0]) {	
+    			concurrents[0] = preprocessors[0].doProcess(process);
+    			states[0]++;
+    		} else {
+    			
+    		}
     	} else {
     		request.run();
     	}
@@ -237,6 +251,9 @@ public class HttpClient {
 		public Builder addPreprocessor(Preprocessor preprocessor) {
 			if (preprocessors == null) {
 				preprocessors = new ArrayList<>();
+			}
+			if (preprocessors.size() == Short.MAX_VALUE) {
+				throw new HttpException("一个HttpClient最多可以添加" + Short.MAX_VALUE + "个预处理！");
 			}
 			preprocessors.add(preprocessor);
 			return this;
