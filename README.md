@@ -101,10 +101,9 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 GET 请求（同步异步请求方法一致）
 
 ```java
-	// 同步请求，返回一个 HttpResult
-	HttpResult result = http.sync("/users").get()	
-	// 同步请求，返回一个 HttpCall
-	HttpCall call = http.async("/users").get()
+	HttpResult result = http.sync("/users").get()	// 同步请求，返回一个 HttpResult
+	
+	HttpCall call = http.async("/users").get()		// // 异步请求，返回一个 HttpCall
 ```
 POST 请求（同步异步请求方法一致）
 
