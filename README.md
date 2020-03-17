@@ -171,9 +171,12 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 
 #### 7.HttpCall
 
-`HttpCall` 对象是异步请求方法（ `get`、`post`、`put`、`delete`）的返回值，它有如下方法：
+　　`HttpCall` 对象是异步请求方法（ `get`、`post`、`put`、`delete`）的返回值，它有如下方法：
 
-
+* `cancel()` 取消请求
+* `isCanceled()` 请求是否被取消
+* `isDone()` 请求是否执行完成，包含取消和失败
+* `getState()` 请求执行完成的状态，若请求未执行完，则返回 null
 
 #### 8.取消异步请求
 
