@@ -144,7 +144,12 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 
 `HttpResult` 是执行请求后的结果，它是同步请求方法（ `get`、`post`、`put`、`delete`）的返回值，也是异步请求响应回调（`OnResponse`）的参数，它有如下方法
 
-* `getState()` 		得到请求执行状态
+* `getState()` 		得到请求执行状态枚举
+	* `State.CANCELED` 请求被取消
+	* `State.RESPONSED` 已收到响应
+	* `State.TIMEOUT` 请求超时
+	* `State.NETWORK_ERROR` 网络错误
+	* `State.EXCEPTION` 请求异常
 * `getStatus()` 	得到HTTP状态码
 * `getHeaders()` 	得到HTTP响应头
 * `getBody()` 		得到响应报文体 `ResultBody` 对象，它有如下方法：
