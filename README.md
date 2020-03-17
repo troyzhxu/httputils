@@ -163,6 +163,23 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 * `isRedirect()` 	是否是重定向（300、301、302、303、307、308）
 * `getError()` 		执行中发生的异常，自动捕获执行请求是发生的 网络超时、网络错误 和 其它请求异常
 
+　　例如，下载文件到指定目录：
+	
+```java
+	String path = "D:/reports/2020-03-01.xlsx";	// 文件保存目录
+
+	// 同步下载
+	http.sync("http://api.demo.com/reports/2020-03-01.xlsx")
+			.get().getBody().toFile(path);
+
+	// 异步下载
+	http.async("http://api.demo.com/reports/2020-03-01.xlsx")
+			.setOnResponse((HttpResult result) -> {
+				result.getBody().toFile(path);
+			})
+			.get();
+```
+
 #### 3.3 HttpCall
 
 　　`HttpCall` 对象是异步请求方法（ `get`、`post`、`put`、`delete`）的返回值，它有如下方法：
