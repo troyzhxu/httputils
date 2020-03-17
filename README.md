@@ -453,7 +453,7 @@ Java Bean 自动转 JSON
 				// 异步获取 Token
 				checkExpirationAndRefreshToken((String token) -> {
 					// 获取当前的请求任务
-					HttpTask task = process.getHttpTask();
+					HttpTask task = process.getTask();
 					// 为请求任务添加 Token 头信息
 					task.addHeader("Token", token);
 					// 继续当前的请求任务

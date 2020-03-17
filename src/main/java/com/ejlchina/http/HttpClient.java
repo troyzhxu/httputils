@@ -96,7 +96,8 @@ public class HttpClient {
     	private Runnable request;
     	
 		public HttpProcess(Preprocessor[] preprocessors, 
-				HttpTask<? extends HttpTask<?>> httpTask, Runnable request) {
+				HttpTask<? extends HttpTask<?>> httpTask, 
+						Runnable request) {
 			this.index = 1;
 			this.preprocessors = preprocessors;
 			this.httpTask = httpTask;
@@ -104,12 +105,12 @@ public class HttpClient {
 		}
 
 		@Override
-		public HttpTask<? extends HttpTask<?>> getHttpTask() {
+		public HttpTask<? extends HttpTask<?>> getTask() {
 			return httpTask;
 		}
 
 		@Override
-		public HttpClient getHttpClient() {
+		public HttpClient getClient() {
 			return HttpClient.this;
 		}
 

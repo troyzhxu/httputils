@@ -18,12 +18,12 @@ public interface Preprocessor {
 		/**
 		 * @return 当前的请求任务
 		 */
-		HttpTask<? extends HttpTask<?>> getHttpTask();
+		HttpTask<? extends HttpTask<?>> getTask();
 		
 		/**
 		 * @return HttpClient
 		 */
-		HttpClient getHttpClient();
+		HttpClient getClient();
 		
 		/**
 		 * 继续HTTP请求任务

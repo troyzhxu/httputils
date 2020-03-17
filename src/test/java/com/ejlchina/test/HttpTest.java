@@ -50,7 +50,7 @@ public class HttpTest {
 						} catch (InterruptedException e) {
 							e.printStackTrace();
 						}
-						process.getHttpTask().addHeader("Token", "yyyyy");
+						process.getTask().addHeader("Token", "yyyyy");
 				
 						process.proceed();
 				
@@ -60,7 +60,7 @@ public class HttpTest {
 				.addPreprocessor((Process process) -> {
 					new Thread(() -> {
 
-						process.getHttpTask().addUrlParam("actor", "Alice");
+						process.getTask().addUrlParam("actor", "Alice");
 				
 						process.proceed();
 				
