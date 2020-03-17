@@ -147,7 +147,8 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 * `getState()` 得到请求执行状态
 * `getStatus()` 得到HTTP状态码
 * `getHeaders()` 得到HTTP响应头
-* `getBody()` 得到响应报文体（`ResultBody` 对象）
+* `getBody()` 得到响应报文体`ResultBody` 对象，它有如下方法：
+** `getContentType()` 
 * `isSuccessful()` 是否响应成功，状态码在 [200..300) 之间
 * `isRedirect()` 是否是重定向（300、301、302、303、307、308）
 * `getError()` 执行中发生的异常
