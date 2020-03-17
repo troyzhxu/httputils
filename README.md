@@ -74,24 +74,26 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 #### 3.BaseUrl 配置
 
 ```java
-	HttpClient.setBaseUrl("http://api.demo.com");
+	HttpClient http = HttpClient.builder()
+			.baseUrl("http://api.demo.com")		// 设置 BaseUrl
+			.build();
 ```
 该配置全局生效
 
 在配置了 BaseUrl 之后，具体的请求便可以省略 BaseUrl 部分，例如：
 
 ```java
-	HttpUtils.sync("/users").get()					// http://api.demo.com/users
+	http.sync("/users").get()					// http://api.demo.com/users
 	
-	HttpUtils.sync("/auth/signin")					// http://api.demo.com/auth/signin
+	http.sync("/auth/signin")					// http://api.demo.com/auth/signin
 			.addBodyParam("username", "Jackson")
 			.addBodyParam("password", "xxxxxx")
-			.post()									// POST请求
+			.post()								// POST请求
 ```
 在配置了 BaseUrl 之后，仍然可以请求全路径的接口，如：
 
 ```java
-	HttpUtils.sync("https://www.baidu.com").get()
+	http.sync("https://www.baidu.com").get()
 ```
 
 #### 4.请求方法
@@ -99,27 +101,31 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 GET 请求（同步异步请求方法一致）
 
 ```java
-	HttpUtils.sync("/users").get()
+	// 同步请求，返回一个 HttpResult
+	HttpResult result = http.sync("/users").get()	
+	// 同步请求，返回一个 HttpCall
+	HttpCall call = http.async("/users").get()
 ```
 POST 请求（同步异步请求方法一致）
 
 ```java
-	HttpUtils.sync("/users")
+	http.sync("/users")
 			.addJsonParam("name", "Jack")
 			.addJsonParam("age", 20)
 			.post()
+	// 
 ```
 PUT 请求（同步异步请求方法一致）
 
 ```java
-	HttpUtils.sync("/users/1")
+	http.sync("/users/1")
 			.addJsonParam("name", "Jack")
 			.put()
 ```
 DELETE 请求（同步异步请求方法一致）
 
 ```java
-	HttpUtils.sync("/users/1").delete()
+	http.sync("/users/1").delete()
 ```
 
 #### 5.取消异步请求
