@@ -181,16 +181,13 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 　　取消一个异步请求示例：
 
 ```java
-	HttpCall call = HttpUtils.async("/users/1")
-			.setOnSuccess((int status, Headers headers, Object user) -> {
-				
-			})
-			.get();
+	HttpCall call = http.async("/users/1").get();
 
+	System.out.println(call.isCanceled());	 // false
+	
 	call.cancel();   // 取消请求
 
-	System.out.println("是否完成: " + call.isDone());		 // false
-	System.out.println("是否取消: " + call.isCanceled());	 // true
+	System.out.println(call.isCanceled());	 // true
 ```
 
 #### 8.异步请求回调
