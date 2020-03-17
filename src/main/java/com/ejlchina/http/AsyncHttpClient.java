@@ -123,12 +123,12 @@ public class AsyncHttpClient<S, F> extends HttpClient<S, F, AsyncHttpClient<S, F
     	return executeCall(prepareCall(method));
     }
     
-    class HttpCallStatus implements HttpCall {
+    class OkHttpCall implements HttpCall {
 
     	private Call call;
     	private boolean done;
     	
-		public HttpCallStatus(Call call) {
+		public OkHttpCall(Call call) {
 			this.call = call;
 		}
 
@@ -154,7 +154,7 @@ public class AsyncHttpClient<S, F> extends HttpClient<S, F, AsyncHttpClient<S, F
     }
 	
     private HttpCall executeCall(Call call) {
-        HttpCallStatus httpCall = new HttpCallStatus(call);
+        OkHttpCall httpCall = new OkHttpCall(call);
         call.enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
@@ -284,10 +284,12 @@ public class AsyncHttpClient<S, F> extends HttpClient<S, F, AsyncHttpClient<S, F
 		if (onComplete != null) {
             onComplete.onComplete(state);
         }
-		if (onException != null) {
-		    onException.onException(e);
-		} else if (state != OnComplete.CANCELED && !nothrow) {
-			throw new HttpException(e.getMessage(), e);
+		if (state != OnComplete.CANCELED) {
+			if (onException != null) {
+			    onException.onException(e);
+			} else if (!nothrow) {
+				throw new HttpException(e.getMessage(), e);
+			}
 		}
 	}
 	
