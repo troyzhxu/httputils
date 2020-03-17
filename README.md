@@ -39,16 +39,16 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 #### 1.构建HttpClient
 
 ```java
-	HttpClient httpClient = HttpClient.builder().build();		
+	HttpClient http = HttpClient.builder().build();		
 ```
 
-#### 1.同步请求
+#### 2.同步请求
 
 所有 HttpUtils.sync(...) 均为同步请求方法
 
 ```java
 	// 最终路径 http://api.demo.com/users?name=Jack
-	User user = httpClient.sync("http://api.demo.com/users")
+	User user = http.sync("http://api.demo.com/users")
 			.addUrlParam("name", "Jack")				// 添加查询参数
 			.get()										// 发送GET请求
 			.getBody()									// 获取响应报文体
@@ -56,13 +56,13 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 			
 ```
 
-#### 2.异步请求
+#### 3.异步请求
 
 所有 HttpUtils.async(...) 均为异步请求方法
 
 ```java
 	// 最终路径为 http://api.demo.com/users/1
-	httpClient.async("http://api.demo.com/users/{id}")
+	http.async("http://api.demo.com/users/{id}")
 			.addPathParam("id", 1)
 			.setOnResponse((HttpResult result) -> {
 				// 得到目标数据
