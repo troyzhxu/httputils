@@ -550,7 +550,7 @@ HTTP http = HTTP.builder()
 			// 检查过期，若需要则刷新Token
 			requestTokenAndRefreshIfExpired((String token) -> {
 				task.addHeader("Token", token);			// 为任务添加 Token头信息
-				process.proceed();						// 调用此方法前，不会有其它任务进入该预处理器
+				process.proceed();						// 调用此方法前，不会有其它任务进入该处理器
 			});	
 		})
 		.build();
