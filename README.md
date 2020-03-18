@@ -57,12 +57,12 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 　　使用方法`sync(String url)`发起同步请求
 
 ```java
-	// 最终路径 http://api.demo.com/users?name=Jack
-	User user = http.sync("http://api.demo.com/users")
-			.addUrlParam("name", "Jack")				// 添加查询参数
-			.get()										// 发送GET请求
-			.getBody()									// 获取响应报文体
-			.toBean(User.class);						// 得到目标数据
+// 最终路径 http://api.demo.com/users?name=Jack
+User user = http.sync("http://api.demo.com/users")
+		.addUrlParam("name", "Jack")				// 添加查询参数
+		.get()										// 发送GET请求
+		.getBody()									// 获取响应报文体
+		.toBean(User.class);						// 得到目标数据
 ```
 
 #### 1.3 异步请求
@@ -70,23 +70,23 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 　　使用方法`async(String url)`发起异步请求
 
 ```java
-	// 最终路径为 http://api.demo.com/users/1
-	http.async("http://api.demo.com/users/{id}")
-			.addPathParam("id", 1)
-			.setOnResponse((HttpResult result) -> {
-				// 得到目标数据
-				User user = result.getBody().toBean(User.class);
-			})
-			.get();	  	// GET请求
+// 最终路径为 http://api.demo.com/users/1
+http.async("http://api.demo.com/users/{id}")
+		.addPathParam("id", 1)
+		.setOnResponse((HttpResult result) -> {
+			// 得到目标数据
+			User user = result.getBody().toBean(User.class);
+		})
+		.get();	  	// GET请求
 ```
 ### 2 请求方法
 
 #### 2.1 GET
 
 ```java
-	http.sync("http://api.demo.com/users").get()		// 同步 GET 请求
+http.sync("http://api.demo.com/users").get()		// 同步 GET 请求
 
-	http.async("http://api.demo.com/users").get()		// 异步 GET 请求
+http.async("http://api.demo.com/users").get()		// 异步 GET 请求
 ```
 #### 2.2 POST
 
