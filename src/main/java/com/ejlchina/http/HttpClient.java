@@ -290,7 +290,8 @@ public class HttpClient {
 		 * @return Builder
 		 */
 		public Builder addPreprocessor(Preprocessor preprocessor) {
-			return addPreprocessor(preprocessor, false);
+			preprocessors.add(preprocessor);
+			return this;
 		}
 		
 		/**
@@ -299,12 +300,8 @@ public class HttpClient {
 		 * @param serial 是否是串行预处理器
 		 * @return Builder
 		 */
-		public Builder addPreprocessor(Preprocessor preprocessor, boolean serial) {
-			if (serial) {
-				preprocessors.add(new SerialPreprocessor(preprocessor));
-			} else {
-				preprocessors.add(preprocessor);
-			}
+		public Builder addSerialPreprocessor(Preprocessor preprocessor) {
+			preprocessors.add(new SerialPreprocessor(preprocessor));
 			return this;
 		}
 		

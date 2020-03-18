@@ -21,17 +21,47 @@ public class HttpTest {
 
 	
 	@Test
-	public void testSync() {
-		Object mutex = new Object();
-		synchronized (mutex) {
-			System.out.println("Hello");
-			synchronized (mutex) {
-				System.out.println("World");
-			}
-			System.out.println("Yes");
-		}
-		System.out.println("Ha");
+	public void testPreprocessor() {
+		
+		HttpClient http = HttpClient.builder()
+			.baseUrl("http://localhost:8080")
+			.addPreprocessor((Process process) -> {
+				System.out.println("并行预处理-开始");
+//				new Thread(() -> {
+					sleep(2);
+					System.out.println("并行预处理-结束");
+					process.proceed();
+//				}).start();
+			})
+			.addSerialPreprocessor((Process process) -> {
+				System.out.println("串行预处理-开始");
+				new Thread(() -> {
+					sleep(3);
+					System.out.println("串行预处理-结束");
+					process.proceed();
+				}).start();
+			})
+			.build();
+		
+		
+		new Thread(() -> {
+			http.async("/user/show/1")
+				.setOnResponse((HttpResult result) -> {
+					System.out.println(result);
+				}).get();
+		}).start();
+		
+		new Thread(() -> {
+			http.async("/user/show/2")
+				.setOnResponse((HttpResult result) -> {
+					System.out.println(result);
+				}).get();
+		}).start();
+		
+		sleep(10);
 	}
+	
+
 	
 	private HttpClient buildHttpClient() {
 		
@@ -50,8 +80,6 @@ public class HttpTest {
 
 						return chain.proceed(request);
 					});
-					
-		
 				})
 				.baseUrl("http://localhost:8080")
 				.callbackExecutor((Runnable run) -> {
@@ -69,7 +97,7 @@ public class HttpTest {
 						process.proceed();
 						
 					}).start();
-				}, false)
+				})
 				.addPreprocessor((Process process) -> {
 					new Thread(() -> {
 
@@ -164,6 +192,15 @@ public class HttpTest {
 		
 	}
 
+	
+	private void sleep(int seconds) {
+		try {
+			Thread.sleep(seconds * 1000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
+	
 
 	static void runOnUiThread(Runnable run) {
 		run.run();
