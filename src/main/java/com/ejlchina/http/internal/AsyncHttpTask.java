@@ -6,7 +6,7 @@ import com.ejlchina.http.HttpCall;
 import com.ejlchina.http.HttpException;
 import com.ejlchina.http.HttpTask;
 import com.ejlchina.http.OnCallback;
-import com.ejlchina.http.internal.HttpResult.State;
+import com.ejlchina.http.HttpResult.State;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -22,7 +22,7 @@ import okhttp3.Response;
 public class AsyncHttpTask extends HttpTask<AsyncHttpTask> {
 
 	
-    private OnCallback<HttpResult> onResponse;
+    private OnCallback<RealHttpResult> onResponse;
     private OnCallback<Exception> onException;
     private OnCallback<State> onComplete;
 
@@ -56,7 +56,7 @@ public class AsyncHttpTask extends HttpTask<AsyncHttpTask> {
 	 * @param onResponse 请求返回回调
 	 * @return HttpTask 实例
 	 */
-    public AsyncHttpTask setOnResponse(OnCallback<HttpResult> onResponse) {
+    public AsyncHttpTask setOnResponse(OnCallback<RealHttpResult> onResponse) {
         this.onResponse = onResponse;
         return this;
     }
@@ -153,9 +153,9 @@ public class AsyncHttpTask extends HttpTask<AsyncHttpTask> {
 		}
 
 		@Override
-		public synchronized HttpResult getResult() {
+		public synchronized RealHttpResult getResult() {
 			if (canceled) {
-				return new HttpResult(State.CANCELED);
+				return new RealHttpResult(State.CANCELED);
 			}
 			if (call == null) {
 				try {
@@ -167,7 +167,7 @@ public class AsyncHttpTask extends HttpTask<AsyncHttpTask> {
 			if (call != null) {
 				return call.getResult();
 			}
-			return new HttpResult(State.CANCELED);
+			return new RealHttpResult(State.CANCELED);
 		}
 
     }
@@ -175,7 +175,7 @@ public class AsyncHttpTask extends HttpTask<AsyncHttpTask> {
     class OkHttpCall implements HttpCall {
 
     	private Call call;
-    	private HttpResult result;
+    	private RealHttpResult result;
     	
 		public OkHttpCall(Call call) {
 			this.call = call;
@@ -201,7 +201,7 @@ public class AsyncHttpTask extends HttpTask<AsyncHttpTask> {
 		}
 
 		@Override
-		public synchronized HttpResult getResult() {
+		public synchronized RealHttpResult getResult() {
 			if (result == null) {
 				try {
 					wait();
@@ -212,7 +212,7 @@ public class AsyncHttpTask extends HttpTask<AsyncHttpTask> {
 			return result;
 		}
 
-		public void setResult(HttpResult result) {
+		public void setResult(RealHttpResult result) {
 			synchronized (this) {
 				this.result = result;
 				notify();
@@ -232,15 +232,15 @@ public class AsyncHttpTask extends HttpTask<AsyncHttpTask> {
             	State state = toState(e);
             	doOnException(state, e);
             	if (state == State.CANCELED) {
-            		httpCall.setResult(new HttpResult(state));
+            		httpCall.setResult(new RealHttpResult(state));
             	} else {
-            		httpCall.setResult(new HttpResult(state, e));
+            		httpCall.setResult(new RealHttpResult(state, e));
             	}
             }
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-            	HttpResult result = new HttpResult(response);
+            	RealHttpResult result = new RealHttpResult(response);
             	doOnResponse(result);
             	httpCall.setResult(result);
             }
@@ -250,7 +250,7 @@ public class AsyncHttpTask extends HttpTask<AsyncHttpTask> {
     }
     
 
-	private void doOnResponse(HttpResult result) {
+	private void doOnResponse(RealHttpResult result) {
 		httpClient.executeCallback(() -> {
 			if (onComplete != null) {
 			    onComplete.on(State.RESPONSED);

@@ -1,5 +1,7 @@
 package com.ejlchina.http.internal;
 
+import com.ejlchina.http.HttpResult.State;
+
 import okhttp3.Headers;
 import okhttp3.Response;
 
@@ -7,55 +9,27 @@ import okhttp3.Response;
  * Http 请求结果
  *
  */
-public class HttpResult {
+public class RealHttpResult {
 
 	private State state;
 	private Response response;
 	private Exception error;
 	
 	
-	public static enum State {
-		
-		/**
-		 * 执行异常
-		 */
-	    EXCEPTION,
-	    
-	    /**
-	     * 请求被取消
-	     */
-	    CANCELED,
-	    
-	    /**
-	     * 请求已响应
-	     */
-	    RESPONSED,
-	    
-	    /**
-	     * 网络超时
-	     */
-	    TIMEOUT,
-	    
-	    /**
-	     * 网络出错
-	     */
-	    NETWORK_ERROR
-		
+	
+	
+	public RealHttpResult() {
 	}
 	
-	
-	public HttpResult() {
-	}
-	
-	public HttpResult(State state) {
+	public RealHttpResult(State state) {
 		this.state = state;
 	}
 	
-	public HttpResult(Response response) {
+	public RealHttpResult(Response response) {
 		response(response);
 	}
 	
-	public HttpResult(State state, Exception error) {
+	public RealHttpResult(State state, Exception error) {
 		exception(state, error);
 	}
 	

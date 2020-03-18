@@ -12,7 +12,7 @@ import com.ejlchina.http.HTTP;
 import com.ejlchina.http.HttpCall;
 import com.ejlchina.http.Preprocessor.Process;
 import com.ejlchina.http.internal.HttpClient;
-import com.ejlchina.http.internal.HttpResult;
+import com.ejlchina.http.internal.RealHttpResult;
 
 import okhttp3.ConnectionPool;
 import okhttp3.Interceptor.Chain;

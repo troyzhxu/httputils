@@ -4,7 +4,7 @@ import java.io.IOException;
 
 import com.ejlchina.http.HttpException;
 import com.ejlchina.http.HttpTask;
-import com.ejlchina.http.internal.HttpResult.State;
+import com.ejlchina.http.HttpResult.State;
 
 import okhttp3.Call;
 
@@ -27,41 +27,41 @@ public class SyncHttpTask extends HttpTask<SyncHttpTask> {
     /**
      * 发起 GET 请求
      * @return 请求结果  
-     * @see HttpResult
+     * @see RealHttpResult
      */
-    public HttpResult get() {
+    public RealHttpResult get() {
         return request("GET");
     }
 
     /**
      * 发起 POST 请求
      * @return 请求结果  
-     * @see HttpResult
+     * @see RealHttpResult
      */
-    public HttpResult post() {
+    public RealHttpResult post() {
         return request("POST");
     }
 
     /**
      * 发起 PUT 请求
      * @return 请求结果  
-     * @see HttpResult
+     * @see RealHttpResult
      */
-    public HttpResult put() {
+    public RealHttpResult put() {
         return request("PUT");
     }
     
     /**
      * 发起 DELETE 请求
      * @return 请求结果  
-     * @see HttpResult
+     * @see RealHttpResult
      */
-    public HttpResult delete() {
+    public RealHttpResult delete() {
         return request("DELETE");
     }
     
-    private synchronized HttpResult request(String method) {
-    	HttpResult result = new HttpResult();
+    private synchronized RealHttpResult request(String method) {
+    	RealHttpResult result = new RealHttpResult();
     	httpClient.preprocess(this, () -> {
         	Call call = prepareCall(method);
             try {
