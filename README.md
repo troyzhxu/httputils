@@ -519,14 +519,14 @@ HTTP http = HTTP.builder()
 ```java
 HTTP http = HTTP.builder()
 		.addPreprocessor((Process process) -> {
-			// 异步获取 Token
-			requestToken((String token) -> {
-				// 获取当前的请求任务
-				HttpTask task = process.getTask();
-				// 为请求任务添加 Token 头信息
-				task.addHeader("Token", token);
-				// 继续当前的请求任务
-				process.proceed();
+			HttpTask<?> task = process.getTask();		// 获得当前的请求任务
+			String tag = task.getTag();
+			if (!"requiredAuth".equals(tag)) {			// 根据标签判断该任务是否需要Token
+				return;
+			}
+			requestToken((String token) -> {			// 异步获取 Token
+				task.addHeader("Token", token);			// 为任务添加 Token头信息
+				process.proceed();						// 继续当前的任务
 			});	
 		})
 		.build();
@@ -542,11 +542,15 @@ HTTP http = HTTP.builder()
 ```java
 HTTP http = HTTP.builder()
 		.addSerialPreprocessor((Process process) -> {
+			HttpTask<?> task = process.getTask();		// 获得当前的请求任务
+			String tag = task.getTag();
+			if (!"requiredAuth".equals(tag)) {			// 根据标签判断该任务是否需要Token
+				return;
+			}
 			// 检查过期，若需要则刷新Token
-			checkExpirationAndRefreshToken((String token) -> {
-				HttpTask task = process.getTask();
-				task.addHeader("Token", token);
-				process.proceed();	// 调用此方法前，不会有其它任务进入该预处理器
+			requestTokenAndRefreshIfExpired((String token) -> {
+				task.addHeader("Token", token);			// 为任务添加 Token头信息
+				process.proceed();						// 调用此方法前，不会有其它任务进入该预处理器
 			});	
 		})
 		.build();
