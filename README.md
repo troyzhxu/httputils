@@ -46,7 +46,7 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
   - [2.2 POST](#22-POST)
   - [2.3 PUT](#23-PUT)
   - [2.4 DELETE](#24-DELETE)
-+ [3 分析执行结果](#3-分析执行结果)
++ [3 解析执行结果](#3-解析执行结果)
   - [3.1 回调函数](#31-回调函数)
   - [3.2 HttpResult](#32-HttpResult)
   - [3.3 HttpCall](#33-HttpCall)
@@ -164,7 +164,7 @@ HttpCall call = http.async("http://api.demo.com/users/1")
 		})
 		.delete();														// 异步 DELETE
 ```
-### 3 分析执行结果
+### 3 解析执行结果
 
 #### 3.1 回调函数
 
