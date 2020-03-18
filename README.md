@@ -4,7 +4,6 @@
 [![License](https://img.shields.io/hexpm/l/plug.svg)](https://gitee.com/ejlchina-zhxu/httputils/blob/master/LICENSE)
 [![Troy.Zhou](https://img.shields.io/badge/%E4%BD%9C%E8%80%85-ejlchina-orange.svg)](https://github.com/ejlchina)
 
-
 ## 介绍
 Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前后端通用
 
@@ -18,6 +17,8 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
  * 异步预处理器
  * GET|POST|PUT|DELETE
  * 文件上传下载
+
+## [查看 1.x.x 版本的文档点我跳转](https://gitee.com/ejlchina-zhxu/httputils/blob/1.x/README.md)
 
 ## 安装教程
 
