@@ -72,7 +72,7 @@ public abstract class HttpTask<C extends HttpTask<?>> {
      * @param tag 标签
      * @return HttpTask 实例
      */
-    public C tag(String tag) {
+    public C setTag(String tag) {
     	this.tag = tag;
     	return (C) this;
     }
