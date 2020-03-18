@@ -117,45 +117,52 @@ http.async("http://api.demo.com/users/{id}")
 #### 2.1 GET
 
 ```java
-HttpResult result = http.sync("http://api.demo.com/users").get();	// 同步 GET 请求
+HttpResult result = http.sync("http://api.demo.com/users").get();		// 同步 GET
 
 HttpCall call = http.async("http://api.demo.com/users")
 		.setOnResponse((HttpResult result) -> {
 		
-		}).get();													// 异步 GET 请求
+		}).get();														// 异步 GET
 ```
 #### 2.2 POST
 
 ```java
 HttpResult result = http.sync("http://api.demo.com/users")
-		.addJsonParam("name", "Jack")
-		.addJsonParam("age", 20)
-		.post()														// 同步 POST 请求
+		.addBodyParam("name", "Jack")
+		.addBodyParam("age", 20)
+		.post();														// 同步 POST
 
 HttpCall call = http.async("http://api.demo.com/users")
-		.addJsonParam("name", "Jack")
-		.addJsonParam("age", 20)
+		.addBodyParam("name", "Jack")
+		.addBodyParam("age", 20)
 		.setOnResponse((HttpResult result) -> {
 		
-		}).post()													// 异步 POST 请求
+		}).post();														// 异步 POST
 ```
 #### 2.3 PUT
 
 ```java
-http.sync("http://api.demo.com/users/1")
+HttpResult result = http.sync("http://api.demo.com/users/1")
 		.addJsonParam("name", "Jack")
-		.put()										// 同步 PUT 请求
+		.put();															// 同步 PUT
 
-http.async("http://api.demo.com/users/1")
+HttpCall call = http.async("http://api.demo.com/users/1")
 		.addJsonParam("name", "Jack")
-		.put()										// 异步 PUT 请求
+		.setOnResponse((HttpResult result) -> {
+		
+		})
+		.put();															// 异步 PUT
 ```
 #### 2.4 DELETE
 
 ```java
-http.sync("http://api.demo.com/users/1").delete()	// 同步 DELETE 请求
+HttpResult result = http.sync("http://api.demo.com/users/1").delete();	// 同步 DELETE
 
-http.async("http://api.demo.com/users/1").delete()	// 异步 DELETE 请求
+HttpCall call = http.async("http://api.demo.com/users/1")
+		.setOnResponse((HttpResult result) -> {
+		
+		})
+		.delete();														// 异步 DELETE
 ```
 ### 3 分析执行结果
 
