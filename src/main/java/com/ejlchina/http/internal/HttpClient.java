@@ -1,4 +1,4 @@
-package com.ejlchina.http;
+package com.ejlchina.http.internal;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -9,6 +9,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.Executor;
+
+import com.ejlchina.http.Configurator;
+import com.ejlchina.http.HTTP;
+import com.ejlchina.http.HttpCall;
+import com.ejlchina.http.HttpException;
+import com.ejlchina.http.HttpTask;
+import com.ejlchina.http.Preprocessor;
 
 import okhttp3.Call;
 import okhttp3.MediaType;

@@ -1,5 +1,8 @@
 package com.ejlchina.http;
 
+import com.ejlchina.http.internal.AsyncHttpTask;
+import com.ejlchina.http.internal.SyncHttpTask;
+
 /**
  * Http 工具类，封装 OkHttp
 

@@ -1,6 +1,8 @@
 package com.ejlchina.http;
 
-import com.ejlchina.http.HttpClient.Builder;
+import com.ejlchina.http.internal.AsyncHttpTask;
+import com.ejlchina.http.internal.SyncHttpTask;
+import com.ejlchina.http.internal.HttpClient.Builder;
 
 /**
  * HTTP 客户端接口

@@ -13,6 +13,7 @@ import java.util.Map;
 
 import com.alibaba.fastjson.JSON;
 import com.ejlchina.http.HttpResult.State;
+import com.ejlchina.http.internal.HttpClient;
 
 import okhttp3.Call;
 import okhttp3.FormBody;

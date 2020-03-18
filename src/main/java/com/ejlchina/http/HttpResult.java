@@ -44,27 +44,27 @@ public class HttpResult {
 	}
 	
 	
-	HttpResult() {
+	public HttpResult() {
 	}
 	
-	HttpResult(State state) {
+	public HttpResult(State state) {
 		this.state = state;
 	}
 	
-	HttpResult(Response response) {
+	public HttpResult(Response response) {
 		response(response);
 	}
 	
-	HttpResult(State state, Exception error) {
+	public HttpResult(State state, Exception error) {
 		exception(state, error);
 	}
 	
-	void exception(State state, Exception error) {
+	public void exception(State state, Exception error) {
 		this.state = state;
 		this.error = error;
 	}
 	
-	void response(Response response) {
+	public void response(Response response) {
 		this.state = State.RESPONSED;
 		this.response = response;
 	}
