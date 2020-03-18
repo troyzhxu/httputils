@@ -67,7 +67,7 @@ public class RealHttpResult implements HttpResult {
 	}
 
 	@Override
-	public ResultBody getBody() {
+	public Body getBody() {
 		if (response != null) {
 			return new ResultBody(response.body());
 		}
@@ -81,7 +81,7 @@ public class RealHttpResult implements HttpResult {
 
 	@Override
 	public String toString() {
-		ResultBody body = getBody();
+		Body body = getBody();
 		String str = "HttpResult [\n  state: " + state + ",\n  status: " + getStatus() 
 				+ ",\n  headers: " + getHeaders();
 		if (body != null) {

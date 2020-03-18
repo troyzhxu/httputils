@@ -13,12 +13,13 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
 import com.ejlchina.http.HttpException;
+import com.ejlchina.http.HttpResult.Body;
 
 import okhttp3.MediaType;
 import okhttp3.ResponseBody;
 import okhttp3.internal.Util;
 
-public class ResultBody {
+public class ResultBody implements Body {
 
 	private ResponseBody body;
 
@@ -26,18 +27,22 @@ public class ResultBody {
 		this.body = body;
 	}
 
+	@Override
 	public MediaType getContentType() {
 		return body.contentType();
 	}
-	
+
+	@Override
 	public long getContentLength() {
 		return body.contentLength();
 	}
-	
+
+	@Override
 	public InputStream toByteStream() {
 		return body.byteStream();
 	}
-	
+
+	@Override
 	public byte[] toBytes() {
 		try {
 			return body.bytes();
@@ -45,11 +50,13 @@ public class ResultBody {
 			throw new HttpException("报文体转化字节数组出错", e);
 		}
 	}
-	
+
+	@Override
 	public Reader toCharStream() {
 		return body.charStream();
 	}
-	
+
+	@Override
 	public String toString() {
 		try {
 			return body.string();
@@ -57,28 +64,33 @@ public class ResultBody {
 			throw new HttpException("报文体转化字符串出错", e);
 		}
 	}
-	
+
+	@Override
 	public JSONObject toJsonObject() {
 		return JSON.parseObject(toString());
 	}
-	
+
+	@Override
 	public JSONArray toJsonArray() {
 		return JSON.parseArray(toString());
 	}
-	
+
+	@Override
 	public <T> T toBean(Class<T> type) {
 		return JSON.parseObject(toString(), type);
 	}
-	
+
+	@Override
 	public <T> T toBean(TypeReference<T> typeRef) {
 		return JSON.parseObject(toString(), typeRef.getType());
 	}
-	
 
+	@Override
 	public File toFile(String filePath) {
 		return toFile(new File(filePath));
 	}
-	
+
+	@Override
 	public File toFile(File file) {
 		if (file.exists() && !file.delete()) {
 			throw new HttpException(

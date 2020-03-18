@@ -1,12 +1,19 @@
 package com.ejlchina.http;
 
-import com.ejlchina.http.internal.ResultBody;
+import java.io.File;
+import java.io.InputStream;
+import java.io.Reader;
+
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.TypeReference;
 
 import okhttp3.Headers;
+import okhttp3.MediaType;
 
 
 /**
- * Http 请求结果
+ * Http 执行结果
  */
 public interface HttpResult {
 
@@ -39,6 +46,84 @@ public interface HttpResult {
 	    NETWORK_ERROR
 		
 	}
+	
+	/**
+	 * HTTP响应报文体
+	 */
+	interface Body {
+		
+		/**
+		 * @return 媒体类型
+		 */
+		MediaType getContentType();
+		
+		/**
+		 * @return 报文体字节长度
+		 */
+		long getContentLength();
+
+		/**
+		 * 同一个 Body 对象的 toXXX 类方法之可使用一个并且只能调用一次
+		 * @return 报文体转字节流
+		 */
+		InputStream toByteStream();
+		
+		/**
+		 * 同一个 Body 对象的 toXXX 类方法之可使用一个并且只能调用一次
+		 * @return 报文体转字节数组
+		 */
+		byte[] toBytes();
+		
+		/**
+		 * 同一个 Body 对象的 toXXX 类方法之可使用一个并且只能调用一次
+		 * @return 报文体转字符流
+		 */
+		Reader toCharStream();
+
+		/**
+		 * 同一个 Body 对象的 toXXX 类方法之可使用一个并且只能调用一次
+		 * @return 报文体转字符串
+		 */
+		String toString();
+
+		/**
+		 * 同一个 Body 对象的 toXXX 类方法之可使用一个并且只能调用一次
+		 * @return 报文体转Json对象
+		 */
+		JSONObject toJsonObject();
+
+		/**
+		 * 同一个 Body 对象的 toXXX 类方法之可使用一个并且只能调用一次
+		 * @return 报文体转Json数组
+		 */
+		JSONArray toJsonArray();
+
+		/**
+		 * 同一个 Body 对象的 toXXX 类方法之可使用一个并且只能调用一次
+		 * @return 报文体Json文本转JavaBean
+		 */
+		<T> T toBean(Class<T> type);
+
+		/**
+		 * 同一个 Body 对象的 toXXX 类方法之可使用一个并且只能调用一次
+		 * @return 报文体Json文本转JavaBean
+		 */
+		<T> T toBean(TypeReference<T> typeRef);
+
+		/**
+		 * 同一个 Body 对象的 toXXX 类方法之可使用一个并且只能调用一次
+		 * @return 报文体保存到指定路径的文件
+		 */
+		File toFile(String filePath);
+
+		/**
+		 * 同一个 Body 对象的 toXXX 类方法之可使用一个并且只能调用一次
+		 * @return 报文体保存到指定文件并返回
+		 */
+		File toFile(File file);
+		
+	}
+	
 
 	/**
 	 * @return 执行状态
@@ -51,7 +136,6 @@ public interface HttpResult {
 	int getStatus();
 
 	/**
-	 * 
 	 * @return 是否响应成功，状态码在 [200..300) 之间
 	 */
 	boolean isSuccessful();
@@ -64,7 +148,7 @@ public interface HttpResult {
 	/**
 	 * @return 响应报文体
 	 */
-	ResultBody getBody();
+	Body getBody();
 	
 	/**
 	 * @return 执行中发生的异常
