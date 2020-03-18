@@ -406,7 +406,7 @@ Java Bean 自动转 JSON
 #### 2.1 BaseUrl
 
 ```java
-	HttpClient http = HttpClient.builder()
+	HTTP http = HTTP.builder()
 			.baseUrl("http://api.demo.com")		// 设置 BaseUrl
 			.build();
 ```
@@ -431,7 +431,7 @@ Java Bean 自动转 JSON
 　　如何想改变执行回调函数的线程时，可以配置回调函数执行器。例如在Android里，让所有的回调函数都在UI线程里执行，则可以在构建`HttpClient`时配置回调执行器：
 
 ```java
-	HttpClient http = HttpClient.builder()
+	HTTP http = HTTP.builder()
 			.callbackExecutor((Runnable run) -> {
 				runOnUiThread(run);				// 在UI线程执行
 			})
@@ -441,7 +441,7 @@ Java Bean 自动转 JSON
 #### 2.3 配置`OkHttpClient`
 
 ```java
-	HttpClient http = HttpClient.builder()
+	HTTP http = HTTP.builder()
 		.config((Builder builder) -> {
 			// 配置连接池 最小10个连接（不配置默认为 5）
 			builder.connectionPool(new ConnectionPool(10, 5, TimeUnit.MINUTES));
@@ -465,7 +465,7 @@ Java Bean 自动转 JSON
 　　例如，当我们想为请求任务自动添加`Token`头信息，而`Token`只能通过异步方法`requestToken`获取时，我们可以添加这样的预处理器：
 
 ```java
-	HttpClient http = HttpClient.builder()
+	HTTP http = HTTP.builder()
 			.addPreprocessor((Process process) -> {
 				// 异步获取 Token
 				requestToken((String token) -> {
@@ -488,7 +488,7 @@ Java Bean 自动转 JSON
 　　为了解决这个问题，`httputils`提供了串行预处理器，它可以让HTTP任务排好队，一个一个的进入预处理器：
 
 ```java
-	HttpClient http = HttpClient.builder()
+	HTTP http = HTTP.builder()
 			.addSerialPreprocessor((Process process) -> {
 				// 检查过期，若需要则刷新Token
 				checkExpirationAndRefreshToken((String token) -> {
