@@ -3,6 +3,7 @@ package com.ejlchina.http;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +28,8 @@ public class HttpClient implements HTTP {
 	// 预处理器
 	private Preprocessor[] preprocessors;
 
+	private List<TagCall> tagCalls;
+	
 	
 	private HttpClient(Builder builder) {
 		this.client = builder.client;
@@ -34,29 +37,67 @@ public class HttpClient implements HTTP {
 		this.mediaTypes = builder.mediaTypes;
 		this.callbackExecutor = builder.callbackExecutor;
 		this.preprocessors = builder.preprocessors.toArray(new Preprocessor[builder.preprocessors.size()]);
+		this.tagCalls = Collections.synchronizedList(new LinkedList<>());
 	}
 	
-	/**
-	 * 异步请求
-	 * @param urlPath 请求地址
-	 * @return 异步 HttpClient
-	 */
 	@Override
     public AsyncHttpTask async(String urlPath) {
         return new AsyncHttpTask(this, urlPath(urlPath));
     }
 
-	/**
-	 * 同步请求
-	 * @param urlPath 请求地址
-	 * @return 同步 HttpClient
-	 */
 	@Override
     public SyncHttpTask sync(String urlPath) {
         return new SyncHttpTask(this, urlPath(urlPath));
     }
    
+	@Override
+	public int cancel(String tag) {
+		if (tag == null) {
+			return 0;
+		}
+		int count = 0;
+		Iterator<TagCall> it = tagCalls.iterator();
+		while (it.hasNext()) {
+			TagCall tagCall = it.next();
+			if (tag.equals(tagCall.tag)) {
+				if (tagCall.call.cancel()) {
+					count++;
+				}
+				it.remove();
+			}
+		}
+		return count;
+	}
     
+	public void addTagCall(String tag, HttpCall call, HttpTask<?> task) {
+		tagCalls.add(new TagCall(tag, call, task));
+	}
+	
+	public void removeTagCall(HttpTask<?> task) {
+		Iterator<TagCall> it = tagCalls.iterator();
+		while (it.hasNext()) {
+			TagCall tagCall = it.next();
+			if (tagCall.task == task) {
+				it.remove();
+				break;
+			}
+		}
+	}
+	
+	class TagCall {
+		
+		String tag;
+		HttpCall call;
+		HttpTask<?> task;
+		
+		public TagCall(String tag, HttpCall call, HttpTask<?> task) {
+			this.tag = tag;
+			this.call = call;
+			this.task = task;
+		}
+		
+	}
+	
 	public Call callRequest(Request request) {
     	return client.newCall(request);
     }

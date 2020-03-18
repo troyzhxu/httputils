@@ -1,6 +1,9 @@
 package com.ejlchina.test;
 
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.junit.Test;
@@ -18,7 +21,23 @@ import okhttp3.Request;
 
 public class HttpTest {
 
-
+	@Test
+	public void testIterator() {
+		List<Integer> list = new ArrayList<>();
+		list.add(0);
+		list.add(1);
+		list.add(2);
+		list.add(3);
+		
+		Iterator<Integer> it = list.iterator();
+		
+		it.next();
+		it.next();
+		it.remove();
+		
+		System.out.println(list);
+		
+	}
 	
 	@Test
 	public void testPreprocessor() {

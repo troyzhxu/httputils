@@ -99,7 +99,7 @@ public class AsyncHttpTask extends HttpTask<AsyncHttpTask> {
 			}
     	});
     	if (tag != null) {
-    		
+    		httpClient.addTagCall(tag, call, this);
     	}
     	return call;
     }
@@ -111,14 +111,19 @@ public class AsyncHttpTask extends HttpTask<AsyncHttpTask> {
     	private HttpCall call;
     	
 		@Override
-		public synchronized boolean cancel() {
+		public boolean cancel() {
 			boolean res = true;
-			if (call != null) {
-				res = call.cancel();
-			} else {
-				canceled = true;
+			synchronized (this) {
+				if (call != null) {
+					res = call.cancel();
+				} else {
+					canceled = true;
+				}
+				notify();
 			}
-			notify();
+			if (tag != null && call == null) {
+	    		httpClient.removeTagCall(AsyncHttpTask.this);
+	    	}
 			return res;
 		}
 
@@ -203,9 +208,14 @@ public class AsyncHttpTask extends HttpTask<AsyncHttpTask> {
 			return result;
 		}
 
-		public synchronized void setResult(HttpResult result) {
-			this.result = result;
-			notify();
+		public void setResult(HttpResult result) {
+			synchronized (this) {
+				this.result = result;
+				notify();
+			}
+			if (tag != null) {
+	    		httpClient.removeTagCall(AsyncHttpTask.this);
+	    	}
 		}
 
     }
