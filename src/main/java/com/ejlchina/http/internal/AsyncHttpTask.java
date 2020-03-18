@@ -53,7 +53,7 @@ public class AsyncHttpTask extends HttpTask<AsyncHttpTask> {
     
 	/**
 	 * 设置请求得到响应后的回调函数
-	 * @param onResponse 请求返回回调
+	 * @param onResponse 请求响应回调
 	 * @return HttpTask 实例
 	 */
     public AsyncHttpTask setOnResponse(OnCallback<HttpResult> onResponse) {

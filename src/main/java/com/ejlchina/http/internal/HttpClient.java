@@ -297,6 +297,7 @@ public class HttpClient implements HTTP {
 	    /**
 	     * 配置 OkHttpClient
 	     * @param configurator 配置器
+	     * @return Builder
 	     */
 		public Builder config(Configurator configurator) {
 			this.configurator = configurator;
@@ -306,17 +307,29 @@ public class HttpClient implements HTTP {
 	    /**
 	     * 设置 baseUrl
 	     * @param baseUrl 全局URL前缀
+	     * @return Builder
 	     */
 		public Builder baseUrl(String baseUrl) {
 			this.baseUrl = baseUrl;
 			return this;
 		}
 		
+		/**
+		 * 配置媒体类型
+		 * @param mediaTypes 媒体类型
+		 * @return Builder
+		 */
 		public Builder mediaTypes(Map<String, String> mediaTypes) {
 			this.mediaTypes.putAll(mediaTypes);
 			return this;
 		}
 		
+		/**
+		 * 配置媒体类型
+		 * @param key 媒体类型KEY
+		 * @param value 媒体类型VALUE
+		 * @return Builder
+		 */
 		public Builder mediaTypes(String key, String value) {
 			this.mediaTypes.put(key, value);
 			return this;
@@ -325,9 +338,10 @@ public class HttpClient implements HTTP {
 	    /**
 	     * 设置回调执行器，例如实现切换线程功能，只对异步请求有效
 	     * @param executor 回调执行器
+	     * @return Builder
 	     */
-		public Builder callbackExecutor(Executor callbackExecutor) {
-			this.callbackExecutor = callbackExecutor;
+		public Builder callbackExecutor(Executor executor) {
+			this.callbackExecutor = executor;
 			return this;
 		}
 		
@@ -344,7 +358,6 @@ public class HttpClient implements HTTP {
 		/**
 		 * 添加预处理器
 		 * @param preprocessor 预处理器
-		 * @param serial 是否是串行预处理器
 		 * @return Builder
 		 */
 		public Builder addSerialPreprocessor(Preprocessor preprocessor) {

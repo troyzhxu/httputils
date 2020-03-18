@@ -14,9 +14,6 @@ import okhttp3.Response;
  * 同步 Http 请求任务
  *  
  * @author Troy.Zhou
- *
- * @param <S> 请求成功时返回的数据类型
- * @param <F> 请求失败时返回的数据类型
  * 
  */
 public class SyncHttpTask extends HttpTask<SyncHttpTask> {
@@ -28,7 +25,6 @@ public class SyncHttpTask extends HttpTask<SyncHttpTask> {
     /**
      * 发起 GET 请求
      * @return 请求结果  
-     * @see RealHttpResult
      */
     public HttpResult get() {
         return request("GET");
@@ -37,7 +33,6 @@ public class SyncHttpTask extends HttpTask<SyncHttpTask> {
     /**
      * 发起 POST 请求
      * @return 请求结果  
-     * @see RealHttpResult
      */
     public HttpResult post() {
         return request("POST");
@@ -46,7 +41,6 @@ public class SyncHttpTask extends HttpTask<SyncHttpTask> {
     /**
      * 发起 PUT 请求
      * @return 请求结果  
-     * @see RealHttpResult
      */
     public HttpResult put() {
         return request("PUT");
@@ -55,7 +49,6 @@ public class SyncHttpTask extends HttpTask<SyncHttpTask> {
     /**
      * 发起 DELETE 请求
      * @return 请求结果  
-     * @see RealHttpResult
      */
     public HttpResult delete() {
         return request("DELETE");
