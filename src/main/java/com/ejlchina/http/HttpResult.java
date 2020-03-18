@@ -100,24 +100,28 @@ public interface HttpResult {
 
 		/**
 		 * 同一个 Body 对象的 toXXX 类方法只可使用一个并且只能调用一次
+		 * @param type 目标类型
 		 * @return 报文体Json文本转JavaBean
 		 */
 		<T> T toBean(Class<T> type);
 
 		/**
 		 * 同一个 Body 对象的 toXXX 类方法只可使用一个并且只能调用一次
+		 * @param type 目标类型
 		 * @return 报文体Json文本转JavaBean
 		 */
 		<T> T toBean(TypeReference<T> typeRef);
 
 		/**
 		 * 同一个 Body 对象的 toXXX 类方法只可使用一个并且只能调用一次
+		 * @param filePath 目标路径
 		 * @return 报文体保存到指定路径的文件
 		 */
 		File toFile(String filePath);
 
 		/**
 		 * 同一个 Body 对象的 toXXX 类方法只可使用一个并且只能调用一次
+		 * @param file 目标文件
 		 * @return 报文体保存到指定文件并返回
 		 */
 		File toFile(File file);
