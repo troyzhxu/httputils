@@ -3,9 +3,10 @@ package com.ejlchina.http.internal;
 import java.io.IOException;
 
 import com.ejlchina.http.HttpCall;
+import com.ejlchina.http.HttpResult;
+import com.ejlchina.http.HttpResult.State;
 import com.ejlchina.http.HttpTask;
 import com.ejlchina.http.OnCallback;
-import com.ejlchina.http.HttpResult.State;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -21,7 +22,7 @@ import okhttp3.Response;
 public class AsyncHttpTask extends HttpTask<AsyncHttpTask> {
 
 	
-    private OnCallback<RealHttpResult> onResponse;
+    private OnCallback<HttpResult> onResponse;
     private OnCallback<Exception> onException;
     private OnCallback<State> onComplete;
 
@@ -55,7 +56,7 @@ public class AsyncHttpTask extends HttpTask<AsyncHttpTask> {
 	 * @param onResponse 请求返回回调
 	 * @return HttpTask 实例
 	 */
-    public AsyncHttpTask setOnResponse(OnCallback<RealHttpResult> onResponse) {
+    public AsyncHttpTask setOnResponse(OnCallback<HttpResult> onResponse) {
         this.onResponse = onResponse;
         return this;
     }
