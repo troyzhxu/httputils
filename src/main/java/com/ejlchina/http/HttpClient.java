@@ -69,6 +69,10 @@ public class HttpClient implements HTTP {
 		return count;
 	}
     
+	public int getTagCallCount() {
+		return tagCalls.size();
+	}
+	
 	public void addTagCall(String tag, HttpCall call, HttpTask<?> task) {
 		tagCalls.add(new TagCall(tag, call, task));
 	}
