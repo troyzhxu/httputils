@@ -73,8 +73,9 @@ public class SyncHttpTask extends HttpTask<SyncHttpTask> {
                 	SyncHttpTask.this.notify();
                 }
             } catch (IOException e) {
+            	State state = toState(e);
             	synchronized (SyncHttpTask.this) {
-            		result.exception(toState(e), e);
+					result.exception(state, e);
                 }
             }
     	});
