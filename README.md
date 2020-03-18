@@ -74,15 +74,15 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 ```
 　　`HTTP`对象有以下三个方法：
 
-* `AsyncHttpTask async(String urlPath)` 开始一个异步HTTP任务
-* `SyncHttpTask sync(String urlPath)` 开始一个同步HTTP任务
-* `int cancel(String tag)` 根据标签批量取消HTTP任务，返回被取消的任务数
+* `async(String urlPath)` 开始一个异步HTTP任务
+* `sync(String urlPath)` 开始一个同步HTTP任务
+* `cancel(String tag)` 根据标签批量取消HTTP任务
 
 　　为了简化文档，下文中出现的`http`均是已构建好的`HTTP`对象。
 
 #### 1.2 同步请求
 
-　　使用方法`sync(String url)`发起同步请求
+　　使用方法`sync(String url)`开始一个同步请求：
 
 ```java
 // 最终路径 http://api.demo.com/users?name=Jack
@@ -92,10 +92,11 @@ User user = http.sync("http://api.demo.com/users")
 		.getBody()									// 获取响应报文体
 		.toBean(User.class);						// 得到目标数据
 ```
+　　方法`sync`返回一个同步`HttpTask`，可链式使用。
 
 #### 1.3 异步请求
 
-　　使用方法`async(String url)`发起异步请求
+　　使用方法`async(String url)`开始一个异步请求：
 
 ```java
 // 最终路径为 http://api.demo.com/users/1
@@ -107,14 +108,23 @@ http.async("http://api.demo.com/users/{id}")
 		})
 		.get();	  	// GET请求
 ```
+　　方法`async`返回一个异步`HttpTask`，可链式使用。
+
 ### 2 请求方法
+
+　　同步与异步的`HttpTask`都拥有`get`、`post`、`put`与`delete`方法。不同的是：同步`HttpTask`的这些方法返回一个`HttpResult`，而异步`HttpTask`的这些方法返回一个`HttpCall`。
 
 #### 2.1 GET
 
 ```java
-http.sync("http://api.demo.com/users").get()		// 同步 GET 请求
+HttpResult result = http.sync("http://api.demo.com/users")
+		.get()										// 同步 GET 请求
 
-http.async("http://api.demo.com/users").get()		// 异步 GET 请求
+HttpCall call = http.async("http://api.demo.com/users")
+		.setOnResponse((HttpResult result) -> {
+		
+		})
+		.get()										// 异步 GET 请求
 ```
 #### 2.2 POST
 
