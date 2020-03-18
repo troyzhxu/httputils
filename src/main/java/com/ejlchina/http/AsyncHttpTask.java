@@ -28,9 +28,9 @@ public class AsyncHttpTask extends HttpTask<AsyncHttpTask> {
 
 
 	/**
-	 * 设置请求异常后的回调函数，设置后，与HttpClient有关的异常将不再向上抛出
+	 * 设置请求执行异常后的回调函数，设置后，相关异常将不再向上抛出
 	 * @param onException 请求异常回调
-	 * @return HttpClient 实例
+	 * @return HttpTask 实例
 	 */
     public AsyncHttpTask setOnException(OnCallback<Exception> onException) {
         this.onException = onException;
@@ -38,9 +38,9 @@ public class AsyncHttpTask extends HttpTask<AsyncHttpTask> {
     }
 
 	/**
-	 * 设置请求完成后的回调函数，无论成功|失败|异常 都会被执行
+	 * 设置请求执行完成后的回调函数，无论成功|失败|异常 都会被执行
 	 * @param onComplete 请求完成回调
-	 * @return HttpClient 实例
+	 * @return HttpTask 实例
 	 */
     public AsyncHttpTask setOnComplete(OnCallback<State> onComplete) {
         this.onComplete = onComplete;
@@ -48,10 +48,9 @@ public class AsyncHttpTask extends HttpTask<AsyncHttpTask> {
     }
     
 	/**
-	 * 设置请求响应后的回调函数，参数未经解析，可用于返回非文本的请求，例如下载文件
-	 * 设置了OnResponse，就不可以再设置 OnSuccess 和 OnFailure 回调
+	 * 设置请求得到响应后的回调函数
 	 * @param onResponse 请求返回回调
-	 * @return HttpClient 实例
+	 * @return HttpTask 实例
 	 */
     public AsyncHttpTask setOnResponse(OnCallback<HttpResult> onResponse) {
         this.onResponse = onResponse;

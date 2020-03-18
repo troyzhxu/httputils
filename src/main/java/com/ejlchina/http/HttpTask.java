@@ -45,6 +45,7 @@ public abstract class HttpTask<C extends HttpTask<?>> {
     private Map<String, FilePara> files;
     private String requestJson;
     protected boolean nothrow;
+    protected String tag;
 
     
     public HttpTask(HttpClient httpClient, String urlPath) {
@@ -57,7 +58,7 @@ public abstract class HttpTask<C extends HttpTask<?>> {
     /**
      * 设置在发生异常时不向上抛出，设置后：
      * 异步请求可以在异常回调内捕获异常，同步请求在返回结果中找到该异常
-     * @return HttpClient 实例
+     * @return HttpTask 实例
      */
     public C nothrow() {
     	this.nothrow = true;
@@ -65,10 +66,28 @@ public abstract class HttpTask<C extends HttpTask<?>> {
     }
     
     /**
+     * 为请求任务添加标签
+     * @param tag 标签
+     * @return HttpTask 实例
+     */
+    public C tag(String tag) {
+    	this.tag = tag;
+    	return (C) this;
+    }
+    
+    /**
+     * 获取请求任务的标签
+     * @return 标签
+     */
+    public String getTag() {
+		return tag;
+	}
+
+	/**
      * 添加请求头
      * @param name 请求头名
      * @param value 请求头值
-     * @return HttpClient 实例
+     * @return HttpTask 实例
      */
 	public C addHeader(String name, String value) {
     	if (name != null && value != null) {
@@ -83,7 +102,7 @@ public abstract class HttpTask<C extends HttpTask<?>> {
     /**
      * 添加请求头
      * @param headers 请求头集合
-     * @return HttpClient 实例
+     * @return HttpTask 实例
      */
     public C addHeader(Map<String, String> headers) {
     	if (headers != null) {
@@ -99,7 +118,7 @@ public abstract class HttpTask<C extends HttpTask<?>> {
      * 路径参数：替换URL里的{name}
      * @param name 参数名
      * @param value 参数值
-     * @return HttpClient 实例
+     * @return HttpTask 实例
      **/
     public C addPathParam(String name, String value) {
     	if (name != null && value != null) {
@@ -115,7 +134,7 @@ public abstract class HttpTask<C extends HttpTask<?>> {
      * 路径参数：替换URL里的{name}
      * @param name 参数名
      * @param value 参数值
-     * @return HttpClient 实例
+     * @return HttpTask 实例
      **/
     public C addPathParam(String name, Number value) {
     	if (value != null) {
@@ -127,7 +146,7 @@ public abstract class HttpTask<C extends HttpTask<?>> {
     /**
      * 路径参数：替换URL里的{name}
      * @param params 参数集合
-     * @return HttpClient 实例
+     * @return HttpTask 实例
      **/
     public C addPathParam(Map<String, ?> params) {
         if (params != null) {
@@ -147,7 +166,7 @@ public abstract class HttpTask<C extends HttpTask<?>> {
      * URL参数：拼接在URL后的参数
      * @param name 参数名
      * @param value 参数值
-     * @return HttpClient 实例
+     * @return HttpTask 实例
      **/
     public C addUrlParam(String name, String value) {
     	if (name != null && value != null) {
@@ -163,7 +182,7 @@ public abstract class HttpTask<C extends HttpTask<?>> {
      * URL参数：拼接在URL后的参数
      * @param name 参数名
      * @param value 参数值
-     * @return HttpClient 实例
+     * @return HttpTask 实例
      **/
     public C addUrlParam(String name, Number value) {
     	if (value != null) {
@@ -175,7 +194,7 @@ public abstract class HttpTask<C extends HttpTask<?>> {
     /**
      * URL参数：拼接在URL后的参数
      * @param params 参数集合
-     * @return HttpClient 实例
+     * @return HttpTask 实例
      **/
     public C addUrlParam(Map<String, ?> params) {
         if (params != null) {
@@ -195,7 +214,7 @@ public abstract class HttpTask<C extends HttpTask<?>> {
      * Body参数：放在Body里的参数
      * @param name 参数名
      * @param value 参数值
-     * @return HttpClient 实例
+     * @return HttpTask 实例
      **/
     public C addBodyParam(String name, String value) {
     	if (name != null && value != null) {
@@ -211,7 +230,7 @@ public abstract class HttpTask<C extends HttpTask<?>> {
      * Body参数：放在Body里的参数
      * @param name 参数名
      * @param value 参数值
-     * @return HttpClient 实例
+     * @return HttpTask 实例
      **/
     public C addBodyParam(String name, Number value) {
     	if (value != null) {
@@ -223,7 +242,7 @@ public abstract class HttpTask<C extends HttpTask<?>> {
     /**
      * Body参数：放在Body里的参数
      * @param params 参数集合
-     * @return HttpClient 实例
+     * @return HttpTask 实例
      **/
     public C addBodyParam(Map<String, ?> params) {
     	if (params != null) {
@@ -244,7 +263,7 @@ public abstract class HttpTask<C extends HttpTask<?>> {
      * 若请求json为多层结构，请使用setRequestJson方法
      * @param name JSON键名
      * @param value JSON键值
-     * @return HttpClient 实例
+     * @return HttpTask 实例
      */
     public C addJsonParam(String name, String value) {
     	if (name != null && value != null) {
@@ -261,7 +280,7 @@ public abstract class HttpTask<C extends HttpTask<?>> {
      * 若请求json为多层结构，请使用setRequestJson方法
      * @param name JSON键名
      * @param value JSON键值
-     * @return HttpClient 实例
+     * @return HttpTask 实例
      */
     public C addJsonParam(String name, Number value) {
     	if (value != null) {
@@ -274,7 +293,7 @@ public abstract class HttpTask<C extends HttpTask<?>> {
      * Json参数：请求体为Json，只支持单层Json
      * 若请求json为多层结构，请使用setRequestJson方法
      * @param params JSON键值集合
-     * @return HttpClient 实例
+     * @return HttpTask 实例
      */
     public C addJsonParam(Map<String, Object> params) {
     	if (params != null) {
@@ -293,7 +312,7 @@ public abstract class HttpTask<C extends HttpTask<?>> {
     /**
      * 请求体为json
      * @param json JSON字符串
-     * @return HttpClient 实例
+     * @return HttpTask 实例
      **/
     public C setRequestJson(String json) {
         if (json != null) {
@@ -305,7 +324,7 @@ public abstract class HttpTask<C extends HttpTask<?>> {
     /**
      * 请求体为json
      * @param bean Java对象，将跟换 bean的get方法序列化程 json 字符串
-     * @return HttpClient 实例
+     * @return HttpTask 实例
      **/
     public C setRequestJson(Object bean) {
         if (bean != null) {
@@ -318,7 +337,7 @@ public abstract class HttpTask<C extends HttpTask<?>> {
      * 请求体为json
      * @param bean Java对象，将跟换 bean的get方法序列化程 json 字符串
      * @param dateFormat 序列化json时对日期类型字段的处理格式
-     * @return HttpClient 实例
+     * @return HttpTask 实例
      **/
     public C setRequestJson(Object bean, String dateFormat) {
         if (bean != null) {
@@ -331,7 +350,7 @@ public abstract class HttpTask<C extends HttpTask<?>> {
      * 添加文件参数
      * @param name 参数名
      * @param file 文件
-     * @return HttpClient 实例
+     * @return HttpTask 实例
      */
     public C addFileParam(String name, File file) {
         if (name != null && file != null && file.exists()) {
@@ -351,7 +370,7 @@ public abstract class HttpTask<C extends HttpTask<?>> {
      * @param name 参数名
      * @param type 文件类型: 如 png、jpg、jpeg 等
      * @param inputStream 文件输入流
-     * @return HttpClient 实例
+     * @return HttpTask 实例
      */
     public C addFileParam(String name, String type, InputStream inputStream) {
     	String fileName = System.currentTimeMillis() + "." + type;
@@ -364,7 +383,7 @@ public abstract class HttpTask<C extends HttpTask<?>> {
      * @param type 文件类型: 如 png、jpg、jpeg 等
      * @param fileName 文件名
      * @param input 文件输入流
-     * @return HttpClient 实例
+     * @return HttpTask 实例
      */
     public C addFileParam(String name, String type, String fileName, InputStream input) {
         if (name != null && input != null) {
@@ -386,7 +405,7 @@ public abstract class HttpTask<C extends HttpTask<?>> {
      * @param name 参数名
      * @param type 文件类型: 如 png、jpg、jpeg 等
      * @param content 文件内容
-     * @return HttpClient 实例
+     * @return HttpTask 实例
      */
     public C addFileParam(String name, String type, byte[] content) {
     	String fileName = System.currentTimeMillis() + "." + type;
@@ -399,7 +418,7 @@ public abstract class HttpTask<C extends HttpTask<?>> {
      * @param type 文件类型: 如 png、jpg、jpeg 等
      * @param fileName 文件名
      * @param content 文件内容
-     * @return HttpClient 实例
+     * @return HttpTask 实例
      */
     public C addFileParam(String name, String type, String fileName, byte[] content) {
         if (name != null && content != null) {
@@ -425,7 +444,6 @@ public abstract class HttpTask<C extends HttpTask<?>> {
     	
     }
     
-
     protected Call prepareCall(String method) {
     	assertNotConflict("GET".equals(method));
         Request.Builder builder = new Request.Builder()
