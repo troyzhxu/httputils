@@ -117,14 +117,12 @@ http.async("http://api.demo.com/users/{id}")
 #### 2.1 GET
 
 ```java
-HttpResult result = http.sync("http://api.demo.com/users")
-		.get()										// 同步 GET 请求
+HttpResult result = http.sync("http://api.demo.com/users").get()	// 同步 GET 请求
 
 HttpCall call = http.async("http://api.demo.com/users")
 		.setOnResponse((HttpResult result) -> {
 		
-		})
-		.get()										// 异步 GET 请求
+		}).get()													// 异步 GET 请求
 ```
 #### 2.2 POST
 
