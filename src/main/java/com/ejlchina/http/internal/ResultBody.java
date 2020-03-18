@@ -12,7 +12,6 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
-import com.ejlchina.http.HttpException;
 import com.ejlchina.http.HttpResult.Body;
 
 import okhttp3.MediaType;

@@ -3,7 +3,6 @@ package com.ejlchina.http.internal;
 import java.io.IOException;
 
 import com.ejlchina.http.HttpCall;
-import com.ejlchina.http.HttpException;
 import com.ejlchina.http.HttpTask;
 import com.ejlchina.http.OnCallback;
 import com.ejlchina.http.HttpResult.State;

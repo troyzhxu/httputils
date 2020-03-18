@@ -2,7 +2,6 @@ package com.ejlchina.http.internal;
 
 import java.io.IOException;
 
-import com.ejlchina.http.HttpException;
 import com.ejlchina.http.HttpResult;
 import com.ejlchina.http.HttpResult.State;
 import com.ejlchina.http.HttpTask;
