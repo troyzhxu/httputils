@@ -26,7 +26,7 @@ public interface HTTP {
     /**
      * 根据标签取消HTTP任务
      * @param tag 标签
-     * @return 取消的任务数量
+     * @return 被取消的任务数量
      */
     int cancel(String tag);
     
