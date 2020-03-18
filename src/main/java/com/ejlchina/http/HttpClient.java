@@ -14,7 +14,7 @@ import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 
-public class HttpClient {
+public class HttpClient implements HTTP {
 
 	
 	private OkHttpClient client;
@@ -41,6 +41,7 @@ public class HttpClient {
 	 * @param urlPath 请求地址
 	 * @return 异步 HttpClient
 	 */
+	@Override
     public AsyncHttpTask async(String urlPath) {
         return new AsyncHttpTask(this, urlPath(urlPath));
     }
@@ -50,16 +51,17 @@ public class HttpClient {
 	 * @param urlPath 请求地址
 	 * @return 同步 HttpClient
 	 */
+	@Override
     public SyncHttpTask sync(String urlPath) {
         return new SyncHttpTask(this, urlPath(urlPath));
     }
    
     
-    Call callRequest(Request request) {
+	public Call callRequest(Request request) {
     	return client.newCall(request);
     }
     
-    MediaType getMediaType(String type) {
+	public MediaType getMediaType(String type) {
         String mediaType = mediaTypes.get(type);
         if (mediaType != null) {
             return MediaType.parse(mediaType);
@@ -67,7 +69,7 @@ public class HttpClient {
         return MediaType.parse("application/octet-stream");
     }
 
-    void executeCallback(Runnable callback) {
+	public void executeCallback(Runnable callback) {
     	if (callbackExecutor != null) {
     		callbackExecutor.execute(callback);
     	} else {
@@ -75,7 +77,7 @@ public class HttpClient {
     	}
     }
 
-    void preprocess(HttpTask<? extends HttpTask<?>> httpTask, Runnable request) {
+	public void preprocess(HttpTask<? extends HttpTask<?>> httpTask, Runnable request) {
     	if (preprocessors.length > 0) {
     		HttpProcess process = new HttpProcess(preprocessors, 
     				httpTask, request);
@@ -161,7 +163,7 @@ public class HttpClient {
 		}
 
 		@Override
-		public HttpClient getClient() {
+		public HTTP getHttp() {
 			return HttpClient.this;
 		}
 
@@ -181,11 +183,6 @@ public class HttpClient {
 		}
 
     }
-    
-    
-	public static Builder builder() {
-		return new Builder();
-	}
 	
 	public Builder newBuilder() {
 		return new Builder(this);
@@ -200,8 +197,7 @@ public class HttpClient {
 		if (baseUrl != null) {
 			return baseUrl + urlPath;
 		}
-		throw new HttpException("在设置 BaseUrl 之前，您必须使用全路径URL发起请求，当前URL为：" + urlPath 
-				+ "\n若要设置 BaseUrl，请使用 HttpClient.setBaseUrl() 方法");
+		throw new HttpException("在设置 BaseUrl 之前，您必须使用全路径URL发起请求，当前URL为：" + urlPath);
 	}
     
 	
@@ -305,7 +301,7 @@ public class HttpClient {
 			return this;
 		}
 		
-		public HttpClient build() {
+		public HTTP build() {
 			if (configurator != null || client == null) {
 				OkHttpClient.Builder builder = new OkHttpClient.Builder();
 				if (configurator != null) {

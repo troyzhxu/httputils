@@ -22,9 +22,9 @@ public interface Preprocessor {
 		HttpTask<? extends HttpTask<?>> getTask();
 		
 		/**
-		 * @return HttpClient
+		 * @return HTTP
 		 */
-		HttpClient getClient();
+		HTTP getHttp();
 		
 		/**
 		 * 继续HTTP请求任务

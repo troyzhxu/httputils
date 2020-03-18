@@ -17,24 +17,24 @@ package com.ejlchina.http;
 public class HttpUtils {
 	
 	
-	private static HttpClient httpClient;
+	private static HTTP http;
 	
 	
-	public static void of(HttpClient httpClient) {
-		HttpUtils.httpClient = httpClient;
+	public static void of(HTTP http) {
+		HttpUtils.http = http;
 	}
 	
 	
-	static HttpClient getHttpClient() {
-		if (httpClient != null) {
-			return httpClient;
+	static HTTP getHttp() {
+		if (http != null) {
+			return http;
 		}
 		synchronized (HttpUtils.class) {
-			if (httpClient != null) {
-				return httpClient;
+			if (http != null) {
+				return http;
 			}
-			httpClient = HttpClient.builder().build();
-			return httpClient;
+			http = HTTP.builder().build();
+			return http;
 		}
 	}
 	
@@ -44,7 +44,7 @@ public class HttpUtils {
 	 * @return 异步 HttpClient
 	 */
     public static AsyncHttpTask async(String urlPath) {
-    	return getHttpClient().async(urlPath);
+    	return getHttp().async(urlPath);
     }
 
 	/**
@@ -53,7 +53,7 @@ public class HttpUtils {
 	 * @return 同步 HttpClient
 	 */
     public static SyncHttpTask sync(String urlPath) {
-    	return getHttpClient().sync(urlPath);
+    	return getHttp().sync(urlPath);
     }
     
 }

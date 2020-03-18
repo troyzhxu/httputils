@@ -5,8 +5,8 @@ import java.util.concurrent.TimeUnit;
 
 import org.junit.Test;
 
+import com.ejlchina.http.HTTP;
 import com.ejlchina.http.HttpCall;
-import com.ejlchina.http.HttpClient;
 import com.ejlchina.http.HttpResult;
 import com.ejlchina.http.Preprocessor.Process;
 
@@ -23,7 +23,7 @@ public class HttpTest {
 	@Test
 	public void testPreprocessor() {
 		
-		HttpClient http = HttpClient.builder()
+		HTTP http = HTTP.builder()
 			.baseUrl("http://localhost:8080")
 			.addPreprocessor((Process process) -> {
 				System.out.println("并行预处理-开始");
@@ -63,9 +63,9 @@ public class HttpTest {
 	
 
 	
-	private HttpClient buildHttpClient() {
+	private HTTP buildHttp() {
 		
-		return HttpClient.builder()
+		return HTTP.builder()
 				.config((Builder builder) -> {
 					
 					// 配置连接池 最小10个连接（不配置默认为 5）
@@ -115,7 +115,7 @@ public class HttpTest {
 	@Test
 	public void syncHttpExample() {
 		
-		HttpClient http = buildHttpClient();
+		HTTP http = buildHttp();
 		// 同步请求
 		HttpResult result = http.sync("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1584365400942&di=d9e7890f13b7bc4b76080fdd490ed5d5&imgtype=0&src=http%3A%2F%2Ft8.baidu.com%2Fit%2Fu%3D1484500186%2C1503043093%26fm%3D79%26app%3D86%26f%3DJPEG%3Fw%3D1280%26h%3D853")
 				.get();
@@ -142,7 +142,7 @@ public class HttpTest {
 
 	@Test
 	public void syncJsonExample() {
-		HttpClient http = buildHttpClient();
+		HTTP http = buildHttp();
 		// 同步请求
 		HttpResult result = http.sync("/user/save")
 				.addJsonParam("name", "Tom")
@@ -155,7 +155,7 @@ public class HttpTest {
 
 	@Test
 	public void asyncHttpExample() throws InterruptedException {
-		HttpClient http = buildHttpClient();
+		HTTP http = buildHttp();
 		// 异步请求
 		// 最终路径 http://api.demo.com/users/2
 		HttpCall call = http.async("/user/show/{id}")
