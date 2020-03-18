@@ -4,10 +4,9 @@ import java.io.IOException;
 
 import com.ejlchina.http.HttpCall;
 import com.ejlchina.http.HttpException;
-import com.ejlchina.http.HttpResult;
 import com.ejlchina.http.HttpTask;
 import com.ejlchina.http.OnCallback;
-import com.ejlchina.http.HttpResult.State;
+import com.ejlchina.http.internal.HttpResult.State;
 
 import okhttp3.Call;
 import okhttp3.Callback;

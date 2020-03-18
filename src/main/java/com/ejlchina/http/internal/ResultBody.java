@@ -1,4 +1,4 @@
-package com.ejlchina.http;
+package com.ejlchina.http.internal;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -12,6 +12,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
+import com.ejlchina.http.HttpException;
 
 import okhttp3.MediaType;
 import okhttp3.ResponseBody;

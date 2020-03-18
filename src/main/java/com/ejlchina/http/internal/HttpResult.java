@@ -1,4 +1,4 @@
-package com.ejlchina.http;
+package com.ejlchina.http.internal;
 
 import okhttp3.Headers;
 import okhttp3.Response;

@@ -1,5 +1,7 @@
 package com.ejlchina.http;
 
+import com.ejlchina.http.internal.HttpResult;
+
 public interface HttpCall {
 
 	/**
