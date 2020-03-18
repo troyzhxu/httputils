@@ -100,6 +100,7 @@ public interface HttpResult {
 
 		/**
 		 * 同一个 Body 对象的 toXXX 类方法只可使用一个并且只能调用一次
+		 * @param <T> 目标泛型
 		 * @param type 目标类型
 		 * @return 报文体Json文本转JavaBean
 		 */
@@ -107,6 +108,7 @@ public interface HttpResult {
 
 		/**
 		 * 同一个 Body 对象的 toXXX 类方法只可使用一个并且只能调用一次
+		 * @param <T> 目标泛型
 		 * @param type 目标类型
 		 * @return 报文体Json文本转JavaBean
 		 */
