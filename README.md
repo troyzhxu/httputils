@@ -46,6 +46,24 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
   - [2.2 POST](#22-POST)
   - [2.3 PUT](#23-PUT)
   - [2.4 DELETE](#24-DELETE)
++ [3 分析执行结果](#3-分析执行结果)
+  - [3.1 回调函数](#31-回调函数)
+  - [3.2 HttpResult](#32-HttpResult)
+  - [3.3 HttpCall](#33-HttpCall)
++ [4 构建HTTP任务](#4-构建HTTP任务)
+  - [4.1 添加请求头](#41-添加请求头)
+  - [4.2 添加路径参数](#42-添加路径参数)
+  - [4.3 添加查询参数](#43-添加查询参数)
+  - [4.4 添加表单参数](#44-添加表单参数)
+  - [4.5 添加Json参数](#45-添加Json参数)
+  - [4.6 添加文件参数](#46-添加文件参数)
+  - [4.7 添加标签](#47-添加标签)
++ [5 配置 HTTP](#5-配置 HTTP)
+  - [5.1 设置 BaseUrl](#51-设置 BaseUrl)
+  - [5.2 回调执行器](#52-回调执行器)
+  - [5.3 配置 OkHttpClient](#53-配置 OkHttpClient)
+  - [5.4 并行预处理器](#54-并行预处理器)
+  - [5.5 串行预处理器](#55-串行预处理器)
 
 ### 1 简单示例
 
@@ -129,9 +147,9 @@ http.sync("http://api.demo.com/users/1").delete()	// 同步 DELETE 请求
 
 http.async("http://api.demo.com/users/1").delete()	// 异步 DELETE 请求
 ```
-### 3 获取请求结果
+### 3 分析执行结果
 
-#### 3.1 请求回调
+#### 3.1 回调函数
 
 　　只有异步请求才可以设置回调函数：
 
@@ -218,7 +236,7 @@ System.out.println(success);	 		 // true
 System.out.println(call.isCanceled());	 // true
 ```
 
-### 4 构建请求任务
+### 4 构建HTTP任务
 
 　　`HTTP` 对象的  
 
@@ -316,7 +334,7 @@ http.sync("http://api.demo.com/signin")
 		.post();
 ```
 
-#### 4.5 添加JSON参数
+#### 4.5 添加Json参数
 
 JSON参数 json 字符串的形式携带与请求报文体内
 
@@ -404,7 +422,7 @@ http.sync("http://api.demo.com/messages")
 		.post();
 ```
 
-#### 4.6 添加标签
+#### 4.7 添加标签
 
 ```java
 http.async("http://api.demo.com/users")
@@ -413,9 +431,9 @@ http.async("http://api.demo.com/users")
 ```
 
 
-### 2 配置 HttpClient
+### 5 配置 HTTP
 
-#### 2.1 BaseUrl
+#### 5.1 设置 BaseUrl
 
 ```java
 HTTP http = HTTP.builder()
@@ -438,7 +456,7 @@ http.sync("/auth/signin")					// http://api.demo.com/auth/signin
 http.sync("https://www.baidu.com").get()
 ```
 
-#### 2.2 回调执行器
+#### 5.2 回调执行器
 
 　　如何想改变执行回调函数的线程时，可以配置回调函数执行器。例如在Android里，让所有的回调函数都在UI线程里执行，则可以在构建`HttpClient`时配置回调执行器：
 
@@ -450,7 +468,7 @@ HTTP http = HTTP.builder()
 		.build();
 ```
 
-#### 2.3 配置`OkHttpClient`
+#### 5.3 配置 OkHttpClient
 
 ```java
 HTTP http = HTTP.builder()
@@ -470,7 +488,7 @@ HTTP http = HTTP.builder()
 	.build();
 ```
 
-#### 2.3 并行预处理器
+#### 5.4 并行预处理器
 
 　　预处理器（`Preprocessor`）可以让我们在请求发出之前对请求本身做一些改变，但与 OkHttp 提供的拦截器（`Interceptor`）不同的是，预处理器可以让我们异步处理这些问题。
 
@@ -493,7 +511,7 @@ HTTP http = HTTP.builder()
 ```
 　　和`Interceptor`一样，`Preprocessor`也可以添加多个。
 
-#### 2.4 串行预处理器
+#### 5.5 串行预处理器
 
 　　普通预处理器都是可并行处理的，然而有时我们希望某个预处理器同时只处理一个任务。比如 当`Token`过期时我们需要去刷新获取新`Token`，而刷新`Token`这个操作只能有一个任务去执行，因为如果`n`个任务同时执行的话，那么必有`n-1`个任务刚得刷新得到的`Token`可能会立马失效，而这是我们所不希望的。
 
