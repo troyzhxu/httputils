@@ -255,7 +255,7 @@ System.out.println(call.isCanceled());	 // true
 
 ### 4 构建HTTP任务
 
-　　`HTTP`对象的`sync`与`async`方法返回一个`HttpTask`对象，该对象提供了一系列`addXXX`、`setXXX` 与`tag`方法用于HTTP任务本身。
+　　`HTTP`对象的`sync`与`async`方法返回一个`HttpTask`对象，该对象提供了一系列`addXXX`、`setXXX` 与`tag`方法用于构建HTTP任务本身。
 
 #### 4.1 添加请求头
 
