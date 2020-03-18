@@ -63,61 +63,61 @@ public interface HttpResult {
 		long getContentLength();
 
 		/**
-		 * 同一个 Body 对象的 toXXX 类方法之可使用一个并且只能调用一次
+		 * 同一个 Body 对象的 toXXX 类方法只可使用一个并且只能调用一次
 		 * @return 报文体转字节流
 		 */
 		InputStream toByteStream();
 		
 		/**
-		 * 同一个 Body 对象的 toXXX 类方法之可使用一个并且只能调用一次
+		 * 同一个 Body 对象的 toXXX 类方法只可使用一个并且只能调用一次
 		 * @return 报文体转字节数组
 		 */
 		byte[] toBytes();
 		
 		/**
-		 * 同一个 Body 对象的 toXXX 类方法之可使用一个并且只能调用一次
+		 * 同一个 Body 对象的 toXXX 类方法只可使用一个并且只能调用一次
 		 * @return 报文体转字符流
 		 */
 		Reader toCharStream();
 
 		/**
-		 * 同一个 Body 对象的 toXXX 类方法之可使用一个并且只能调用一次
+		 * 同一个 Body 对象的 toXXX 类方法只可使用一个并且只能调用一次
 		 * @return 报文体转字符串
 		 */
 		String toString();
 
 		/**
-		 * 同一个 Body 对象的 toXXX 类方法之可使用一个并且只能调用一次
+		 * 同一个 Body 对象的 toXXX 类方法只可使用一个并且只能调用一次
 		 * @return 报文体转Json对象
 		 */
 		JSONObject toJsonObject();
 
 		/**
-		 * 同一个 Body 对象的 toXXX 类方法之可使用一个并且只能调用一次
+		 * 同一个 Body 对象的 toXXX 类方法只可使用一个并且只能调用一次
 		 * @return 报文体转Json数组
 		 */
 		JSONArray toJsonArray();
 
 		/**
-		 * 同一个 Body 对象的 toXXX 类方法之可使用一个并且只能调用一次
+		 * 同一个 Body 对象的 toXXX 类方法只可使用一个并且只能调用一次
 		 * @return 报文体Json文本转JavaBean
 		 */
 		<T> T toBean(Class<T> type);
 
 		/**
-		 * 同一个 Body 对象的 toXXX 类方法之可使用一个并且只能调用一次
+		 * 同一个 Body 对象的 toXXX 类方法只可使用一个并且只能调用一次
 		 * @return 报文体Json文本转JavaBean
 		 */
 		<T> T toBean(TypeReference<T> typeRef);
 
 		/**
-		 * 同一个 Body 对象的 toXXX 类方法之可使用一个并且只能调用一次
+		 * 同一个 Body 对象的 toXXX 类方法只可使用一个并且只能调用一次
 		 * @return 报文体保存到指定路径的文件
 		 */
 		File toFile(String filePath);
 
 		/**
-		 * 同一个 Body 对象的 toXXX 类方法之可使用一个并且只能调用一次
+		 * 同一个 Body 对象的 toXXX 类方法只可使用一个并且只能调用一次
 		 * @return 报文体保存到指定文件并返回
 		 */
 		File toFile(File file);

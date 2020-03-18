@@ -153,7 +153,7 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 * `getStatus()` 	得到HTTP状态码
 * `isSuccessful()` 	是否响应成功，状态码在 [200..300) 之间
 * `getHeaders()` 	得到HTTP响应头
-* `getBody()` 		得到响应报文体 `ResultBody` 对象，它有如下方法：
+* `getBody()` 		得到响应报文体`Body`对象，它有如下方法：
     * `toBytes()` 						返回字节数组
     * `toByteStream()` 					返回字节输入流
     * `toCharStream()` 					返回字符输入流
@@ -166,6 +166,7 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
     * `toFile(File file)` 				下载到指定文件并返回保存后的文件（下载文件时非常有用）
     * `getContentType()`				返回报文体的媒体类型
     * `getContentLength()`				返回报文体的字节长度
+    * 以上`toXXX()`类方法只可使用一个并且只能调用一次
 * `getError()` 		执行中发生的异常，自动捕获执行请求是发生的 网络超时、网络错误 和 其它请求异常
 
 　　例如，下载文件到指定目录：
