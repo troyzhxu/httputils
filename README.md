@@ -39,12 +39,18 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 
 ### 1 简单示例
 
-#### 1.1 构建 HttpClient
+#### 1.1 构建 HTTP
 
 ```java
-	HttpClient http = HttpClient.builder().build();		
+	HTTP http = HTTP.builder().build();		
 ```
-　　为了简化文档，下文中出现的`http`均是已构建好的`HttpClient`对象。
+　　`HTTP`对象有以下三个方法：
+
+* `AsyncHttpTask async(String urlPath)` 开始一个异步HTTP任务
+* `SyncHttpTask sync(String urlPath)` 开始一个同步HTTP任务
+* `int cancel(String tag)` 根据标签批量取消HTTP任务，返回被取消的任务数
+
+　　为了简化文档，下文中出现的`http`均是已构建好的`HTTP`对象。
 
 #### 1.2 同步请求
 
@@ -145,6 +151,7 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 	* `State.NETWORK_ERROR` 网络错误
 	* `State.EXCEPTION` 其它请求异常
 * `getStatus()` 	得到HTTP状态码
+* `isSuccessful()` 	是否响应成功，状态码在 [200..300) 之间
 * `getHeaders()` 	得到HTTP响应头
 * `getBody()` 		得到响应报文体 `ResultBody` 对象，它有如下方法：
     * `toBytes()` 						返回字节数组
@@ -159,7 +166,6 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
     * `toFile(File file)` 				下载到指定文件并返回保存后的文件（下载文件时非常有用）
     * `getContentType()`				返回报文体的媒体类型
     * `getContentLength()`				返回报文体的字节长度
-* `isSuccessful()` 	是否响应成功，状态码在 [200..300) 之间
 * `getError()` 		执行中发生的异常，自动捕获执行请求是发生的 网络超时、网络错误 和 其它请求异常
 
 　　例如，下载文件到指定目录：
@@ -183,7 +189,7 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 
 　　`HttpCall` 对象是异步请求方法（ `get`、`post`、`put`、`delete`）的返回值，它有如下方法：
 
-* `cancel()` 取消本次请求
+* `cancel()` 取消本次请求，返回取消结果
 * `isCanceled()` 返回请求是否被取消
 * `isDone()` 返回是否执行完成，包含取消和失败
 * `getResult()` 返回执行结果`HttpResult`对象，若请求未执行完，则挂起当前线程直到执行完成
@@ -201,6 +207,8 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 ```
 
 ### 4 构建请求任务
+
+　　`HTTP` 对象的  
 
 #### 4.1 添加请求头
 
@@ -384,6 +392,15 @@ Java Bean 自动转 JSON
 			.post();
 ```
 
+#### 4.6 添加标签
+
+```java
+	http.async("http://api.demo.com/users")
+			.tag('MyTag')
+			.get()
+```
+
+
 ### 2 配置 HttpClient
 
 #### 2.1 BaseUrl
@@ -445,13 +462,13 @@ Java Bean 自动转 JSON
 
 　　预处理器（`Preprocessor`）可以让我们在请求发出之前对请求本身做一些改变，但与 OkHttp 提供的拦截器（`Interceptor`）不同的是，预处理器可以让我们异步处理这些问题。
 
-　　例如，当我们想为请求自动添加`Token`，而有效的`Token`只能通过异步方法`checkExpirationAndRefreshToken`获取时，我们可以添加这样的预处理器：
+　　例如，当我们想为请求任务自动添加`Token`头信息，而`Token`只能通过异步方法`requestToken`获取时，我们可以添加这样的预处理器：
 
 ```java
 	HttpClient http = HttpClient.builder()
 			.addPreprocessor((Process process) -> {
 				// 异步获取 Token
-				checkExpirationAndRefreshToken((String token) -> {
+				requestToken((String token) -> {
 					// 获取当前的请求任务
 					HttpTask task = process.getTask();
 					// 为请求任务添加 Token 头信息
@@ -464,7 +481,26 @@ Java Bean 自动转 JSON
 ```
 　　和`Interceptor`一样，`Preprocessor`也可以添加多个。
 
-该配置全局生效
+#### 2.4 串行预处理器
+
+　　普通预处理器都是可并行处理的，然而有时我们希望某个预处理器同时只处理一个任务。比如 当`Token`过期时我们需要去刷新获取一个新`Token`，而刷新`Token`这个操作同时只能有一个任务去执行，因为如果两个任务同时执行的话，那么必有一个任务刚得到的新`Token`就会立马失效，而这是我们所不希望的。
+
+　　为了解决这个问题，`httputils`提供了串行预处理器，它可以让HTTP任务排好队，一个一个的进入预处理器：
+
+```java
+	HttpClient http = HttpClient.builder()
+			.addSerialPreprocessor((Process process) -> {
+				// 检查过期，若需要则刷新Token
+				checkExpirationAndRefreshToken((String token) -> {
+					HttpTask task = process.getTask();
+					task.addHeader("Token", token);
+					process.proceed();	// 在调用此方法前，不会有其它任务进入该预处理器
+				});	
+			})
+			.build();
+```
+　　串行预处理器实现了让HTTP任务排队串行处理的功能，但值得一提的是：它并没有因此而阻塞任何线程！
+
 
 ## 参与贡献
 
