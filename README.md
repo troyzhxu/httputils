@@ -30,7 +30,6 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
      <version>2.0.0</version>
 </dependency>
 ```
-
 ### Gradle
 
 `compile 'com.ejlchina:httputils:2.0.0'`
