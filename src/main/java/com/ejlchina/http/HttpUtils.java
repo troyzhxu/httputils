@@ -56,4 +56,13 @@ public class HttpUtils {
     	return getHttp().sync(urlPath);
     }
     
+    /**
+     * 根据标签取消HTTP任务
+     * @param tag 标签
+     * @return 取消的任务数量
+     */
+    public static int cancel(String tag) {
+    	return getHttp().cancel(tag);
+    }
+    
 }
