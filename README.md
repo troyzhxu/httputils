@@ -255,11 +255,11 @@ System.out.println(call.isCanceled());	 // true
 
 ### 4 构建HTTP任务
 
-　　`HTTP`对象的`sync`与`async`方法返回一个`HttpTask`对象，该对象提供了一系列`addXXX`、`setXXX` 与`tag`方法用于构建HTTP任务本身。
+　　`HTTP`对象的`sync`与`async`方法返回一个`HttpTask`对象，该对象提供了一系列可链式使用的`addXXX`、`setXXX` 与`tag`方法用于构建HTTP任务本身。
 
 #### 4.1 添加请求头
 
-单个添加（同步异步添加方法一样）
+　　单个添加（同步异步添加方法一样）：
 
 ```java
 http.sync("http://api.demo.com/orders")
@@ -267,7 +267,7 @@ http.sync("http://api.demo.com/orders")
 		.addHeader("Content-Type", "application/json")
 		.get();
 ```
-多个添加（同步异步添加方法一样）
+　　多个添加（同步异步添加方法一样）：
 
 ```java
 Map<String, String> headers = new HashMap<>()
@@ -281,9 +281,9 @@ http.sync("http://api.demo.com/orders")
 
 #### 4.2 添加路径参数
 
-路径参数用于替换URL字符串中的占位符
+　　路径参数用于替换URL字符串中的占位符。
 
-单个添加（同步异步添加方法一样）
+　　单个添加（同步异步添加方法一样）：
 
 ```java
 http.sync("http://api.demo.com/shops/{shopName}/products/{productId}")
@@ -291,7 +291,7 @@ http.sync("http://api.demo.com/shops/{shopName}/products/{productId}")
 		.addPathParam("productId", 20)
 		.get();
 ```
-多个添加（同步异步添加方法一样）
+　　多个添加（同步异步添加方法一样）：
 
 ```java
 Map<String, String> params = new HashMap<>()
@@ -305,22 +305,22 @@ http.sync("http://api.demo.com/shops/{shopName}/products/{productId}")
 
 #### 4.3 添加查询参数
 
-查询参数（URL参数）用于拼接在 url 字符串的 ? 之后
+　　查询参数（URL参数）用于拼接在 url 字符串的 ? 之后。
 
-单个添加（同步异步添加方法一样）
+　　单个添加（同步异步添加方法一样）：
 
 ```java
 http.sync("http://api.demo.com/products")
 		.addUrlParam("name", "手机")
-		.addUrlParam("tag", "5G")
+		.addUrlParam("type", "5G")
 		.get();
 ```
-多个添加（同步异步添加方法一样）
+　　多个添加（同步异步添加方法一样）：
 
 ```java
 Map<String, String> params = new HashMap<>()
 params.put("name", "手机");
-params.put("tag", 5G);
+params.put("type", "5G");
 
 http.sync("http://api.demo.com/products")
 		.addUrlParam(params)
@@ -329,9 +329,9 @@ http.sync("http://api.demo.com/products")
 
 #### 4.4 添加表单参数
 
-表单参数（Budy参数）以 key=value& 的形式携带与请求报文体内
+　　表单参数（Body参数）以 key=value& 的形式携带与请求报文体内。
 
-单个添加（同步异步添加方法一样）
+　　单个添加（同步异步添加方法一样）：
 
 ```java
 http.sync("http://api.demo.com/signin")
@@ -339,7 +339,7 @@ http.sync("http://api.demo.com/signin")
 		.addBodyParam("password", "xxxxxx")
 		.post();
 ```
-多个添加（同步异步添加方法一样）
+　　多个添加（同步异步添加方法一样）：
 
 ```java
 Map<String, String> params = new HashMap<>()
@@ -353,9 +353,9 @@ http.sync("http://api.demo.com/signin")
 
 #### 4.5 添加Json参数
 
-JSON参数 json 字符串的形式携带与请求报文体内
+　　JSON 参数最终以 json 字符串的形式携带与请求报文体内。
 
-单个添加（同步异步添加方法一样）
+　　单个添加（同步异步添加方法一样）：
 
 ```java
 http.sync("http://api.demo.com/signin")
@@ -363,7 +363,7 @@ http.sync("http://api.demo.com/signin")
 		.addJsonParam("password", "xxxxxx")
 		.post();
 ```
-多个添加（同步异步添加方法一样）
+　　多个添加（同步异步添加方法一样）：
 
 ```java
 Map<String, String> params = new HashMap<>()
@@ -374,14 +374,14 @@ http.sync("http://api.demo.com/signin")
 		.addJsonParam(params)
 		.post();
 ```
-添加JSON字符串
+　　直接设置JSON字符串：
 
 ```java
 http.sync("http://api.demo.com/signin")
 		.setRequestJson("\"username\":\"Jackson\",\"password\":\"xxxxxx\"")
 		.post();
 ```
-Java Bean 自动转 JSON
+　　JavaBean 自动转 JSON：
 
 ```java
 Login login = new Login();
@@ -395,9 +395,7 @@ http.sync("http://api.demo.com/signin")
 
 #### 4.6 添加文件参数
 
-同步和异步添加文件方法是一样的
-
-上传本地文件
+　　上传本地文件：
 
 ```java
 File file1 = new File("D:/1.jpg");
@@ -408,7 +406,7 @@ http.sync("http://api.demo.com/upload")
 		.addFileParam("image2", file2)
 		.post();
 ```
-使用文件输入流上传
+　　使用文件输入流上传：
 
 ```java
 // 获得文件的输入流
@@ -418,7 +416,7 @@ http.sync("http://api.demo.com/upload")
 		.addFileParam("image", "jpg", input)
 		.post();
 ```
-使用文件字节数组上传
+　　使用文件字节数组上传：
 
 ```java
 // 获得文件的字节数组
@@ -428,7 +426,7 @@ http.sync("http://api.demo.com/upload")
 		.addFileParam("image", "jpg", content)
 		.post();
 ```
-文件参数和表单参数可以一起添加
+　　文件参数和表单参数可以一起添加：
 
 ```java
 File file = new File("D:/首页广告.jpg");
@@ -441,12 +439,19 @@ http.sync("http://api.demo.com/messages")
 
 #### 4.7 添加标签
 
+　　有时候我们对HTTP任务加以分类，这时候可以使用标签功能：
+
 ```java
 http.async("http://api.demo.com/users")
 		.tag('MyTag')
-		.get()
+		.get();
 ```
+　　当任务被添加标签后，我们按标签批量的对HTTP任务进行取消：
 
+```java
+http.cancel('MyTag');
+```
+　　也可以在统一配置的预处理器中，以标签对任务进行分类处理，参见[并行预处理器](#54-并行预处理器)与[串行预处理器](#55-串行预处理器)。
 
 ### 5 配置 HTTP
 
