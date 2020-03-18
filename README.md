@@ -117,25 +117,27 @@ http.async("http://api.demo.com/users/{id}")
 #### 2.1 GET
 
 ```java
-HttpResult result = http.sync("http://api.demo.com/users").get()	// 同步 GET 请求
+HttpResult result = http.sync("http://api.demo.com/users").get();	// 同步 GET 请求
 
 HttpCall call = http.async("http://api.demo.com/users")
 		.setOnResponse((HttpResult result) -> {
 		
-		}).get()													// 异步 GET 请求
+		}).get();													// 异步 GET 请求
 ```
 #### 2.2 POST
 
 ```java
-http.sync("/users")
+HttpResult result = http.sync("http://api.demo.com/users")
 		.addJsonParam("name", "Jack")
 		.addJsonParam("age", 20)
-		.post()										// 同步 POST 请求
+		.post()														// 同步 POST 请求
 
-http.async("http://api.demo.com/users")
+HttpCall call = http.async("http://api.demo.com/users")
 		.addJsonParam("name", "Jack")
 		.addJsonParam("age", 20)
-		.post()										// 异步 POST 请求
+		.setOnResponse((HttpResult result) -> {
+		
+		}).post()													// 异步 POST 请求
 ```
 #### 2.3 PUT
 
