@@ -55,9 +55,31 @@ public abstract class HttpTask<C extends HttpTask<?>> {
     	this.urlPath = urlPath;
     }
 
-
+    /**
+     * 获取请求任务的URL地址
+     * @return URL地址
+     */
+    public String getUrl() {
+    	return urlPath;
+    }
     
     /**
+     * 获取请求任务的标签
+     * @return 标签
+     */
+    public String getTag() {
+		return tag;
+	}
+    
+    /**
+     * 获取请求任务的头信息
+     * @return 头信息
+     */
+    public Map<String, String> getHeaders() {
+		return headers;
+	}
+
+	/**
      * 设置在发生异常时不向上抛出，设置后：
      * 异步请求可以在异常回调内捕获异常，同步请求在返回结果中找到该异常
      * @return HttpTask 实例
@@ -75,22 +97,6 @@ public abstract class HttpTask<C extends HttpTask<?>> {
     public C setTag(String tag) {
     	this.tag = tag;
     	return (C) this;
-    }
-    
-    /**
-     * 获取请求任务的标签
-     * @return 标签
-     */
-    public String getTag() {
-		return tag;
-	}
-    
-    /**
-     * 获取请求任务的URL地址
-     * @return URL地址
-     */
-    public String getUrl() {
-    	return urlPath;
     }
 
 	/**
