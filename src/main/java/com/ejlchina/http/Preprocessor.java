@@ -10,9 +10,8 @@ public interface Preprocessor {
 	/**
 	 * 在HTTP请求开始之前执行
 	 * @param process HTTP请求进程
-	 * @return true: 该处理器可以并行处理请求任务，false: 该处理器只能串行处理请求任务
 	 */
-	boolean doProcess(Process process);
+	void doProcess(Process process);
 	
 	
 	interface Process {

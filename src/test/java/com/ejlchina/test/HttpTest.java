@@ -19,23 +19,18 @@ import okhttp3.Request;
 public class HttpTest {
 
 
+	
 	@Test
-	public void test() {
-		
-		short[] arr = new short[10];
-		
-		for (int i = 0; i < 10; i++) {
-			System.out.print(arr[i]++);
+	public void testSync() {
+		Object mutex = new Object();
+		synchronized (mutex) {
+			System.out.println("Hello");
+			synchronized (mutex) {
+				System.out.println("World");
+			}
+			System.out.println("Yes");
 		}
-		System.out.println();
-		for (int i = 0; i < 10; i++) {
-			System.out.print(arr[i]++);
-		}
-		System.out.println();
-		for (int i = 0; i < 10; i++) {
-			System.out.print(arr[i]++);
-		}
-		
+		System.out.println("Ha");
 	}
 	
 	private HttpClient buildHttpClient() {
@@ -74,8 +69,7 @@ public class HttpTest {
 						process.proceed();
 						
 					}).start();
-					return true;
-				})
+				}, false)
 				.addPreprocessor((Process process) -> {
 					new Thread(() -> {
 
@@ -84,7 +78,6 @@ public class HttpTest {
 						process.proceed();
 				
 					}).start();
-					return true;
 				})
 				.build();
 		

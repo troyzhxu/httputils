@@ -3,8 +3,10 @@ package com.ejlchina.http;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 import java.util.concurrent.Executor;
 
 import okhttp3.Call;
@@ -24,12 +26,7 @@ public class HttpClient {
 	private Executor callbackExecutor;
 	// 预处理器
 	private Preprocessor[] preprocessors;
-	// 预处理器的可并发性
-	private boolean[] concurrents;
-	// 预处理器的状态，n表示有n个执行器在同时执行
-	private short[] states;
-	// 
-	private List<Runnable>[] pendedRuns;
+
 	
 	private HttpClient(Builder builder) {
 		this.client = builder.client;
@@ -37,10 +34,7 @@ public class HttpClient {
 		this.mediaTypes = builder.mediaTypes;
 		this.callbackExecutor = builder.callbackExecutor;
 		this.preprocessors = builder.preprocessors.toArray(new Preprocessor[builder.preprocessors.size()]);
-		this.concurrents = new boolean[preprocessors.length];
-		this.states = new short[preprocessors.length];
 	}
-	
 	
 	/**
 	 * 异步请求
@@ -80,22 +74,65 @@ public class HttpClient {
     		callback.run();
     	}
     }
-    
-    
+
     void preprocess(HttpTask<? extends HttpTask<?>> httpTask, Runnable request) {
     	if (preprocessors.length > 0) {
     		HttpProcess process = new HttpProcess(preprocessors, 
     				httpTask, request);
-    		// 该处理器当前执行的任务数为0，或者该处理器可并行处理任务
-    		if (states[0] == 0 || concurrents[0]) {	
-    			concurrents[0] = preprocessors[0].doProcess(process);
-    			states[0]++;
-    		} else {
-    			
-    		}
+    		preprocessors[0].doProcess(process);
     	} else {
     		request.run();
     	}
+    }
+    
+    /**
+     * 串行预处理器
+     * @author Troy.Zhou
+     */
+    static class SerialPreprocessor implements Preprocessor {
+    	
+    	// 预处理器
+    	private Preprocessor preprocessor;
+    	// 待处理的任务队列
+    	private Queue<Process> pendings;
+    	// 是否有任务正在执行
+    	private boolean running = false;
+    	
+		SerialPreprocessor(Preprocessor preprocessor) {
+			this.preprocessor = preprocessor;
+			this.pendings = new LinkedList<>();
+		}
+
+		@Override
+		public void doProcess(Process process) {
+			boolean should = true;
+			synchronized (this) {
+				if (running) {
+					pendings.add(process);
+					should = false;
+				} else {
+					running = true;
+				}
+			}
+			if (should) {
+				preprocessor.doProcess(process);
+			}
+		}
+		
+		public void afterProcess() {
+			Process process = null;
+			synchronized (this) {
+				if (pendings.size() > 0) {
+					process = pendings.poll();
+				} else {
+					running = false;
+				}
+			}
+			if (process != null) {
+				preprocessor.doProcess(process);
+			}
+		}
+    	
     }
     
     
@@ -130,6 +167,12 @@ public class HttpClient {
 
 		@Override
 		public void proceed() {
+			if (index > 0) {
+				Preprocessor last = preprocessors[index - 1];
+				if (last instanceof SerialPreprocessor) {
+					((SerialPreprocessor) last).afterProcess();
+				}
+			}
 			if (index < preprocessors.length) {
 				preprocessors[index++].doProcess(this);
 			} else {
@@ -148,7 +191,6 @@ public class HttpClient {
 		return new Builder(this);
 	}
 	
-	
 	private String urlPath(String urlPath) {
 		boolean isFullPath = urlPath.startsWith("https://") 
     			|| urlPath.startsWith("http://");
@@ -161,9 +203,8 @@ public class HttpClient {
 		throw new HttpException("在设置 BaseUrl 之前，您必须使用全路径URL发起请求，当前URL为：" + urlPath 
 				+ "\n若要设置 BaseUrl，请使用 HttpClient.setBaseUrl() 方法");
 	}
-
     
-    
+	
 	public static class Builder {
 		
 		private OkHttpClient client;
@@ -244,18 +285,26 @@ public class HttpClient {
 		}
 		
 		/**
-		 * 添加预处理器
+		 * 添加可并行处理请求任务的预处理器
 		 * @param preprocessor 预处理器
 		 * @return Builder
 		 */
 		public Builder addPreprocessor(Preprocessor preprocessor) {
-			if (preprocessors == null) {
-				preprocessors = new ArrayList<>();
+			return addPreprocessor(preprocessor, false);
+		}
+		
+		/**
+		 * 添加预处理器
+		 * @param preprocessor 预处理器
+		 * @param serial 是否是串行预处理器
+		 * @return Builder
+		 */
+		public Builder addPreprocessor(Preprocessor preprocessor, boolean serial) {
+			if (serial) {
+				preprocessors.add(new SerialPreprocessor(preprocessor));
+			} else {
+				preprocessors.add(preprocessor);
 			}
-			if (preprocessors.size() == Short.MAX_VALUE) {
-				throw new HttpException("一个HttpClient最多可以添加" + Short.MAX_VALUE + "个预处理！");
-			}
-			preprocessors.add(preprocessor);
 			return this;
 		}
 		
@@ -269,7 +318,7 @@ public class HttpClient {
 			}
 			return new HttpClient(this);
 		}
-		
+
 	}
 	
 }
