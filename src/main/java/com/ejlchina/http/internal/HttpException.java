@@ -1,4 +1,4 @@
-package com.ejlchina.http;
+package com.ejlchina.http.internal;
 
 /**
  * Created by 周旭（Troy.Zhou） on 2016/8/30.

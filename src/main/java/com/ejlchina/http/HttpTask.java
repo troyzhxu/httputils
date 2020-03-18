@@ -5,22 +5,21 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Type;
 import java.net.ConnectException;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.Executor;
 
 import com.alibaba.fastjson.JSON;
+import com.ejlchina.http.internal.HttpClient;
+import com.ejlchina.http.internal.HttpException;
+import com.ejlchina.http.HttpResult.State;
 
 import okhttp3.Call;
 import okhttp3.FormBody;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
-import okhttp3.OkHttpClient;
-import okhttp3.OkHttpClient.Builder;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
@@ -30,24 +29,15 @@ import okio.Buffer;
 
 /**
  * Created by 周旭（Troy.Zhou） on 2020/3/11.
- * @since 0.3.4
- * 
- * @param <S> 请求成功时返回的数据类型
- * @param <F> 请求失败时返回的数据类型
  */
 @SuppressWarnings("unchecked")
-public abstract class HttpClient<S, F, C extends HttpClient<S, F, ?>> {
+public abstract class HttpTask<C extends HttpTask<?>> {
 
-	private static final Type STR_TYPE = String.class;
     private static final MediaType TYPE_JSON = MediaType.parse("application/json; charset=utf-8");
-    private static Map<String, String> mediaTypes;
     private static String PATH_PARAM_REGEX = "[A-Za-z0-9_\\-/]*\\{[A-Za-z0-9_\\-]+\\}[A-Za-z0-9_\\-/]*";
-    private static OkHttpClient httpClient;
-    private static String baseUrl;
 
+    protected HttpClient httpClient;
     private String urlPath;
-    protected Type okType;
-    protected Type failType;
     private Map<String, String> headers;
     private Map<String, String> pathParams;
     private Map<String, String> urlParams;
@@ -57,90 +47,20 @@ public abstract class HttpClient<S, F, C extends HttpClient<S, F, ?>> {
     private Map<String, FilePara> files;
     private String requestJson;
     protected boolean nothrow;
+    protected String tag;
 
-    public HttpClient(String urlPath, Type okType, Type failType) {
-    	this.urlPath = urlPath(urlPath);
-    	this.okType = okType;
-    	this.failType = failType;
-        if (httpClient == null) {
-            httpClient = new Builder().build();
-        }
-        if (mediaTypes == null) {
-        	mediaTypes = new HashMap<>();
-        	mediaTypes.put("*", "application/octet-stream");
-        	mediaTypes.put("png", "image/png");
-        	mediaTypes.put("jpg", "image/jpeg");
-        	mediaTypes.put("jpeg", "image/jpeg");
-        	mediaTypes.put("wav", "audio/wav");
-        	mediaTypes.put("mp3", "audio/mp3");
-        	mediaTypes.put("mp4", "video/mpeg4");
-        	mediaTypes.put("txt", "text/plain");
-        	mediaTypes.put("xls", "application/x-xls");
-        	mediaTypes.put("xml", "text/xml");
-        	mediaTypes.put("apk", "application/vnd.android.package-archive");
-        	mediaTypes.put("doc", "application/msword");
-        	mediaTypes.put("pdf", "application/pdf");
-        	mediaTypes.put("html", "text/html");
-        }
+    
+    public HttpTask(HttpClient httpClient, String urlPath) {
+    	this.httpClient = httpClient;
+    	this.urlPath = urlPath;
     }
 
-	private String urlPath(String urlPath) {
-		boolean isFullPath = urlPath.startsWith("https://") 
-    			|| urlPath.startsWith("http://");
-		if (isFullPath) {
-			return urlPath;
-		}
-		if (baseUrl != null) {
-			return baseUrl + urlPath;
-		}
-		throw new HttpException("在设置 BaseUrl 之前，您必须使用全路径URL发起请求，当前URL为：" + urlPath 
-				+ "\n若要设置 BaseUrl，请使用 HttpClient.setBaseUrl() 方法");
-	}
 
-    /**
-     * 配置 httpClient
-     * @param configurator 配置器
-     */
-    public static void config(Configurator configurator) {
-    	Builder builder = new Builder();
-    	configurator.config(builder);
-        HttpClient.httpClient = builder.build();
-    }
-    
-    /**
-     * 设置 baseUrl
-     * @param baseUrl 全局URL前缀
-     */
-    public static void setBaseUrl(String baseUrl) {
-    	HttpClient.baseUrl = baseUrl;
-    }
-    
-    /**
-     * 设置回调执行器，例如实现切换线程功能
-     * @param executor 回调执行器
-     */
-    public static void setExecutor(Executor executor) {
-    	AsyncHttpClient.executor = executor;
-    }
-    
-    /**
-     * Http 配置器
-     *
-     */
-    public static interface Configurator {
-    	
-    	/**
-    	 * 使用 builder 配置 HttpClient
-    	 * @param builder OkHttpClient 构建器
-    	 */
-    	void config(Builder builder);
-    	
-    }
     
     /**
      * 设置在发生异常时不向上抛出，设置后：
      * 异步请求可以在异常回调内捕获异常，同步请求在返回结果中找到该异常
-     * @return HttpClient 实例
+     * @return HttpTask 实例
      */
     public C nothrow() {
     	this.nothrow = true;
@@ -148,10 +68,36 @@ public abstract class HttpClient<S, F, C extends HttpClient<S, F, ?>> {
     }
     
     /**
+     * 为请求任务添加标签
+     * @param tag 标签
+     * @return HttpTask 实例
+     */
+    public C tag(String tag) {
+    	this.tag = tag;
+    	return (C) this;
+    }
+    
+    /**
+     * 获取请求任务的标签
+     * @return 标签
+     */
+    public String getTag() {
+		return tag;
+	}
+    
+    /**
+     * 获取请求任务的URL地址
+     * @return URL地址
+     */
+    public String getUrl() {
+    	return urlPath;
+    }
+
+	/**
      * 添加请求头
      * @param name 请求头名
      * @param value 请求头值
-     * @return HttpClient 实例
+     * @return HttpTask 实例
      */
 	public C addHeader(String name, String value) {
     	if (name != null && value != null) {
@@ -166,7 +112,7 @@ public abstract class HttpClient<S, F, C extends HttpClient<S, F, ?>> {
     /**
      * 添加请求头
      * @param headers 请求头集合
-     * @return HttpClient 实例
+     * @return HttpTask 实例
      */
     public C addHeader(Map<String, String> headers) {
     	if (headers != null) {
@@ -182,7 +128,7 @@ public abstract class HttpClient<S, F, C extends HttpClient<S, F, ?>> {
      * 路径参数：替换URL里的{name}
      * @param name 参数名
      * @param value 参数值
-     * @return HttpClient 实例
+     * @return HttpTask 实例
      **/
     public C addPathParam(String name, String value) {
     	if (name != null && value != null) {
@@ -198,7 +144,7 @@ public abstract class HttpClient<S, F, C extends HttpClient<S, F, ?>> {
      * 路径参数：替换URL里的{name}
      * @param name 参数名
      * @param value 参数值
-     * @return HttpClient 实例
+     * @return HttpTask 实例
      **/
     public C addPathParam(String name, Number value) {
     	if (value != null) {
@@ -210,7 +156,7 @@ public abstract class HttpClient<S, F, C extends HttpClient<S, F, ?>> {
     /**
      * 路径参数：替换URL里的{name}
      * @param params 参数集合
-     * @return HttpClient 实例
+     * @return HttpTask 实例
      **/
     public C addPathParam(Map<String, ?> params) {
         if (params != null) {
@@ -230,7 +176,7 @@ public abstract class HttpClient<S, F, C extends HttpClient<S, F, ?>> {
      * URL参数：拼接在URL后的参数
      * @param name 参数名
      * @param value 参数值
-     * @return HttpClient 实例
+     * @return HttpTask 实例
      **/
     public C addUrlParam(String name, String value) {
     	if (name != null && value != null) {
@@ -246,7 +192,7 @@ public abstract class HttpClient<S, F, C extends HttpClient<S, F, ?>> {
      * URL参数：拼接在URL后的参数
      * @param name 参数名
      * @param value 参数值
-     * @return HttpClient 实例
+     * @return HttpTask 实例
      **/
     public C addUrlParam(String name, Number value) {
     	if (value != null) {
@@ -258,7 +204,7 @@ public abstract class HttpClient<S, F, C extends HttpClient<S, F, ?>> {
     /**
      * URL参数：拼接在URL后的参数
      * @param params 参数集合
-     * @return HttpClient 实例
+     * @return HttpTask 实例
      **/
     public C addUrlParam(Map<String, ?> params) {
         if (params != null) {
@@ -278,7 +224,7 @@ public abstract class HttpClient<S, F, C extends HttpClient<S, F, ?>> {
      * Body参数：放在Body里的参数
      * @param name 参数名
      * @param value 参数值
-     * @return HttpClient 实例
+     * @return HttpTask 实例
      **/
     public C addBodyParam(String name, String value) {
     	if (name != null && value != null) {
@@ -294,7 +240,7 @@ public abstract class HttpClient<S, F, C extends HttpClient<S, F, ?>> {
      * Body参数：放在Body里的参数
      * @param name 参数名
      * @param value 参数值
-     * @return HttpClient 实例
+     * @return HttpTask 实例
      **/
     public C addBodyParam(String name, Number value) {
     	if (value != null) {
@@ -306,7 +252,7 @@ public abstract class HttpClient<S, F, C extends HttpClient<S, F, ?>> {
     /**
      * Body参数：放在Body里的参数
      * @param params 参数集合
-     * @return HttpClient 实例
+     * @return HttpTask 实例
      **/
     public C addBodyParam(Map<String, ?> params) {
     	if (params != null) {
@@ -327,7 +273,7 @@ public abstract class HttpClient<S, F, C extends HttpClient<S, F, ?>> {
      * 若请求json为多层结构，请使用setRequestJson方法
      * @param name JSON键名
      * @param value JSON键值
-     * @return HttpClient 实例
+     * @return HttpTask 实例
      */
     public C addJsonParam(String name, String value) {
     	if (name != null && value != null) {
@@ -344,7 +290,7 @@ public abstract class HttpClient<S, F, C extends HttpClient<S, F, ?>> {
      * 若请求json为多层结构，请使用setRequestJson方法
      * @param name JSON键名
      * @param value JSON键值
-     * @return HttpClient 实例
+     * @return HttpTask 实例
      */
     public C addJsonParam(String name, Number value) {
     	if (value != null) {
@@ -357,7 +303,7 @@ public abstract class HttpClient<S, F, C extends HttpClient<S, F, ?>> {
      * Json参数：请求体为Json，只支持单层Json
      * 若请求json为多层结构，请使用setRequestJson方法
      * @param params JSON键值集合
-     * @return HttpClient 实例
+     * @return HttpTask 实例
      */
     public C addJsonParam(Map<String, Object> params) {
     	if (params != null) {
@@ -376,7 +322,7 @@ public abstract class HttpClient<S, F, C extends HttpClient<S, F, ?>> {
     /**
      * 请求体为json
      * @param json JSON字符串
-     * @return HttpClient 实例
+     * @return HttpTask 实例
      **/
     public C setRequestJson(String json) {
         if (json != null) {
@@ -388,7 +334,7 @@ public abstract class HttpClient<S, F, C extends HttpClient<S, F, ?>> {
     /**
      * 请求体为json
      * @param bean Java对象，将跟换 bean的get方法序列化程 json 字符串
-     * @return HttpClient 实例
+     * @return HttpTask 实例
      **/
     public C setRequestJson(Object bean) {
         if (bean != null) {
@@ -401,7 +347,7 @@ public abstract class HttpClient<S, F, C extends HttpClient<S, F, ?>> {
      * 请求体为json
      * @param bean Java对象，将跟换 bean的get方法序列化程 json 字符串
      * @param dateFormat 序列化json时对日期类型字段的处理格式
-     * @return HttpClient 实例
+     * @return HttpTask 实例
      **/
     public C setRequestJson(Object bean, String dateFormat) {
         if (bean != null) {
@@ -414,7 +360,7 @@ public abstract class HttpClient<S, F, C extends HttpClient<S, F, ?>> {
      * 添加文件参数
      * @param name 参数名
      * @param file 文件
-     * @return HttpClient 实例
+     * @return HttpTask 实例
      */
     public C addFileParam(String name, File file) {
         if (name != null && file != null && file.exists()) {
@@ -434,7 +380,7 @@ public abstract class HttpClient<S, F, C extends HttpClient<S, F, ?>> {
      * @param name 参数名
      * @param type 文件类型: 如 png、jpg、jpeg 等
      * @param inputStream 文件输入流
-     * @return HttpClient 实例
+     * @return HttpTask 实例
      */
     public C addFileParam(String name, String type, InputStream inputStream) {
     	String fileName = System.currentTimeMillis() + "." + type;
@@ -447,7 +393,7 @@ public abstract class HttpClient<S, F, C extends HttpClient<S, F, ?>> {
      * @param type 文件类型: 如 png、jpg、jpeg 等
      * @param fileName 文件名
      * @param input 文件输入流
-     * @return HttpClient 实例
+     * @return HttpTask 实例
      */
     public C addFileParam(String name, String type, String fileName, InputStream input) {
         if (name != null && input != null) {
@@ -469,7 +415,7 @@ public abstract class HttpClient<S, F, C extends HttpClient<S, F, ?>> {
      * @param name 参数名
      * @param type 文件类型: 如 png、jpg、jpeg 等
      * @param content 文件内容
-     * @return HttpClient 实例
+     * @return HttpTask 实例
      */
     public C addFileParam(String name, String type, byte[] content) {
     	String fileName = System.currentTimeMillis() + "." + type;
@@ -482,7 +428,7 @@ public abstract class HttpClient<S, F, C extends HttpClient<S, F, ?>> {
      * @param type 文件类型: 如 png、jpg、jpeg 等
      * @param fileName 文件名
      * @param content 文件内容
-     * @return HttpClient 实例
+     * @return HttpTask 实例
      */
     public C addFileParam(String name, String type, String fileName, byte[] content) {
         if (name != null && content != null) {
@@ -508,13 +454,12 @@ public abstract class HttpClient<S, F, C extends HttpClient<S, F, ?>> {
     	
     }
     
-
     protected Call prepareCall(String method) {
     	assertNotConflict("GET".equals(method));
         Request.Builder builder = new Request.Builder()
         		.url(buildUrlPath());
         buildHeaders(builder);
-        switch (method) {
+		switch (method) {
         case "GET":
         	builder.get();
         	break;
@@ -528,7 +473,7 @@ public abstract class HttpClient<S, F, C extends HttpClient<S, F, ?>> {
         	builder.delete(buildRequestBody());
         	break;
         }
-        return httpClient.newCall(builder.build());
+		return httpClient.callRequest(builder.build());
 	}
    
     
@@ -553,26 +498,16 @@ public abstract class HttpClient<S, F, C extends HttpClient<S, F, ?>> {
 		return body;
 	}
 
-	protected int toState(Exception e) {
-		int state = OnComplete.EXCEPTION;
+	protected State toState(Exception e) {
 		if (e instanceof SocketTimeoutException) {
-		    state = OnComplete.TIMEOUT;
+		    return State.TIMEOUT;
 		} else if (e instanceof UnknownHostException || e instanceof ConnectException) {
-		    state = OnComplete.NETWORK_ERROR;
+			return State.NETWORK_ERROR;
 		} else if ("Canceled".equals(e.getMessage())) {
-		    state = OnComplete.CANCELED;
+			return State.CANCELED;
 		}
-		return state;
+		return State.EXCEPTION;
 	}
-
-
-    protected Object parseObject(String body, Type type) throws Exception {
-        Object result = body;
-        if (type != null && !type.equals(STR_TYPE) && body != null) {
-            result =JSON.parseObject(body, type);
-        }
-        return result;
-    }
 
 	
     private RequestBody buildRequestBody() {
@@ -589,7 +524,7 @@ public abstract class HttpClient<S, F, C extends HttpClient<S, F, ?>> {
             }
             for (String name : files.keySet()) {
                 FilePara file = files.get(name);
-                MediaType type = parseFileMediaType(file.type);
+                MediaType type = httpClient.getMediaType(file.type);
                 builder.addFormDataPart(name, file.fileName, RequestBody.create(type, file.content));
             }
             return builder.build();
@@ -598,10 +533,10 @@ public abstract class HttpClient<S, F, C extends HttpClient<S, F, ?>> {
         } else {
             FormBody.Builder builder = new FormBody.Builder();
             if (bodyParams != null) {
-                for (String name : bodyParams.keySet()) {
-                    String value = bodyParams.get(name);
-                    builder.add(name, value);
-                }
+	            for (String name : bodyParams.keySet()) {
+	                String value = bodyParams.get(name);
+	                builder.add(name, value);
+	            }
             }
             return builder.build();
         }
@@ -703,14 +638,5 @@ public abstract class HttpClient<S, F, C extends HttpClient<S, F, ?>> {
             }
         }
     }
-
-    protected MediaType parseFileMediaType(String suffix) {
-        String type = mediaTypes.get(suffix);
-        if (type != null) {
-            return MediaType.parse(type);
-        }
-        return MediaType.parse("application/octet-stream");
-    }
-
 
 }

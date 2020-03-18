@@ -1,6 +1,7 @@
 package com.ejlchina.http;
 
-import com.alibaba.fastjson.TypeReference;
+import com.ejlchina.http.internal.AsyncHttpTask;
+import com.ejlchina.http.internal.SyncHttpTask;
 
 /**
  * Http 工具类，封装 OkHttp
@@ -15,156 +16,56 @@ import com.alibaba.fastjson.TypeReference;
  *   Http2
  *   
  * @author Troy.Zhou
- * @since 0.3.4
  */
 public class HttpUtils {
 	
+	
+	private static HTTP http;
+	
+	
+	public static void of(HTTP http) {
+		HttpUtils.http = http;
+	}
+	
+	
+	static HTTP getHttp() {
+		if (http != null) {
+			return http;
+		}
+		synchronized (HttpUtils.class) {
+			if (http != null) {
+				return http;
+			}
+			http = HTTP.builder().build();
+			return http;
+		}
+	}
+	
 	/**
 	 * 异步请求
-	 * @param <S> 请求成功时返回的数据类型
-	 * @param <F> 请求失败时返回的数据类型
 	 * @param urlPath 请求地址
-	 * @return 异步 HttpClient
+	 * @return 异步 HttpTask
 	 */
-    public static <S, F> AsyncHttpClient<S, F> async(String urlPath) {
-        return new AsyncHttpClient<>(urlPath, null, null);
-    }
-    
-	/**
-	 * 异步请求
-	 * @param <S> 请求成功时返回的数据类型
-	 * @param <F> 请求失败时返回的数据类型
-	 * @param urlPath 请求地址
-	 * @param okType 请求成功时返回的数据类型
-	 * @return 异步 HttpClient
-	 */
-    public static <S, F> AsyncHttpClient<S, F> async(String urlPath, Class<S> okType) {
-        return new AsyncHttpClient<>(urlPath, okType, null);
-    }
-    
-	/**
-	 * 异步请求
-	 * @param <S> 请求成功时返回的数据类型
-	 * @param <F> 请求失败时返回的数据类型
-	 * @param urlPath 请求地址
-	 * @param okTypeRef 请求成功时返回的数据类型
-	 * @return 异步 HttpClient
-	 */
-    public static <S, F> AsyncHttpClient<S, F> async(String urlPath, TypeReference<S> okTypeRef) {
-        return new AsyncHttpClient<>(urlPath, okTypeRef.getType(), null);
-    }
-    
-	/**
-	 * 异步请求
-	 * @param <S> 请求成功时返回的数据类型
-	 * @param <F> 请求失败时返回的数据类型
-	 * @param urlPath 请求地址
-	 * @param okType 请求成功时返回的数据类型
-	 * @param failType 请求失败时返回的数据类型
-	 * @return 异步 HttpClient
-	 */
-    public static <S, F> AsyncHttpClient<S, F> async(String urlPath, Class<S> okType, Class<F> failType) {
-        return new AsyncHttpClient<>(urlPath, okType, failType);
-    }
-    
-	/**
-	 * 异步请求
-	 * @param <S> 请求成功时返回的数据类型
-	 * @param <F> 请求失败时返回的数据类型
-	 * @param urlPath 请求地址
-	 * @param okTypeRef 请求成功时返回的数据类型
-	 * @param failTypeRef 请求失败时返回的数据类型
-	 * @return 异步 HttpClient
-	 */
-    public static <S, F> AsyncHttpClient<S, F> async(String urlPath, TypeReference<S> okTypeRef, TypeReference<F> failTypeRef) {
-        return new AsyncHttpClient<>(urlPath, okTypeRef.getType(), failTypeRef.getType());
-    }
-
-	/**
-	 * 异步请求
-	 * @param <S> 请求成功时返回的数据类型
-	 * @param <F> 请求失败时返回的数据类型
-	 * @param urlPath 请求地址
-	 * @param okTypeRef 请求成功时返回的数据类型
-	 * @param failType 请求失败时返回的数据类型
-	 * @return 异步 HttpClient
-	 */
-    public static <S, F> AsyncHttpClient<S, F> async(String urlPath, TypeReference<S> okTypeRef, Class<F> failType) {
-        return new AsyncHttpClient<>(urlPath, okTypeRef.getType(), failType);
+    public static AsyncHttpTask async(String urlPath) {
+    	return getHttp().async(urlPath);
     }
 
 	/**
 	 * 同步请求
-	 * @param <S> 请求成功时返回的数据类型
-	 * @param <F> 请求失败时返回的数据类型
 	 * @param urlPath 请求地址
-	 * @return 同步 HttpClient
+	 * @return 同步 HttpTask
 	 */
-    public static <S, F> SyncHttpClient<S, F> sync(String urlPath) {
-        return new SyncHttpClient<>(urlPath, null, null);
+    public static SyncHttpTask sync(String urlPath) {
+    	return getHttp().sync(urlPath);
     }
     
-	/**
-	 * 同步请求
-	 * @param <S> 请求成功时返回的数据类型
-	 * @param <F> 请求失败时返回的数据类型
-	 * @param urlPath 请求地址
-	 * @param okType 请求成功时返回的数据类型
-	 * @return 同步 HttpClient
-	 */
-    public static <S, F> SyncHttpClient<S, F> sync(String urlPath, Class<S> okType) {
-        return new SyncHttpClient<>(urlPath, okType, null);
-    }
-    
-	/**
-	 * 同步请求
-	 * @param <S> 请求成功时返回的数据类型
-	 * @param <F> 请求失败时返回的数据类型
-	 * @param urlPath 请求地址
-	 * @param okTypeRef 请求成功时返回的数据类型
-	 * @return 同步 HttpClient
-	 */
-    public static <S, F> SyncHttpClient<S, F> sync(String urlPath, TypeReference<S> okTypeRef) {
-        return new SyncHttpClient<>(urlPath, okTypeRef.getType(), null);
-    }
-    
-	/**
-	 * 同步请求
-	 * @param <S> 请求成功时返回的数据类型
-	 * @param <F> 请求失败时返回的数据类型
-	 * @param urlPath 请求地址
-	 * @param okType 请求成功时返回的数据类型
-	 * @param failType 请求失败时返回的数据类型
-	 * @return 同步 HttpClient
-	 */
-    public static <S, F> SyncHttpClient<S, F> sync(String urlPath, Class<S> okType, Class<F> failType) {
-        return new SyncHttpClient<>(urlPath, okType, failType);
-    }
-    
-	/**
-	 * 同步请求
-	 * @param <S> 请求成功时返回的数据类型
-	 * @param <F> 请求失败时返回的数据类型
-	 * @param urlPath 请求地址
-	 * @param okTypeRef 请求成功时返回的数据类型
-	 * @param failTypeRef 请求失败时返回的数据类型
-	 * @return 同步 HttpClient
-	 */
-    public static <S, F> SyncHttpClient<S, F> sync(String urlPath, TypeReference<S> okTypeRef, TypeReference<F> failTypeRef) {
-        return new SyncHttpClient<>(urlPath, okTypeRef.getType(), failTypeRef.getType());
-    }
-
-	/**
-	 * 同步请求
-	 * @param <S> 请求成功时返回的数据类型
-	 * @param <F> 请求失败时返回的数据类型
-	 * @param urlPath 请求地址
-	 * @param okTypeRef 请求成功时返回的数据类型
-	 * @param failType 请求失败时返回的数据类型
-	 * @return 同步 HttpClient
-	 */
-    public static <S, F> SyncHttpClient<S, F> sync(String urlPath, TypeReference<S> okTypeRef, Class<F> failType) {
-        return new SyncHttpClient<>(urlPath, okTypeRef.getType(), failType);
+    /**
+     * 根据标签取消HTTP任务
+     * @param tag 标签
+     * @return 被取消的任务数量
+     */
+    public static int cancel(String tag) {
+    	return getHttp().cancel(tag);
     }
     
 }

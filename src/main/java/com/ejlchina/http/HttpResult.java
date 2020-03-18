@@ -1,107 +1,164 @@
 package com.ejlchina.http;
 
+import java.io.File;
+import java.io.InputStream;
+import java.io.Reader;
+
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.TypeReference;
+
 import okhttp3.Headers;
+import okhttp3.MediaType;
+
 
 /**
- * Http 请求结果
- *
- * @param <S> 请求成功时返回的数据类型
- * @param <F> 请求失败时返回的数据类型
+ * Http 执行结果
  */
-public class HttpResult<S, F> {
+public interface HttpResult {
 
-	private int state;
-	private int status;
-	private Headers headers;
-	private S okData;
-	private F failData;
-	private Exception e;
-	
-	
-	private HttpResult(int state, int status, Headers headers, S okData, F failData, Exception e) {
-		this.state = state;
-		this.status = status;
-		this.headers = headers;
-		this.okData = okData;
-		this.failData = failData;
-		this.e = e;
-	}
 
-	public static <T, M> HttpResult<T, M> exception(int compCode, Exception e) {
-		return new HttpResult<>(compCode, 0, null, null, null, e);
+	enum State {
+		
+		/**
+		 * 执行异常
+		 */
+	    EXCEPTION,
+	    
+	    /**
+	     * 请求被取消
+	     */
+	    CANCELED,
+	    
+	    /**
+	     * 请求已响应
+	     */
+	    RESPONSED,
+	    
+	    /**
+	     * 网络超时
+	     */
+	    TIMEOUT,
+	    
+	    /**
+	     * 网络出错
+	     */
+	    NETWORK_ERROR
+		
 	}
 	
-	public static <T, M> HttpResult<T, M> exception(int status, Headers headers, int compCode, Exception e) {
-		return new HttpResult<>(compCode, status, headers, null, null, e);
+	/**
+	 * HTTP响应报文体
+	 */
+	interface Body {
+		
+		/**
+		 * @return 媒体类型
+		 */
+		MediaType getContentType();
+		
+		/**
+		 * @return 报文体字节长度
+		 */
+		long getContentLength();
+
+		/**
+		 * 同一个 Body 对象的 toXXX 类方法只可使用一个并且只能调用一次
+		 * @return 报文体转字节流
+		 */
+		InputStream toByteStream();
+		
+		/**
+		 * 同一个 Body 对象的 toXXX 类方法只可使用一个并且只能调用一次
+		 * @return 报文体转字节数组
+		 */
+		byte[] toBytes();
+		
+		/**
+		 * 同一个 Body 对象的 toXXX 类方法只可使用一个并且只能调用一次
+		 * @return 报文体转字符流
+		 */
+		Reader toCharStream();
+
+		/**
+		 * 同一个 Body 对象的 toXXX 类方法只可使用一个并且只能调用一次
+		 * @return 报文体转字符串
+		 */
+		String toString();
+
+		/**
+		 * 同一个 Body 对象的 toXXX 类方法只可使用一个并且只能调用一次
+		 * @return 报文体转Json对象
+		 */
+		JSONObject toJsonObject();
+
+		/**
+		 * 同一个 Body 对象的 toXXX 类方法只可使用一个并且只能调用一次
+		 * @return 报文体转Json数组
+		 */
+		JSONArray toJsonArray();
+
+		/**
+		 * 同一个 Body 对象的 toXXX 类方法只可使用一个并且只能调用一次
+		 * @param <T> 目标泛型
+		 * @param type 目标类型
+		 * @return 报文体Json文本转JavaBean
+		 */
+		<T> T toBean(Class<T> type);
+
+		/**
+		 * 同一个 Body 对象的 toXXX 类方法只可使用一个并且只能调用一次
+		 * @param <T> 目标泛型
+		 * @param typeRef 目标类型
+		 * @return 报文体Json文本转JavaBean
+		 */
+		<T> T toBean(TypeReference<T> typeRef);
+
+		/**
+		 * 同一个 Body 对象的 toXXX 类方法只可使用一个并且只能调用一次
+		 * @param filePath 目标路径
+		 * @return 报文体保存到指定路径的文件
+		 */
+		File toFile(String filePath);
+
+		/**
+		 * 同一个 Body 对象的 toXXX 类方法只可使用一个并且只能调用一次
+		 * @param file 目标文件
+		 * @return 报文体保存到指定文件并返回
+		 */
+		File toFile(File file);
+		
 	}
 	
-	public static <T, M> HttpResult<T, M> success(int status, Headers headers, T okData) {
-		return new HttpResult<>(OnComplete.SUCCESS, status, headers, okData, null, null);
-	}
-	
-	public static <T, M> HttpResult<T, M> fail(int status, Headers headers, M failData) {
-		return new HttpResult<>(OnComplete.SUCCESS, status, headers, null, failData, null);
-	}
 
 	/**
 	 * @return 执行状态
-	 * @see OnComplete#EXCEPTION
-     * @see OnComplete#CANCELED
-     * @see OnComplete#SUCCESS
-     * @see OnComplete#FAILURE
-     * @see OnComplete#TIMEOUT
-     * @see OnComplete#NETWORK_ERROR
 	 */
-	public int getState() {
-		return state;
-	}
+	State getState();
 
 	/**
-	 * 
 	 * @return HTTP状态码
 	 */
-	public int getStatus() {
-		return status;
-	}
+	int getStatus();
 
 	/**
-	 * @return 返回头信息
+	 * @return 是否响应成功，状态码在 [200..300) 之间
 	 */
-	public Headers getHeaders() {
-		return headers;
-	}
+	boolean isSuccessful();
+	
+	/**
+	 * @return 响应头信息
+	 */
+	Headers getHeaders();
 
 	/**
-	 * HTTP状态码在 [200, 300) 之间 时
-	 * @return 响应成功时报文体解析出的数据
+	 * @return 响应报文体
 	 */
-	public S getOkData() {
-		return okData;
-	}
-
+	Body getBody();
+	
 	/**
-	 * HTTP状态码在 [200, 300) 之外 时
-	 * @return 响应失败时报文体解析出的数据
+	 * @return 执行中发生的异常
 	 */
-	public F getFailData() {
-		return failData;
-	}
-
-	/**
-	 * @return 请求中发生的异常
-	 */
-	public Exception getE() {
-		return e;
-	}
-
-	@Override
-	public String toString() {
-		return "HttpResult [\n  state = " + state + 
-				",\n  status = " + status + 
-				",\n  headers = " + headers + 
-				",\n  okData = " + okData + 
-				",\n  failData = " + failData + 
-				",\n  e = " + e + "\n]";
-	}
+	Exception getError();
 	
 }
