@@ -3,10 +3,12 @@ package com.ejlchina.http.internal;
 import java.io.IOException;
 
 import com.ejlchina.http.HttpException;
-import com.ejlchina.http.HttpTask;
+import com.ejlchina.http.HttpResult;
 import com.ejlchina.http.HttpResult.State;
+import com.ejlchina.http.HttpTask;
 
 import okhttp3.Call;
+import okhttp3.Response;
 
 
 /**
@@ -29,7 +31,7 @@ public class SyncHttpTask extends HttpTask<SyncHttpTask> {
      * @return 请求结果  
      * @see RealHttpResult
      */
-    public RealHttpResult get() {
+    public HttpResult get() {
         return request("GET");
     }
 
@@ -38,7 +40,7 @@ public class SyncHttpTask extends HttpTask<SyncHttpTask> {
      * @return 请求结果  
      * @see RealHttpResult
      */
-    public RealHttpResult post() {
+    public HttpResult post() {
         return request("POST");
     }
 
@@ -47,7 +49,7 @@ public class SyncHttpTask extends HttpTask<SyncHttpTask> {
      * @return 请求结果  
      * @see RealHttpResult
      */
-    public RealHttpResult put() {
+    public HttpResult put() {
         return request("PUT");
     }
     
@@ -56,29 +58,34 @@ public class SyncHttpTask extends HttpTask<SyncHttpTask> {
      * @return 请求结果  
      * @see RealHttpResult
      */
-    public RealHttpResult delete() {
+    public HttpResult delete() {
         return request("DELETE");
     }
     
-    private synchronized RealHttpResult request(String method) {
+    private HttpResult request(String method) {
     	RealHttpResult result = new RealHttpResult();
     	httpClient.preprocess(this, () -> {
         	Call call = prepareCall(method);
             try {
-                result.response(call.execute());
+                Response response = call.execute();
+                synchronized (SyncHttpTask.this) {
+                	result.response(response);
+                	SyncHttpTask.this.notify();
+                }
             } catch (IOException e) {
-            	result.exception(toState(e), e);
-            }
-            synchronized (SyncHttpTask.this) {
-            	SyncHttpTask.this.notify();
+            	synchronized (SyncHttpTask.this) {
+            		result.exception(toState(e), e);
+                }
             }
     	});
-    	if (result.getState() == null) {
-    		try {
-    			SyncHttpTask.this.wait();
-			} catch (InterruptedException e) {
-				throw new HttpException("等待异常", e);
-			}
+    	synchronized (this) {
+    		if (result.getState() == null) {
+        		try {
+        			SyncHttpTask.this.wait();
+    			} catch (InterruptedException e) {
+    				throw new HttpException("等待异常", e);
+    			}
+        	}
     	}
     	Exception e = result.getError();
     	if (e != null && result.getState() != State.CANCELED 

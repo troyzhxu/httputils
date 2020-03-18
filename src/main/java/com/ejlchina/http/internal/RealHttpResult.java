@@ -1,22 +1,16 @@
 package com.ejlchina.http.internal;
 
-import com.ejlchina.http.HttpResult.State;
+import com.ejlchina.http.HttpResult;
 
 import okhttp3.Headers;
 import okhttp3.Response;
 
-/**
- * Http 请求结果
- *
- */
-public class RealHttpResult {
+
+public class RealHttpResult implements HttpResult {
 
 	private State state;
 	private Response response;
 	private Exception error;
-	
-	
-	
 	
 	public RealHttpResult() {
 	}
@@ -43,16 +37,12 @@ public class RealHttpResult {
 		this.response = response;
 	}
 	
-	/**
-	 * @return 执行状态
-	 */
+	@Override
 	public State getState() {
 		return state;
 	}
 
-	/**
-	 * @return HTTP状态码
-	 */
+	@Override
 	public int getStatus() {
 		if (response != null) {
 			return response.code();
@@ -60,10 +50,7 @@ public class RealHttpResult {
 		return 0;
 	}
 
-	/**
-	 * 
-	 * @return 是否响应成功，状态码在 [200..300) 之间
-	 */
+	@Override
 	public boolean isSuccessful() {
 	    if (response != null) {
 			return response.isSuccessful();
@@ -71,9 +58,7 @@ public class RealHttpResult {
 		return false;
 	}
 	
-	/**
-	 * @return 响应头信息
-	 */
+	@Override
 	public Headers getHeaders() {
 		if (response != null) {
 			return response.headers();
@@ -81,9 +66,7 @@ public class RealHttpResult {
 		return null;
 	}
 
-	/**
-	 * @return 响应报文体
-	 */
+	@Override
 	public ResultBody getBody() {
 		if (response != null) {
 			return new ResultBody(response.body());
@@ -91,9 +74,7 @@ public class RealHttpResult {
 		return null;
 	}
 	
-	/**
-	 * @return 执行中发生的异常
-	 */
+	@Override
 	public Exception getError() {
 		return error;
 	}
@@ -109,6 +90,5 @@ public class RealHttpResult {
 		}
 		return str + ",\n  error: " + error + "\n]";
 	}
-
 	
 }
