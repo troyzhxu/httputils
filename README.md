@@ -91,33 +91,33 @@ http.async("http://api.demo.com/users").get()		// 异步 GET 请求
 #### 2.2 POST
 
 ```java
-	http.sync("/users")
-			.addJsonParam("name", "Jack")
-			.addJsonParam("age", 20)
-			.post()										// 同步 POST 请求
+http.sync("/users")
+		.addJsonParam("name", "Jack")
+		.addJsonParam("age", 20)
+		.post()										// 同步 POST 请求
 
-	http.async("http://api.demo.com/users")
-			.addJsonParam("name", "Jack")
-			.addJsonParam("age", 20)
-			.post()										// 异步 POST 请求
+http.async("http://api.demo.com/users")
+		.addJsonParam("name", "Jack")
+		.addJsonParam("age", 20)
+		.post()										// 异步 POST 请求
 ```
 #### 2.3 PUT
 
 ```java
-	http.sync("http://api.demo.com/users/1")
-			.addJsonParam("name", "Jack")
-			.put()										// 同步 PUT 请求
+http.sync("http://api.demo.com/users/1")
+		.addJsonParam("name", "Jack")
+		.put()										// 同步 PUT 请求
 
-	http.async("http://api.demo.com/users/1")
-			.addJsonParam("name", "Jack")
-			.put()										// 异步 PUT 请求
+http.async("http://api.demo.com/users/1")
+		.addJsonParam("name", "Jack")
+		.put()										// 异步 PUT 请求
 ```
 #### 2.4 DELETE
 
 ```java
-	http.sync("http://api.demo.com/users/1").delete()	// 同步 DELETE 请求
-	
-	http.async("http://api.demo.com/users/1").delete()	// 异步 DELETE 请求
+http.sync("http://api.demo.com/users/1").delete()	// 同步 DELETE 请求
+
+http.async("http://api.demo.com/users/1").delete()	// 异步 DELETE 请求
 ```
 ### 3 获取请求结果
 
@@ -126,17 +126,17 @@ http.async("http://api.demo.com/users").get()		// 异步 GET 请求
 　　只有异步请求才可以设置回调函数：
 
 ```java
-	http.async("http://api.demo.com/users/1")
-			.setOnResponse((HttpResult result) -> {
-				// 响应回调
-			})
-			.setOnException((Exception e) -> {
-				// 异常回调
-			})
-			.setOnComplete((State state) -> {
-				// 完成回调，无论成功失败都会执行
-			})
-			.get();
+http.async("http://api.demo.com/users/1")
+		.setOnResponse((HttpResult result) -> {
+			// 响应回调
+		})
+		.setOnException((Exception e) -> {
+			// 异常回调
+		})
+		.setOnComplete((State state) -> {
+			// 完成回调，无论成功失败都会执行
+		})
+		.get();
 ```
 　　所有的同步请求方法均返回一个 HttpResult 对象，所有的异步请求方法均返回一个 HttpCall 对象。
 
@@ -172,18 +172,18 @@ http.async("http://api.demo.com/users").get()		// 异步 GET 请求
 　　例如，下载文件到指定目录：
 	
 ```java
-	String path = "D:/reports/2020-03-01.xlsx";	// 文件保存目录
+String path = "D:/reports/2020-03-01.xlsx";	// 文件保存目录
 
-	// 同步下载
-	http.sync("http://api.demo.com/reports/2020-03-01.xlsx")
-			.get().getBody().toFile(path);
+// 同步下载
+http.sync("http://api.demo.com/reports/2020-03-01.xlsx")
+		.get().getBody().toFile(path);
 
-	// 异步下载
-	http.async("http://api.demo.com/reports/2020-03-01.xlsx")
-			.setOnResponse((HttpResult result) -> {
-				result.getBody().toFile(path);
-			})
-			.get();
+// 异步下载
+http.async("http://api.demo.com/reports/2020-03-01.xlsx")
+		.setOnResponse((HttpResult result) -> {
+			result.getBody().toFile(path);
+		})
+		.get();
 ```
 
 #### 3.3 HttpCall
@@ -198,13 +198,14 @@ http.async("http://api.demo.com/users").get()		// 异步 GET 请求
 　　取消一个异步请求示例：
 
 ```java
-	HttpCall call = http.async("http://api.demo.com/users/1").get();
+HttpCall call = http.async("http://api.demo.com/users/1").get();
 
-	System.out.println(call.isCanceled());	 // false
-	
-	call.cancel();   // 取消请求
+System.out.println(call.isCanceled());	 // false
 
-	System.out.println(call.isCanceled());	 // true
+boolean success = call.cancel();   // 取消请求
+
+System.out.println(success);	 		 // true
+System.out.println(call.isCanceled());	 // true
 ```
 
 ### 4 构建请求任务
@@ -216,21 +217,21 @@ http.async("http://api.demo.com/users").get()		// 异步 GET 请求
 单个添加（同步异步添加方法一样）
 
 ```java
-	http.sync("http://api.demo.com/orders")
-			.addHeader("Access-Token", "xxxxxx")
-			.addHeader("Content-Type", "application/json")
-			.get();
+http.sync("http://api.demo.com/orders")
+		.addHeader("Access-Token", "xxxxxx")
+		.addHeader("Content-Type", "application/json")
+		.get();
 ```
 多个添加（同步异步添加方法一样）
 
 ```java
-	Map<String, String> headers = new HashMap<>()
-	headers.put("Access-Token", "xxxxxx");
-	headers.put("Accept", "application/json");
-	
-	http.sync("http://api.demo.com/orders")
-			.addHeader(headers)
-			.get();
+Map<String, String> headers = new HashMap<>()
+headers.put("Access-Token", "xxxxxx");
+headers.put("Accept", "application/json");
+
+http.sync("http://api.demo.com/orders")
+		.addHeader(headers)
+		.get();
 ```
 
 #### 4.2 添加路径参数
@@ -240,21 +241,21 @@ http.async("http://api.demo.com/users").get()		// 异步 GET 请求
 单个添加（同步异步添加方法一样）
 
 ```java
-	http.sync("http://api.demo.com/shops/{shopName}/products/{productId}")
-			.addPathParam("shopName", "taobao")
-			.addPathParam("productId", 20)
-			.get();
+http.sync("http://api.demo.com/shops/{shopName}/products/{productId}")
+		.addPathParam("shopName", "taobao")
+		.addPathParam("productId", 20)
+		.get();
 ```
 多个添加（同步异步添加方法一样）
 
 ```java
-	Map<String, String> params = new HashMap<>()
-	params.put("shopName", "taobao");
-	params.put("productId", 20);
-	
-	http.sync("http://api.demo.com/shops/{shopName}/products/{productId}")
-			.addPathParam(params)
-			.get();
+Map<String, String> params = new HashMap<>()
+params.put("shopName", "taobao");
+params.put("productId", 20);
+
+http.sync("http://api.demo.com/shops/{shopName}/products/{productId}")
+		.addPathParam(params)
+		.get();
 ```
 
 #### 4.3 添加查询参数
@@ -264,21 +265,21 @@ http.async("http://api.demo.com/users").get()		// 异步 GET 请求
 单个添加（同步异步添加方法一样）
 
 ```java
-	http.sync("http://api.demo.com/products")
-			.addUrlParam("name", "手机")
-			.addUrlParam("tag", "5G")
-			.get();
+http.sync("http://api.demo.com/products")
+		.addUrlParam("name", "手机")
+		.addUrlParam("tag", "5G")
+		.get();
 ```
 多个添加（同步异步添加方法一样）
 
 ```java
-	Map<String, String> params = new HashMap<>()
-	params.put("name", "手机");
-	params.put("tag", 5G);
-	
-	http.sync("http://api.demo.com/products")
-			.addUrlParam(params)
-			.get();
+Map<String, String> params = new HashMap<>()
+params.put("name", "手机");
+params.put("tag", 5G);
+
+http.sync("http://api.demo.com/products")
+		.addUrlParam(params)
+		.get();
 ```
 
 #### 4.4 添加表单参数
@@ -288,21 +289,21 @@ http.async("http://api.demo.com/users").get()		// 异步 GET 请求
 单个添加（同步异步添加方法一样）
 
 ```java
-	http.sync("http://api.demo.com/signin")
-			.addBodyParam("username", "Jackson")
-			.addBodyParam("password", "xxxxxx")
-			.post();
+http.sync("http://api.demo.com/signin")
+		.addBodyParam("username", "Jackson")
+		.addBodyParam("password", "xxxxxx")
+		.post();
 ```
 多个添加（同步异步添加方法一样）
 
 ```java
-	Map<String, String> params = new HashMap<>()
-	params.put("username", "Jackson");
-	params.put("password", "xxxxxx");
-	
-	http.sync("http://api.demo.com/signin")
-			.addBodyParam(params)
-			.post();
+Map<String, String> params = new HashMap<>()
+params.put("username", "Jackson");
+params.put("password", "xxxxxx");
+
+http.sync("http://api.demo.com/signin")
+		.addBodyParam(params)
+		.post();
 ```
 
 #### 4.5 添加JSON参数
@@ -312,39 +313,39 @@ JSON参数 json 字符串的形式携带与请求报文体内
 单个添加（同步异步添加方法一样）
 
 ```java
-	http.sync("http://api.demo.com/signin")
-			.addJsonParam("username", "Jackson")
-			.addJsonParam("password", "xxxxxx")
-			.post();
+http.sync("http://api.demo.com/signin")
+		.addJsonParam("username", "Jackson")
+		.addJsonParam("password", "xxxxxx")
+		.post();
 ```
 多个添加（同步异步添加方法一样）
 
 ```java
-	Map<String, String> params = new HashMap<>()
-	params.put("username", "Jackson");
-	params.put("password", "xxxxxx");
-	
-	http.sync("http://api.demo.com/signin")
-			.addJsonParam(params)
-			.post();
+Map<String, String> params = new HashMap<>()
+params.put("username", "Jackson");
+params.put("password", "xxxxxx");
+
+http.sync("http://api.demo.com/signin")
+		.addJsonParam(params)
+		.post();
 ```
 添加JSON字符串
 
 ```java
-	http.sync("http://api.demo.com/signin")
-			.setRequestJson("\"username\":\"Jackson\",\"password\":\"xxxxxx\"")
-			.post();
+http.sync("http://api.demo.com/signin")
+		.setRequestJson("\"username\":\"Jackson\",\"password\":\"xxxxxx\"")
+		.post();
 ```
 Java Bean 自动转 JSON
 
 ```java
-	Login login = new Login();
-	login.setUsername("Jackson");
-	login.setPassword("xxxxxx");
-	
-	http.sync("http://api.demo.com/signin")
-			.setRequestJson(login)
-			.post();
+Login login = new Login();
+login.setUsername("Jackson");
+login.setPassword("xxxxxx");
+
+http.sync("http://api.demo.com/signin")
+		.setRequestJson(login)
+		.post();
 ```
 
 #### 4.6 添加文件参数
@@ -354,51 +355,51 @@ Java Bean 自动转 JSON
 上传本地文件
 
 ```java
-	File file1 = new File("D:/1.jpg");
-	File file2 = new File("D:/2.jpg");
-	
-	http.sync("http://api.demo.com/upload")
-			.addFileParam("image1", file1)
-			.addFileParam("image2", file2)
-			.post();
+File file1 = new File("D:/1.jpg");
+File file2 = new File("D:/2.jpg");
+
+http.sync("http://api.demo.com/upload")
+		.addFileParam("image1", file1)
+		.addFileParam("image2", file2)
+		.post();
 ```
 使用文件输入流上传
 
 ```java
-	// 获得文件的输入流
-	InputStream input = ...
-	
-	http.sync("http://api.demo.com/upload")
-			.addFileParam("image", "jpg", input)
-			.post();
+// 获得文件的输入流
+InputStream input = ...
+
+http.sync("http://api.demo.com/upload")
+		.addFileParam("image", "jpg", input)
+		.post();
 ```
 使用文件字节数组上传
 
 ```java
-	// 获得文件的字节数组
-	byte[] content = ...
-	
-	http.sync("http://api.demo.com/upload")
-			.addFileParam("image", "jpg", content)
-			.post();
+// 获得文件的字节数组
+byte[] content = ...
+
+http.sync("http://api.demo.com/upload")
+		.addFileParam("image", "jpg", content)
+		.post();
 ```
 文件参数和表单参数可以一起添加
 
 ```java
-	File file = new File("D:/首页广告.jpg");
-	
-	http.sync("http://api.demo.com/messages")
-			.addBodyParam("name", "广告图")
-			.addFileParam("image", file)
-			.post();
+File file = new File("D:/首页广告.jpg");
+
+http.sync("http://api.demo.com/messages")
+		.addBodyParam("name", "广告图")
+		.addFileParam("image", file)
+		.post();
 ```
 
 #### 4.6 添加标签
 
 ```java
-	http.async("http://api.demo.com/users")
-			.tag('MyTag')
-			.get()
+http.async("http://api.demo.com/users")
+		.tag('MyTag')
+		.get()
 ```
 
 
@@ -407,24 +408,24 @@ Java Bean 自动转 JSON
 #### 2.1 BaseUrl
 
 ```java
-	HTTP http = HTTP.builder()
-			.baseUrl("http://api.demo.com")		// 设置 BaseUrl
-			.build();
+HTTP http = HTTP.builder()
+		.baseUrl("http://api.demo.com")		// 设置 BaseUrl
+		.build();
 ```
 　　该配置全局生效，在配置了`BaseUr`之后，具体的请求便可以省略 BaseUrl 部分，例如：
 
 ```java
-	http.sync("/users").get()					// http://api.demo.com/users
-	
-	http.sync("/auth/signin")					// http://api.demo.com/auth/signin
-			.addBodyParam("username", "Jackson")
-			.addBodyParam("password", "xxxxxx")
-			.post()								// POST请求
+http.sync("/users").get()					// http://api.demo.com/users
+
+http.sync("/auth/signin")					// http://api.demo.com/auth/signin
+		.addBodyParam("username", "Jackson")
+		.addBodyParam("password", "xxxxxx")
+		.post()								// POST请求
 ```
 　　在配置了`BaseUrl`之后，仍然可以请求全路径的接口，如：
 
 ```java
-	http.sync("https://www.baidu.com").get()
+http.sync("https://www.baidu.com").get()
 ```
 
 #### 2.2 回调执行器
@@ -432,53 +433,53 @@ Java Bean 自动转 JSON
 　　如何想改变执行回调函数的线程时，可以配置回调函数执行器。例如在Android里，让所有的回调函数都在UI线程里执行，则可以在构建`HttpClient`时配置回调执行器：
 
 ```java
-	HTTP http = HTTP.builder()
-			.callbackExecutor((Runnable run) -> {
-				runOnUiThread(run);				// 在UI线程执行
-			})
-			.build();
+HTTP http = HTTP.builder()
+		.callbackExecutor((Runnable run) -> {
+			runOnUiThread(run);				// 在UI线程执行
+		})
+		.build();
 ```
 
 #### 2.3 配置`OkHttpClient`
 
 ```java
-	HTTP http = HTTP.builder()
-		.config((Builder builder) -> {
-			// 配置连接池 最小10个连接（不配置默认为 5）
-			builder.connectionPool(new ConnectionPool(10, 5, TimeUnit.MINUTES));
-			// 配置连接超时时间
-			builder.connectTimeout(20, TimeUnit.SECONDS);
-			// 配置拦截器
-			builder.addInterceptor((Chain chain) -> {
-				Request request = chain.request();
-				// 必须同步返回，拦截器内无法执行异步操作
-				return chain.proceed(request);
-			});
-			// 其它配置: SSL、缓存、代理...
-		})
-		.build();
+HTTP http = HTTP.builder()
+	.config((Builder builder) -> {
+		// 配置连接池 最小10个连接（不配置默认为 5）
+		builder.connectionPool(new ConnectionPool(10, 5, TimeUnit.MINUTES));
+		// 配置连接超时时间
+		builder.connectTimeout(20, TimeUnit.SECONDS);
+		// 配置拦截器
+		builder.addInterceptor((Chain chain) -> {
+			Request request = chain.request();
+			// 必须同步返回，拦截器内无法执行异步操作
+			return chain.proceed(request);
+		});
+		// 其它配置: SSL、缓存、代理...
+	})
+	.build();
 ```
 
-#### 2.3 预处理器
+#### 2.3 并行预处理器
 
 　　预处理器（`Preprocessor`）可以让我们在请求发出之前对请求本身做一些改变，但与 OkHttp 提供的拦截器（`Interceptor`）不同的是，预处理器可以让我们异步处理这些问题。
 
 　　例如，当我们想为请求任务自动添加`Token`头信息，而`Token`只能通过异步方法`requestToken`获取时，我们可以添加这样的预处理器：
 
 ```java
-	HTTP http = HTTP.builder()
-			.addPreprocessor((Process process) -> {
-				// 异步获取 Token
-				requestToken((String token) -> {
-					// 获取当前的请求任务
-					HttpTask task = process.getTask();
-					// 为请求任务添加 Token 头信息
-					task.addHeader("Token", token);
-					// 继续当前的请求任务
-					process.proceed();
-				});	
-			})
-			.build();
+HTTP http = HTTP.builder()
+		.addPreprocessor((Process process) -> {
+			// 异步获取 Token
+			requestToken((String token) -> {
+				// 获取当前的请求任务
+				HttpTask task = process.getTask();
+				// 为请求任务添加 Token 头信息
+				task.addHeader("Token", token);
+				// 继续当前的请求任务
+				process.proceed();
+			});	
+		})
+		.build();
 ```
 　　和`Interceptor`一样，`Preprocessor`也可以添加多个。
 
@@ -489,16 +490,16 @@ Java Bean 自动转 JSON
 　　为了解决这个问题，`httputils`提供了串行预处理器，它可以让HTTP任务排好队，一个一个的进入预处理器：
 
 ```java
-	HTTP http = HTTP.builder()
-			.addSerialPreprocessor((Process process) -> {
-				// 检查过期，若需要则刷新Token
-				checkExpirationAndRefreshToken((String token) -> {
-					HttpTask task = process.getTask();
-					task.addHeader("Token", token);
-					process.proceed();	// 在调用此方法前，不会有其它任务进入该预处理器
-				});	
-			})
-			.build();
+HTTP http = HTTP.builder()
+		.addSerialPreprocessor((Process process) -> {
+			// 检查过期，若需要则刷新Token
+			checkExpirationAndRefreshToken((String token) -> {
+				HttpTask task = process.getTask();
+				task.addHeader("Token", token);
+				process.proceed();	// 调用此方法前，不会有其它任务进入该预处理器
+			});	
+		})
+		.build();
 ```
 　　串行预处理器实现了让HTTP任务排队串行处理的功能，但值得一提的是：它并没有因此而阻塞任何线程！
 
