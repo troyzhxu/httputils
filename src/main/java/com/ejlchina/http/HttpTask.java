@@ -82,6 +82,14 @@ public abstract class HttpTask<C extends HttpTask<?>> {
     public String getTag() {
 		return tag;
 	}
+    
+    /**
+     * 获取请求任务的URL地址
+     * @return URL地址
+     */
+    public String getUrl() {
+    	return urlPath;
+    }
 
 	/**
      * 添加请求头
