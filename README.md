@@ -194,7 +194,7 @@ http.async("http://api.demo.com/users/1")
     * `toFile(File file)` 				下载到指定文件并返回保存后的文件（下载文件时非常有用）
     * `getContentType()`				返回报文体的媒体类型
     * `getContentLength()`				返回报文体的字节长度
-    * 以上`toXXX()`类方法只可使用一个并且只能调用一次
+    * 对同一个`Body`对象，以上`toXXX()`类方法只能使用一个且仅能使用一次
 * `getError()` 		执行中发生的异常，自动捕获执行请求是发生的 网络超时、网络错误 和 其它请求异常
 
 　　例如，下载文件到指定目录：
