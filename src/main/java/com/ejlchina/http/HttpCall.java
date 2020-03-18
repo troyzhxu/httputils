@@ -4,8 +4,9 @@ public interface HttpCall {
 
 	/**
 	 * 取消 Http 请求
+	 * @return 是否取消成功
 	 */
-	void cancel();
+	boolean cancel();
 
 	/**
 	 * @return 请求是否被取消

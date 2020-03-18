@@ -98,6 +98,9 @@ public class AsyncHttpTask extends HttpTask<AsyncHttpTask> {
         		}
 			}
     	});
+    	if (tag != null) {
+    		
+    	}
     	return call;
     }
     
@@ -108,13 +111,15 @@ public class AsyncHttpTask extends HttpTask<AsyncHttpTask> {
     	private HttpCall call;
     	
 		@Override
-		public synchronized void cancel() {
+		public synchronized boolean cancel() {
+			boolean res = true;
 			if (call != null) {
-				call.cancel();
+				res = call.cancel();
 			} else {
 				canceled = true;
 			}
 			notify();
+			return res;
 		}
 
 		@Override
@@ -168,8 +173,12 @@ public class AsyncHttpTask extends HttpTask<AsyncHttpTask> {
 		}
 
 		@Override
-		public void cancel() {
-			call.cancel();
+		public boolean cancel() {
+			if (result == null) {
+				call.cancel();
+				return true;
+			}
+			return false;
 		}
 
 		@Override

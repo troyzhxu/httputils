@@ -28,7 +28,7 @@ public class HttpTest {
 			.addPreprocessor((Process process) -> {
 				System.out.println("并行预处理-开始");
 //				new Thread(() -> {
-					sleep(2);
+					sleep(2000);
 					System.out.println("并行预处理-结束");
 					process.proceed();
 //				}).start();
@@ -36,7 +36,7 @@ public class HttpTest {
 			.addSerialPreprocessor((Process process) -> {
 				System.out.println("串行预处理-开始");
 				new Thread(() -> {
-					sleep(3);
+					sleep(3000);
 					System.out.println("串行预处理-结束");
 					process.proceed();
 				}).start();
@@ -58,10 +58,42 @@ public class HttpTest {
 				}).get();
 		}).start();
 		
-		sleep(10);
+		sleep(10000);
 	}
 	
 
+
+	@Test
+	public void testCancel() {
+		
+		HTTP http = HTTP.builder()
+			.baseUrl("http://localhost:8080")
+			.build();
+		
+		HttpCall call = http.async("/user/show/1")
+				.setOnResponse((HttpResult result) -> {
+					System.out.println(result);
+				}).get();
+
+		sleep(10);
+		
+		System.out.println("isDone = " + call.isDone());
+		System.out.println("isCanceled = " + call.isCanceled());
+		
+		System.out.println("取消结果 = " + call.cancel());
+		
+		System.out.println("isDone = " + call.isDone());
+		System.out.println("isCanceled = " + call.isCanceled());
+		
+		sleep(100);
+		System.out.println("++++++++");
+		
+		System.out.println("isDone = " + call.isDone());
+		System.out.println("isCanceled = " + call.isCanceled());
+	}
+	
+
+	
 	
 	private HTTP buildHttp() {
 		
@@ -193,9 +225,9 @@ public class HttpTest {
 	}
 
 	
-	private void sleep(int seconds) {
+	private void sleep(int millis) {
 		try {
-			Thread.sleep(seconds * 1000);
+			Thread.sleep(millis);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
