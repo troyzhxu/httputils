@@ -238,7 +238,7 @@ http.async("http://api.demo.com/reports/2020-03-01.xlsx")
 * `cancel()` 取消本次请求，返回取消结果
 * `isCanceled()` 返回请求是否被取消
 * `isDone()` 返回是否执行完成，包含取消和失败
-* `getResult()` 返回执行结果`HttpResult`对象，若请求未执行完，则挂起当前线程直到执行完成
+* `getResult()` 返回执行结果`HttpResult`对象，若请求未执行完，则挂起当前线程直到执行完成再返回
 
 　　取消一个异步请求示例：
 
@@ -255,7 +255,7 @@ System.out.println(call.isCanceled());	 // true
 
 ### 4 构建HTTP任务
 
-　　`HTTP` 对象的  
+　　`HTTP`对象的`sync`与`async`方法返回一个`HttpTask`对象，该对象提供了一系列`addXXX`、`setXXX` 与`tag`方法用于HTTP任务本身。
 
 #### 4.1 添加请求头
 
