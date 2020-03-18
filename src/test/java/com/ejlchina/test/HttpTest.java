@@ -63,20 +63,29 @@ public class HttpTest {
 			})
 			.build();
 		
-		
 		new Thread(() -> {
-			http.async("/user/show/1")
-				.setOnResponse((HttpResult result) -> {
-					System.out.println(result);
-				}).get();
+			System.out.println(http.sync("/user/show/1").get());
 		}).start();
 		
 		new Thread(() -> {
-			http.async("/user/show/2")
-				.setOnResponse((HttpResult result) -> {
-					System.out.println(result);
-				}).get();
+			System.out.println(http.sync("/user/show/2").get());
 		}).start();
+		
+//		new Thread(() -> {
+//			http.async("/user/show/1")
+//				.setOnResponse((HttpResult result) -> {
+//					System.out.println(result);
+//				})
+//				.get();
+//		}).start();
+//		
+//		new Thread(() -> {
+//			http.async("/user/show/2")
+//				.setOnResponse((HttpResult result) -> {
+//					System.out.println(result);
+//				})
+//				.get();
+//		}).start();
 		
 		sleep(10000);
 	}
@@ -242,6 +251,11 @@ public class HttpTest {
 				.post();
 		
 		System.out.println("result = " + result);
+		
+		result = http.sync("/user/show/1").get();
+		
+		System.out.println("result = " + result);
+		
 		System.out.println("isSuccessful = " + result.isSuccessful());
 	}
 
