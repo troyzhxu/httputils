@@ -225,7 +225,19 @@ http.async("http://api.demo.com/users/1")
     * 对同一个`Body`对象，以上`toXXX()`类方法只能使用一个且仅能使用一次
 * `getError()`         执行中发生的异常，自动捕获执行请求是发生的 网络超时、网络错误 和 其它请求异常
 
-　　例如，下载文件到指定目录：
+　　示例，请求结果自动转Bean和List：
+
+```java
+// 自动转Bean
+Order order = http.sync("http://api.demo.com/orders/1")
+        .get().getBody().toBean(Order.class);
+        
+// 自动转List
+List<Order> orders = http.sync("http://api.demo.com/orders")
+        .get().getBody().toList(Order.class);
+```
+
+　　示例，下载文件到指定目录：
 
 ```java
 String path = "D:/reports/2020-03-01.xlsx";    // 文件保存目录
