@@ -4,7 +4,6 @@
 [![License](https://img.shields.io/hexpm/l/plug.svg)](https://gitee.com/ejlchina-zhxu/httputils/blob/master/LICENSE)
 [![Troy.Zhou](https://img.shields.io/badge/%E4%BD%9C%E8%80%85-ejlchina-orange.svg)](https://github.com/ejlchina)
 
-
 ## 介绍
 Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前后端通用
 
@@ -19,6 +18,8 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
  * GET|POST|PUT|DELETE
  * 文件上传下载
 
+## 当前文档版本 2.0.0 [查阅 1.x.x 点我跳转](https://gitee.com/ejlchina-zhxu/httputils/blob/1.x/README.md)
+
 ## 安装教程
 
 ### Maven
@@ -30,7 +31,6 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
      <version>2.0.0</version>
 </dependency>
 ```
-
 ### Gradle
 
 `compile 'com.ejlchina:httputils:2.0.0'`
@@ -46,7 +46,7 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
   - [2.2 POST](#22-POST)
   - [2.3 PUT](#23-PUT)
   - [2.4 DELETE](#24-DELETE)
-+ [3 分析执行结果](#3-分析执行结果)
++ [3 解析执行结果](#3-解析执行结果)
   - [3.1 回调函数](#31-回调函数)
   - [3.2 HttpResult](#32-HttpResult)
   - [3.3 HttpCall](#33-HttpCall)
@@ -74,15 +74,15 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 ```
 　　`HTTP`对象有以下三个方法：
 
-* `AsyncHttpTask async(String urlPath)` 开始一个异步HTTP任务
-* `SyncHttpTask sync(String urlPath)` 开始一个同步HTTP任务
-* `int cancel(String tag)` 根据标签批量取消HTTP任务，返回被取消的任务数
+* `async(String urlPath)` 开始一个异步HTTP任务
+* `sync(String urlPath)` 开始一个同步HTTP任务
+* `cancel(String tag)` 根据标签批量取消HTTP任务
 
 　　为了简化文档，下文中出现的`http`均是已构建好的`HTTP`对象。
 
 #### 1.2 同步请求
 
-　　使用方法`sync(String url)`发起同步请求
+　　使用方法`sync(String url)`开始一个同步请求：
 
 ```java
 // 最终路径 http://api.demo.com/users?name=Jack
@@ -92,10 +92,11 @@ User user = http.sync("http://api.demo.com/users")
 		.getBody()									// 获取响应报文体
 		.toBean(User.class);						// 得到目标数据
 ```
+　　方法`sync`返回一个同步`HttpTask`，可链式使用。
 
 #### 1.3 异步请求
 
-　　使用方法`async(String url)`发起异步请求
+　　使用方法`async(String url)`开始一个异步请求：
 
 ```java
 // 最终路径为 http://api.demo.com/users/1
@@ -107,47 +108,63 @@ http.async("http://api.demo.com/users/{id}")
 		})
 		.get();	  	// GET请求
 ```
+　　方法`async`返回一个异步`HttpTask`，可链式使用。
+
 ### 2 请求方法
+
+　　同步与异步的`HttpTask`都拥有`get`、`post`、`put`与`delete`方法。不同的是：同步`HttpTask`的这些方法返回一个`HttpResult`，而异步`HttpTask`的这些方法返回一个`HttpCall`。
 
 #### 2.1 GET
 
 ```java
-http.sync("http://api.demo.com/users").get()		// 同步 GET 请求
+HttpResult result = http.sync("http://api.demo.com/users").get();		// 同步 GET
 
-http.async("http://api.demo.com/users").get()		// 异步 GET 请求
+HttpCall call = http.async("http://api.demo.com/users")
+		.setOnResponse((HttpResult result) -> {
+		
+		}).get();														// 异步 GET
 ```
 #### 2.2 POST
 
 ```java
-http.sync("/users")
-		.addJsonParam("name", "Jack")
-		.addJsonParam("age", 20)
-		.post()										// 同步 POST 请求
+HttpResult result = http.sync("http://api.demo.com/users")
+		.addBodyParam("name", "Jack")
+		.addBodyParam("age", 20)
+		.post();														// 同步 POST
 
-http.async("http://api.demo.com/users")
-		.addJsonParam("name", "Jack")
-		.addJsonParam("age", 20)
-		.post()										// 异步 POST 请求
+HttpCall call = http.async("http://api.demo.com/users")
+		.addBodyParam("name", "Jack")
+		.addBodyParam("age", 20)
+		.setOnResponse((HttpResult result) -> {
+		
+		}).post();														// 异步 POST
 ```
 #### 2.3 PUT
 
 ```java
-http.sync("http://api.demo.com/users/1")
+HttpResult result = http.sync("http://api.demo.com/users/1")
 		.addJsonParam("name", "Jack")
-		.put()										// 同步 PUT 请求
+		.put();															// 同步 PUT
 
-http.async("http://api.demo.com/users/1")
+HttpCall call = http.async("http://api.demo.com/users/1")
 		.addJsonParam("name", "Jack")
-		.put()										// 异步 PUT 请求
+		.setOnResponse((HttpResult result) -> {
+		
+		})
+		.put();															// 异步 PUT
 ```
 #### 2.4 DELETE
 
 ```java
-http.sync("http://api.demo.com/users/1").delete()	// 同步 DELETE 请求
+HttpResult result = http.sync("http://api.demo.com/users/1").delete();	// 同步 DELETE
 
-http.async("http://api.demo.com/users/1").delete()	// 异步 DELETE 请求
+HttpCall call = http.async("http://api.demo.com/users/1")
+		.setOnResponse((HttpResult result) -> {
+		
+		})
+		.delete();														// 异步 DELETE
 ```
-### 3 分析执行结果
+### 3 解析执行结果
 
 #### 3.1 回调函数
 
@@ -194,7 +211,7 @@ http.async("http://api.demo.com/users/1")
     * `toFile(File file)` 				下载到指定文件并返回保存后的文件（下载文件时非常有用）
     * `getContentType()`				返回报文体的媒体类型
     * `getContentLength()`				返回报文体的字节长度
-    * 以上`toXXX()`类方法只可使用一个并且只能调用一次
+    * 对同一个`Body`对象，以上`toXXX()`类方法只能使用一个且仅能使用一次
 * `getError()` 		执行中发生的异常，自动捕获执行请求是发生的 网络超时、网络错误 和 其它请求异常
 
 　　例如，下载文件到指定目录：
@@ -221,7 +238,7 @@ http.async("http://api.demo.com/reports/2020-03-01.xlsx")
 * `cancel()` 取消本次请求，返回取消结果
 * `isCanceled()` 返回请求是否被取消
 * `isDone()` 返回是否执行完成，包含取消和失败
-* `getResult()` 返回执行结果`HttpResult`对象，若请求未执行完，则挂起当前线程直到执行完成
+* `getResult()` 返回执行结果`HttpResult`对象，若请求未执行完，则挂起当前线程直到执行完成再返回
 
 　　取消一个异步请求示例：
 
@@ -238,11 +255,11 @@ System.out.println(call.isCanceled());	 // true
 
 ### 4 构建HTTP任务
 
-　　`HTTP` 对象的  
+　　`HTTP`对象的`sync`与`async`方法返回一个`HttpTask`对象，该对象提供了一系列可链式使用的`addXXX`、`setXXX` 与`tag`方法用于构建任务本身。
 
 #### 4.1 添加请求头
 
-单个添加（同步异步添加方法一样）
+　　单个添加（同步异步添加方法一样）：
 
 ```java
 http.sync("http://api.demo.com/orders")
@@ -250,7 +267,7 @@ http.sync("http://api.demo.com/orders")
 		.addHeader("Content-Type", "application/json")
 		.get();
 ```
-多个添加（同步异步添加方法一样）
+　　多个添加（同步异步添加方法一样）：
 
 ```java
 Map<String, String> headers = new HashMap<>()
@@ -264,9 +281,9 @@ http.sync("http://api.demo.com/orders")
 
 #### 4.2 添加路径参数
 
-路径参数用于替换URL字符串中的占位符
+　　路径参数用于替换URL字符串中的占位符。
 
-单个添加（同步异步添加方法一样）
+　　单个添加（同步异步添加方法一样）：
 
 ```java
 http.sync("http://api.demo.com/shops/{shopName}/products/{productId}")
@@ -274,7 +291,7 @@ http.sync("http://api.demo.com/shops/{shopName}/products/{productId}")
 		.addPathParam("productId", 20)
 		.get();
 ```
-多个添加（同步异步添加方法一样）
+　　多个添加（同步异步添加方法一样）：
 
 ```java
 Map<String, String> params = new HashMap<>()
@@ -288,22 +305,22 @@ http.sync("http://api.demo.com/shops/{shopName}/products/{productId}")
 
 #### 4.3 添加查询参数
 
-查询参数（URL参数）用于拼接在 url 字符串的 ? 之后
+　　查询参数（URL参数）用于拼接在 url 字符串的 ? 之后。
 
-单个添加（同步异步添加方法一样）
+　　单个添加（同步异步添加方法一样）：
 
 ```java
 http.sync("http://api.demo.com/products")
 		.addUrlParam("name", "手机")
-		.addUrlParam("tag", "5G")
+		.addUrlParam("type", "5G")
 		.get();
 ```
-多个添加（同步异步添加方法一样）
+　　多个添加（同步异步添加方法一样）：
 
 ```java
 Map<String, String> params = new HashMap<>()
 params.put("name", "手机");
-params.put("tag", 5G);
+params.put("type", "5G");
 
 http.sync("http://api.demo.com/products")
 		.addUrlParam(params)
@@ -312,9 +329,9 @@ http.sync("http://api.demo.com/products")
 
 #### 4.4 添加表单参数
 
-表单参数（Budy参数）以 key=value& 的形式携带与请求报文体内
+　　表单参数（Body参数）以 key=value& 的形式携带与请求报文体内。
 
-单个添加（同步异步添加方法一样）
+　　单个添加（同步异步添加方法一样）：
 
 ```java
 http.sync("http://api.demo.com/signin")
@@ -322,7 +339,7 @@ http.sync("http://api.demo.com/signin")
 		.addBodyParam("password", "xxxxxx")
 		.post();
 ```
-多个添加（同步异步添加方法一样）
+　　多个添加（同步异步添加方法一样）：
 
 ```java
 Map<String, String> params = new HashMap<>()
@@ -336,9 +353,9 @@ http.sync("http://api.demo.com/signin")
 
 #### 4.5 添加Json参数
 
-JSON参数 json 字符串的形式携带与请求报文体内
+　　JSON 参数最终以 json 字符串的形式携带与请求报文体内。
 
-单个添加（同步异步添加方法一样）
+　　单个添加（同步异步添加方法一样）：
 
 ```java
 http.sync("http://api.demo.com/signin")
@@ -346,7 +363,7 @@ http.sync("http://api.demo.com/signin")
 		.addJsonParam("password", "xxxxxx")
 		.post();
 ```
-多个添加（同步异步添加方法一样）
+　　多个添加（同步异步添加方法一样）：
 
 ```java
 Map<String, String> params = new HashMap<>()
@@ -357,14 +374,14 @@ http.sync("http://api.demo.com/signin")
 		.addJsonParam(params)
 		.post();
 ```
-添加JSON字符串
+　　直接设置JSON字符串：
 
 ```java
 http.sync("http://api.demo.com/signin")
 		.setRequestJson("\"username\":\"Jackson\",\"password\":\"xxxxxx\"")
 		.post();
 ```
-Java Bean 自动转 JSON
+　　JavaBean 自动转 JSON：
 
 ```java
 Login login = new Login();
@@ -378,9 +395,7 @@ http.sync("http://api.demo.com/signin")
 
 #### 4.6 添加文件参数
 
-同步和异步添加文件方法是一样的
-
-上传本地文件
+　　上传本地文件：
 
 ```java
 File file1 = new File("D:/1.jpg");
@@ -391,7 +406,7 @@ http.sync("http://api.demo.com/upload")
 		.addFileParam("image2", file2)
 		.post();
 ```
-使用文件输入流上传
+　　使用文件输入流上传：
 
 ```java
 // 获得文件的输入流
@@ -401,7 +416,7 @@ http.sync("http://api.demo.com/upload")
 		.addFileParam("image", "jpg", input)
 		.post();
 ```
-使用文件字节数组上传
+　　使用文件字节数组上传：
 
 ```java
 // 获得文件的字节数组
@@ -411,7 +426,7 @@ http.sync("http://api.demo.com/upload")
 		.addFileParam("image", "jpg", content)
 		.post();
 ```
-文件参数和表单参数可以一起添加
+　　文件参数和表单参数可以一起添加：
 
 ```java
 File file = new File("D:/首页广告.jpg");
@@ -424,12 +439,19 @@ http.sync("http://api.demo.com/messages")
 
 #### 4.7 添加标签
 
+　　有时候我们对HTTP任务加以分类，这时候可以使用标签功能：
+
 ```java
 http.async("http://api.demo.com/users")
-		.tag('MyTag')
-		.get()
+		.tag("MyTag")
+		.get();
 ```
+　　当任务被添加标签后，我们按标签批量的对HTTP任务进行取消：
 
+```java
+http.cancel("MyTag");
+```
+　　也可以在统一配置的预处理器中，以标签对任务进行分类处理，参见[并行预处理器](#54-并行预处理器)与[串行预处理器](#55-串行预处理器)。
 
 ### 5 配置 HTTP
 
@@ -483,28 +505,28 @@ HTTP http = HTTP.builder()
 			// 必须同步返回，拦截器内无法执行异步操作
 			return chain.proceed(request);
 		});
-		// 其它配置: SSL、缓存、代理...
+		// 其它配置: SSL、缓存、代理、事件监听...
 	})
 	.build();
 ```
 
 #### 5.4 并行预处理器
 
-　　预处理器（`Preprocessor`）可以让我们在请求发出之前对请求本身做一些改变，但与 OkHttp 提供的拦截器（`Interceptor`）不同的是，预处理器可以让我们异步处理这些问题。
+　　预处理器（`Preprocessor`）可以让我们在请求发出之前对请求本身做一些改变，但与 OkHttp 提供的拦截器（`Interceptor`）不同的是：预处理器可以让我们异步处理这些问题。
 
-　　例如，当我们想为请求任务自动添加`Token`头信息，而`Token`只能通过异步方法`requestToken`获取时，我们可以添加这样的预处理器：
+　　例如，当我们想为请求任务自动添加`Token`头信息，而`Token`只能通过异步方法`requestToken`获取时，这时使用`Interceptor`就很难处理了，但我们可以使用预处理器轻松解决：
 
 ```java
 HTTP http = HTTP.builder()
 		.addPreprocessor((Process process) -> {
-			// 异步获取 Token
-			requestToken((String token) -> {
-				// 获取当前的请求任务
-				HttpTask task = process.getTask();
-				// 为请求任务添加 Token 头信息
-				task.addHeader("Token", token);
-				// 继续当前的请求任务
-				process.proceed();
+			HttpTask<?> task = process.getTask();		// 获得当前的请求任务
+			String tag = task.getTag();					// 取得添加在任务上的标签
+			if (!"Auth".equals(tag)) {					// 根据标签判断该任务是否需要Token
+				return;
+			}
+			requestToken((String token) -> {			// 异步获取 Token
+				task.addHeader("Token", token);			// 为任务添加 Token头信息
+				process.proceed();						// 继续当前的任务
 			});	
 		})
 		.build();
@@ -515,16 +537,20 @@ HTTP http = HTTP.builder()
 
 　　普通预处理器都是可并行处理的，然而有时我们希望某个预处理器同时只处理一个任务。比如 当`Token`过期时我们需要去刷新获取新`Token`，而刷新`Token`这个操作只能有一个任务去执行，因为如果`n`个任务同时执行的话，那么必有`n-1`个任务刚得刷新得到的`Token`可能会立马失效，而这是我们所不希望的。
 
-　　为了解决这个问题，`httputils`提供了串行预处理器，它可以让HTTP任务排好队，一个一个的进入预处理器：
+　　为了解决这个问题，`httputils`提供了串行预处理器，它可以让HTTP任务排好队，一个一个地进入预处理器：
 
 ```java
 HTTP http = HTTP.builder()
 		.addSerialPreprocessor((Process process) -> {
+			HttpTask<?> task = process.getTask();		// 获得当前的请求任务
+			String tag = task.getTag();					// 取得添加在任务上的标签
+			if (!"Auth".equals(tag)) {					// 根据标签判断该任务是否需要Token
+				return;
+			}
 			// 检查过期，若需要则刷新Token
-			checkExpirationAndRefreshToken((String token) -> {
-				HttpTask task = process.getTask();
-				task.addHeader("Token", token);
-				process.proceed();	// 调用此方法前，不会有其它任务进入该预处理器
+			requestTokenAndRefreshIfExpired((String token) -> {
+				task.addHeader("Token", token);			// 为任务添加 Token头信息
+				process.proceed();						// 调用此方法前，不会有其它任务进入该处理器
 			});	
 		})
 		.build();

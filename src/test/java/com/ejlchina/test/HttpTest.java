@@ -103,7 +103,7 @@ public class HttpTest {
 				.setOnResponse((HttpResult result) -> {
 					System.out.println(result);
 				})
-				.tag("A")
+				.setTag("A")
 				.get();
 
 		System.out.println(((HttpClient) http).getTagCallCount());
@@ -112,7 +112,7 @@ public class HttpTest {
 				.setOnResponse((HttpResult result) -> {
 					System.out.println(result);
 				})
-				.tag("A")
+				.setTag("A")
 				.get();
 		
 		System.out.println(((HttpClient) http).getTagCallCount());
@@ -121,7 +121,7 @@ public class HttpTest {
 				.setOnResponse((HttpResult result) -> {
 					System.out.println(result);
 				})
-				.tag("A")
+				.setTag("A")
 				.get();
 		
 		System.out.println(((HttpClient) http).getTagCallCount());
@@ -130,7 +130,7 @@ public class HttpTest {
 				.setOnResponse((HttpResult result) -> {
 					System.out.println(result);
 				})
-				.tag("B")
+				.setTag("B")
 				.get();
 		
 		System.out.println(((HttpClient) http).getTagCallCount());

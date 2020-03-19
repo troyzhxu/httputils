@@ -195,12 +195,12 @@ public class HttpClient implements HTTP {
     	
     	private Preprocessor[] preprocessors;
     	
-    	private HttpTask<? extends HttpTask<?>> httpTask;
+    	private HttpTask<?> httpTask;
     	
     	private Runnable request;
     	
 		public HttpProcess(Preprocessor[] preprocessors, 
-				HttpTask<? extends HttpTask<?>> httpTask, 
+				HttpTask<?> httpTask, 
 						Runnable request) {
 			this.index = 1;
 			this.preprocessors = preprocessors;
@@ -209,7 +209,7 @@ public class HttpClient implements HTTP {
 		}
 
 		@Override
-		public HttpTask<? extends HttpTask<?>> getTask() {
+		public HttpTask<?> getTask() {
 			return httpTask;
 		}
 
