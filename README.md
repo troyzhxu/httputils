@@ -439,7 +439,7 @@ http.sync("http://api.demo.com/messages")
 
 #### 4.7 添加标签
 
-　　有时候我们对HTTP任务加以分类，这时候可以使用标签功能：
+　　有时候我们想对HTTP任务加以分类，这时候可以使用标签功能：
 
 ```java
 http.async("http://api.demo.com/users")
