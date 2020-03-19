@@ -72,6 +72,19 @@ public abstract class HttpTask<C extends HttpTask<?>> {
 	}
     
     /**
+     * 标签匹配
+     * 判断任务标签与指定的标签是否匹配（包含指定的标签）
+     * @param tag 标签
+     * @return 是否匹配
+     */
+    public boolean tagMatched(String tag) {
+    	if (this.tag != null && tag != null) {
+    		return this.tag.contains(tag);
+    	}
+    	return false;
+    }
+    
+    /**
      * 获取请求任务的头信息
      * @return 头信息
      */
