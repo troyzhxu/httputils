@@ -18,7 +18,8 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
  * GET|POST|PUT|DELETE
  * 文件上传下载
 
-## 当前文档版本 2.1.0 [查阅 1.x.x 点我跳转](https://gitee.com/ejlchina-zhxu/httputils/blob/1.x/README.md)
+## 当前文档版本 2.1.0 
+### [查阅 2.0.0 点我跳转](https://gitee.com/ejlchina-zhxu/httputils/blob/master/README-2.0.0.md) | [查阅 1.x.x 点我跳转](https://gitee.com/ejlchina-zhxu/httputils/blob/1.x/README.md)
 
 ## 安装教程
 
