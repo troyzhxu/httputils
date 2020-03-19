@@ -233,7 +233,7 @@ http.async("http://api.demo.com/reports/2020-03-01.xlsx")
 
 #### 3.3 HttpCall
 
-　　`HttpCall` 对象是异步请求方法（ `get`、`post`、`put`、`delete`）的返回值，它有如下方法：
+　　`HttpCall` 对象是异步请求方法（ `get`、`post`、`put`、`delete`）的返回值，与`java`的`Future`接口很像，它有如下方法：
 
 * `cancel()` 取消本次请求，返回取消结果
 * `isCanceled()` 返回请求是否被取消
