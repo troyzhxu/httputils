@@ -22,7 +22,7 @@
 ### 依赖说明
 
  * `okhttp` 核心依赖，底层依赖`okio`包
- * `fastjson` 阿里的快速json包
+ * `fastjson` 阿里的快速json解析包
 
 ### 联系方式
 
