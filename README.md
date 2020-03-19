@@ -480,7 +480,7 @@ http.sync("https://www.baidu.com").get()
 
 #### 5.2 回调执行器
 
-　　如何想改变执行回调函数的线程时，可以配置回调函数执行器。例如在Android里，让所有的回调函数都在UI线程里执行，则可以在构建`HttpClient`时配置回调执行器：
+　　如何想改变执行回调函数的线程时，可以配置回调函数执行器。例如在Android里，让所有的回调函数都在UI线程里执行，则可以在构建`HTTP`时配置回调执行器：
 
 ```java
 HTTP http = HTTP.builder()
