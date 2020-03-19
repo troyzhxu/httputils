@@ -18,7 +18,7 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
  * GET|POST|PUT|DELETE
  * 文件上传下载
 
-## 当前文档版本 2.0.0 [查阅 1.x.x 点我跳转](https://gitee.com/ejlchina-zhxu/httputils/blob/1.x/README.md)
+## 当前文档版本 2.1.0 [查阅 1.x.x 点我跳转](https://gitee.com/ejlchina-zhxu/httputils/blob/1.x/README.md)
 
 ## 安装教程
 
@@ -28,12 +28,12 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 <dependency>
      <groupId>com.ejlchina</groupId>
      <artifactId>httputils</artifactId>
-     <version>2.0.0</version>
+     <version>2.1.0</version>
 </dependency>
 ```
 ### Gradle
 
-`compile 'com.ejlchina:httputils:2.0.0'`
+`compile 'com.ejlchina:httputils:2.1.0'`
 
 ## 使用说明
 
@@ -70,7 +70,7 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 #### 1.1 构建 HTTP
 
 ```java
-	HTTP http = HTTP.builder().build();		
+HTTP http = HTTP.builder().build();		
 ```
 　　`HTTP`对象有以下三个方法：
 
@@ -233,7 +233,7 @@ http.async("http://api.demo.com/reports/2020-03-01.xlsx")
 
 #### 3.3 HttpCall
 
-　　`HttpCall`对象是异步请求方法（ `get`、`post`、`put`、`delete`）的返回值，与`java`的`Future`接口很像，它有如下方法：
+　　`HttpCall`对象是异步请求方法（`get`、`post`、`put`、`delete`）的返回值，与`java`的`Future`接口很像，它有如下方法：
 
 * `cancel()` 取消本次请求，返回取消结果
 * `isCanceled()` 返回请求是否被取消
@@ -255,7 +255,7 @@ System.out.println(call.isCanceled());	 // true
 
 ### 4 构建HTTP任务
 
-　　`HTTP`对象的`sync`与`async`方法返回一个`HttpTask`对象，该对象提供了一系列可链式使用的`addXXX`、`setXXX` 与`tag`方法用于构建任务本身。
+　　`HTTP`对象的`sync`与`async`方法返回一个`HttpTask`对象，该对象提供了一系列可链式使用的`addXXX`与`setXXX`方法用于构建任务本身。
 
 #### 4.1 添加请求头
 
@@ -439,19 +439,36 @@ http.sync("http://api.demo.com/messages")
 
 #### 4.7 添加标签
 
-　　有时候我们对HTTP任务加以分类，这时候可以使用标签功能：
+　　有时候我们想对HTTP任务加以分类，这时候可以使用标签功能：
 
 ```java
-http.async("http://api.demo.com/users")
-		.tag("MyTag")
+http.async("http://api.demo.com/users")		//（1）
+		.setTag("A")
+		.get();
+		
+http.async("http://api.demo.com/users")		//（2）
+		.setTag("A.B")
+		.get();
+		
+http.async("http://api.demo.com/users")		//（3）
+		.setTag("B")
+		.get();
+		
+http.async("http://api.demo.com/users")		//（4）
+		.setTag("B.C")
+		.get();
+		
+http.async("http://api.demo.com/users")		//（5）
+		.setTag("C")
 		.get();
 ```
 　　当使用标签后，就可以按标签批量的对HTTP任务进行取消：
 
 ```java
-http.cancel("MyTag");
+int count = http.cancel("B");				//（2）（3）（4）被取消（取消标签包含"B"的任务）
+System.out.println(count);					// 输出 3
 ```
-　　也可以在统一配置的预处理器中，以标签对任务进行分类处理，参见[并行预处理器](#54-并行预处理器)与[串行预处理器](#55-串行预处理器)。
+　　同样的，只有异步HTTP任务才可以被取消。标签除了可以用来取消任务，在预处理器中它也可以发挥作用，请参见[并行预处理器](#54-并行预处理器)与[串行预处理器](#55-串行预处理器)。
 
 ### 5 配置 HTTP
 
@@ -480,7 +497,7 @@ http.sync("https://www.baidu.com").get()
 
 #### 5.2 回调执行器
 
-　　如何想改变执行回调函数的线程时，可以配置回调函数执行器。例如在Android里，让所有的回调函数都在UI线程里执行，则可以在构建`HTTP`时配置回调执行器：
+　　如何想改变执行回调函数的线程时，可以配置回调执行器。例如在Android里，让所有的回调函数都在UI线程执行，则可以在构建`HTTP`时配置如下：
 
 ```java
 HTTP http = HTTP.builder()
@@ -514,16 +531,15 @@ HTTP http = HTTP.builder()
 
 #### 5.4 并行预处理器
 
-　　预处理器（`Preprocessor`）可以让我们在请求发出之前对请求本身做一些改变，但与 OkHttp 提供的拦截器（`Interceptor`）不同的是：预处理器可以让我们异步处理这些问题。
+　　预处理器（`Preprocessor`）可以让我们在请求发出之前对请求本身做一些改变，但与`OkHttp`的拦截器（`Interceptor`）不同的是：预处理器可以让我们异步处理这些问题。
 
 　　例如，当我们想为请求任务自动添加`Token`头信息，而`Token`只能通过异步方法`requestToken`获取时，这时使用`Interceptor`就很难处理了，但我们可以使用预处理器轻松解决：
 
 ```java
 HTTP http = HTTP.builder()
 		.addPreprocessor((Process process) -> {
-			HttpTask<?> task = process.getTask();		// 获得当前的请求任务
-			String tag = task.getTag();					// 取得添加在任务上的标签
-			if (!"Auth".equals(tag)) {					// 根据标签判断该任务是否需要Token
+			HttpTask<?> task = process.getTask();		// 获得当前的HTTP任务
+			if (!task.tagMatched("Auth")) {				// 根据标签判断该任务是否需要Token
 				return;
 			}
 			requestToken((String token) -> {			// 异步获取 Token
@@ -537,16 +553,15 @@ HTTP http = HTTP.builder()
 
 #### 5.5 串行预处理器
 
-　　普通预处理器都是可并行处理的，然而有时我们希望某个预处理器同时只处理一个任务。比如 当`Token`过期时我们需要去刷新获取新`Token`，而刷新`Token`这个操作只能有一个任务去执行，因为如果`n`个任务同时执行的话，那么必有`n-1`个任务刚得刷新得到的`Token`可能会立马失效，而这是我们所不希望的。
+　　普通预处理器都是可并行处理的，然而有时我们希望某个预处理器同时只处理一个任务。比如 当`Token`过期时我们需要去刷新获取新`Token`，而刷新`Token`这个操作只能有一个任务去执行，因为如果`n`个任务同时执行的话，那么必有`n-1`个任务刚刷新得到的`Token`可能就立马失效了，而这是我们所不希望的。
 
 　　为了解决这个问题，`HttpUtils`提供了串行预处理器，它可以让HTTP任务排好队，一个一个地进入预处理器：
 
 ```java
 HTTP http = HTTP.builder()
 		.addSerialPreprocessor((Process process) -> {
-			HttpTask<?> task = process.getTask();		// 获得当前的请求任务
-			String tag = task.getTag();					// 取得添加在任务上的标签
-			if (!"Auth".equals(tag)) {					// 根据标签判断该任务是否需要Token
+			HttpTask<?> task = process.getTask();		// 获得当前的HTTP任务
+			if (!task.tagMatched("Auth")) {				// 根据标签判断该任务是否需要Token
 				return;
 			}
 			// 检查过期，若需要则刷新Token

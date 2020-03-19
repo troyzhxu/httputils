@@ -1,7 +1,5 @@
 package com.ejlchina.http;
 
-import com.ejlchina.http.internal.RealHttpResult;
-
 public interface HttpCall {
 
 	/**
@@ -25,6 +23,6 @@ public interface HttpCall {
      * retrieves its result
 	 * @return 请求执行结果，若请求未执行完，则阻塞当前线程直到请求执行完成
 	 */
-	RealHttpResult getResult();
+	HttpResult getResult();
 	
 }

@@ -65,7 +65,8 @@ public class HttpClient implements HTTP {
 		Iterator<TagCall> it = tagCalls.iterator();
 		while (it.hasNext()) {
 			TagCall tagCall = it.next();
-			if (tag.equals(tagCall.tag)) {
+			// 只要任务的标签包含指定的Tag就会被取消
+			if (tagCall.tag.contains(tag)) {
 				if (tagCall.call.cancel()) {
 					count++;
 				}
