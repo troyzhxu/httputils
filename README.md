@@ -218,8 +218,8 @@ http.async("http://api.demo.com/users/1")
     * `toJsonArray()` 					返回Json数组
     * `toBean(Class<T> type)` 			返回根据type自动json解析后的JavaBean
     * `toBean(TypeReference<T> type)`	返回根据type自动json解析后的JavaBean
-    * `toFile(String filePath)` 		下载到指定路径并返回保存后的文件（下载文件时非常有用）
-    * `toFile(File file)` 				下载到指定文件并返回保存后的文件（下载文件时非常有用）
+    * `toFile(String filePath)` 		下载到指定路径并返回保存后的文件
+    * `toFile(File file)` 				下载到指定文件并返回保存后的文件
     * `getContentType()`				返回报文体的媒体类型
     * `getContentLength()`				返回报文体的字节长度
     * 对同一个`Body`对象，以上`toXXX()`类方法只能使用一个且仅能使用一次
