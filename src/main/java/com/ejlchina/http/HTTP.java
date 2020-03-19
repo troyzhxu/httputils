@@ -26,7 +26,7 @@ public interface HTTP {
     SyncHttpTask sync(String urlPath);
 	
     /**
-     * 根据标签取消HTTP任务
+     * 根据标签取消HTTP任务，只要任务的标签包含指定的Tag就会被取消
      * @param tag 标签
      * @return 被取消的任务数量
      */
