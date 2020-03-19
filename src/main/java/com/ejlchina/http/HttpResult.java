@@ -7,7 +7,6 @@ import java.util.List;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.alibaba.fastjson.TypeReference;
 
 import okhttp3.Headers;
 import okhttp3.MediaType;
@@ -106,14 +105,6 @@ public interface HttpResult {
 		 * @return 报文体Json文本转JavaBean
 		 */
 		<T> T toBean(Class<T> type);
-
-		/**
-		 * 同一个 Body 对象的 toXXX 类方法只可使用一个并且只能调用一次
-		 * @param <T> 目标泛型
-		 * @param typeRef 目标类型
-		 * @return 报文体Json文本转JavaBean
-		 */
-		<T> T toBean(TypeReference<T> typeRef);
 
 		/**
 		 * 同一个 Body 对象的 toXXX 类方法只可使用一个并且只能调用一次
