@@ -567,7 +567,7 @@ HTTP http = HTTP.builder()
                 return;
             }
             requestToken((String token) -> {     // 异步获取 Token
-                task.addHeader("Token", token);  // 为任务添加 Token头信息
+                task.addHeader("Token", token);  // 为任务添加头信息
                 process.proceed();               // 继续当前的任务
             });
         })
