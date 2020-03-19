@@ -442,25 +442,25 @@ http.sync("http://api.demo.com/messages")
 　　有时候我们想对HTTP任务加以分类，这时候可以使用标签功能：
 
 ```java
-http.async("http://api.demo.com/users")
+http.async("http://api.demo.com/users")		//（1）
 		.setTag("A")
-		.get();								//（1）
+		.get();
 		
-http.async("http://api.demo.com/users")
+http.async("http://api.demo.com/users")		//（2）
 		.setTag("A.B")
-		.get();								//（2）
+		.get();
 		
-http.async("http://api.demo.com/users")
+http.async("http://api.demo.com/users")		//（3）
 		.setTag("B")
-		.get();								//（3）
+		.get();
 		
-http.async("http://api.demo.com/users")
+http.async("http://api.demo.com/users")		//（4）
 		.setTag("B.C")
-		.get();								//（4）
+		.get();
 		
-http.async("http://api.demo.com/users")
+http.async("http://api.demo.com/users")		//（5）
 		.setTag("C")
-		.get();								//（5）
+		.get();
 ```
 　　当使用标签后，就可以按标签批量的对HTTP任务进行取消：
 
