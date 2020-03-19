@@ -218,6 +218,7 @@ http.async("http://api.demo.com/users/1")
     * `toJsonArray()`                 返回Json数组
     * `toBean(Class<T> type)`         返回根据type自动json解析后的JavaBean
     * `toBean(TypeReference<T> type)` 返回根据type自动json解析后的JavaBean
+    * `toList(Class<T> type)`         返回根据type自动json解析后的JavaBean列表
     * `toFile(String filePath)`       下载到指定路径并返回保存后的文件
     * `toFile(File file)`             下载到指定文件并返回保存后的文件
     * `getContentType()`              返回报文体的媒体类型
