@@ -5,7 +5,8 @@
 [![Troy.Zhou](https://img.shields.io/badge/%E4%BD%9C%E8%80%85-ejlchina-orange.svg)](https://github.com/ejlchina)
 
 ## 介绍
-Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前后端通用
+
+　　Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前后端通用
 
  * 支持异步、同步请求
  * 支持Restfull风格
@@ -17,6 +18,15 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
  * 异步预处理器
  * GET|POST|PUT|DELETE
  * 文件上传下载
+
+### 依赖说明
+
+ * `okhttp` 核心依赖，底层依赖`okio`包
+ * `fastjson` 阿里的快速json包
+
+### 联系方式
+
+ * 邮箱地址：zhou.xu@ejlchina.com
 
 ## 当前文档版本 2.1.0 
 ### [查阅 2.0.0 点我跳转](https://gitee.com/ejlchina-zhxu/httputils/blob/master/README-2.0.0.md) | [查阅 1.x.x 点我跳转](https://gitee.com/ejlchina-zhxu/httputils/blob/1.x/README.md)
