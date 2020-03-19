@@ -3,6 +3,7 @@ package com.ejlchina.http;
 import java.io.File;
 import java.io.InputStream;
 import java.io.Reader;
+import java.util.List;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -114,6 +115,14 @@ public interface HttpResult {
 		 */
 		<T> T toBean(TypeReference<T> typeRef);
 
+		/**
+		 * 同一个 Body 对象的 toXXX 类方法只可使用一个并且只能调用一次
+		 * @param <T> 目标泛型
+		 * @param type 目标类型
+		 * @return 报文体Json文本转JavaBean列表
+		 */
+		<T> List<T> toList(Class<T> type);
+		
 		/**
 		 * 同一个 Body 对象的 toXXX 类方法只可使用一个并且只能调用一次
 		 * @param filePath 目标路径

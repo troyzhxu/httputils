@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Reader;
+import java.util.List;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
@@ -82,6 +83,11 @@ public class ResultBody implements Body {
 	@Override
 	public <T> T toBean(TypeReference<T> typeRef) {
 		return JSON.parseObject(toString(), typeRef.getType());
+	}
+	
+	@Override
+	public <T> List<T> toList(Class<T> type) {
+		return JSON.parseArray(toString(), type);
 	}
 
 	@Override
