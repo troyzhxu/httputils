@@ -77,7 +77,7 @@ public abstract class HttpTask<C extends HttpTask<?>> {
      * @param tag 标签
      * @return 是否匹配
      */
-    public boolean tagMatched(String tag) {
+    public boolean isTagged(String tag) {
     	if (this.tag != null && tag != null) {
     		return this.tag.contains(tag);
     	}
