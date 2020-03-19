@@ -505,7 +505,7 @@ HTTP http = HTTP.builder()
 			// 必须同步返回，拦截器内无法执行异步操作
 			return chain.proceed(request);
 		});
-		// 其它配置: SSL、缓存、代理...
+		// 其它配置: SSL、缓存、代理、事件监听...
 	})
 	.build();
 ```
@@ -520,8 +520,8 @@ HTTP http = HTTP.builder()
 HTTP http = HTTP.builder()
 		.addPreprocessor((Process process) -> {
 			HttpTask<?> task = process.getTask();		// 获得当前的请求任务
-			String tag = task.getTag();
-			if (!"requiredAuth".equals(tag)) {			// 根据标签判断该任务是否需要Token
+			String tag = task.getTag();					// 取得添加在任务上的标签
+			if (!"Auth".equals(tag)) {					// 根据标签判断该任务是否需要Token
 				return;
 			}
 			requestToken((String token) -> {			// 异步获取 Token
@@ -543,8 +543,8 @@ HTTP http = HTTP.builder()
 HTTP http = HTTP.builder()
 		.addSerialPreprocessor((Process process) -> {
 			HttpTask<?> task = process.getTask();		// 获得当前的请求任务
-			String tag = task.getTag();
-			if (!"requiredAuth".equals(tag)) {			// 根据标签判断该任务是否需要Token
+			String tag = task.getTag();					// 取得添加在任务上的标签
+			if (!"Auth".equals(tag)) {					// 根据标签判断该任务是否需要Token
 				return;
 			}
 			// 检查过期，若需要则刷新Token
