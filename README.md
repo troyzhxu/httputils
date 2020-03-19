@@ -492,6 +492,8 @@ HTTP http = HTTP.builder()
 
 #### 5.3 配置 OkHttpClient
 
+　　与其他封装`OkHttp`的框架不同，`HttpUtils`并不会遮蔽`OkHttp`本身就很好用的功能，如下：
+
 ```java
 HTTP http = HTTP.builder()
 	.config((Builder builder) -> {
