@@ -18,7 +18,7 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
  * GET|POST|PUT|DELETE
  * 文件上传下载
 
-## 当前文档版本 2.0.0 [查阅 1.x.x 点我跳转](https://gitee.com/ejlchina-zhxu/httputils/blob/1.x/README.md)
+## 当前文档版本 2.1.0 [查阅 1.x.x 点我跳转](https://gitee.com/ejlchina-zhxu/httputils/blob/1.x/README.md)
 
 ## 安装教程
 
@@ -28,12 +28,12 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 <dependency>
      <groupId>com.ejlchina</groupId>
      <artifactId>httputils</artifactId>
-     <version>2.0.0</version>
+     <version>2.1.0</version>
 </dependency>
 ```
 ### Gradle
 
-`compile 'com.ejlchina:httputils:2.0.0'`
+`compile 'com.ejlchina:httputils:2.1.0'`
 
 ## 使用说明
 
