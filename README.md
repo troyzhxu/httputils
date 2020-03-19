@@ -201,32 +201,32 @@ http.async("http://api.demo.com/users/1")
 　　`HttpResult`对象是HTTP请求执行完后的结果，它是同步请求方法（ `get`、`post`、`put`、`delete`）的返回值，也是异步请求响应回调（`OnResponse`）的参数，它有如下方法：
 
 * `getState()`         得到请求执行状态枚举，它有以下取值：
-    * `State.CANCELED` 请求被取消
-    * `State.RESPONSED` 已收到响应
-    * `State.TIMEOUT` 请求超时
+    * `State.CANCELED`      请求被取消
+    * `State.RESPONSED`     已收到响应
+    * `State.TIMEOUT`       请求超时
     * `State.NETWORK_ERROR` 网络错误
-    * `State.EXCEPTION` 其它请求异常
-* `getStatus()`     得到HTTP状态码
+    * `State.EXCEPTION`     其它请求异常
+* `getStatus()`        得到HTTP状态码
 * `isSuccessful()`     是否响应成功，状态码在 [200..300) 之间
-* `getHeaders()`     得到HTTP响应头
-* `getBody()`         得到响应报文体`Body`对象，它有如下方法：
-    * `toBytes()`                         返回字节数组
-    * `toByteStream()`                     返回字节输入流
-    * `toCharStream()`                     返回字符输入流
-    * `toString()`                         返回字符串
-    * `toJsonObject()`                     返回Json对象
-    * `toJsonArray()`                     返回Json数组
-    * `toBean(Class<T> type)`             返回根据type自动json解析后的JavaBean
-    * `toBean(TypeReference<T> type)`    返回根据type自动json解析后的JavaBean
-    * `toFile(String filePath)`         下载到指定路径并返回保存后的文件
-    * `toFile(File file)`                 下载到指定文件并返回保存后的文件
-    * `getContentType()`                返回报文体的媒体类型
-    * `getContentLength()`                返回报文体的字节长度
+* `getHeaders()`       得到HTTP响应头
+* `getBody()`          得到响应报文体`Body`对象，它有如下方法：
+    * `toBytes()`                     返回字节数组
+    * `toByteStream()`                返回字节输入流
+    * `toCharStream()`                返回字符输入流
+    * `toString()`                    返回字符串
+    * `toJsonObject()`                返回Json对象
+    * `toJsonArray()`                 返回Json数组
+    * `toBean(Class<T> type)`         返回根据type自动json解析后的JavaBean
+    * `toBean(TypeReference<T> type)` 返回根据type自动json解析后的JavaBean
+    * `toFile(String filePath)`       下载到指定路径并返回保存后的文件
+    * `toFile(File file)`             下载到指定文件并返回保存后的文件
+    * `getContentType()`              返回报文体的媒体类型
+    * `getContentLength()`            返回报文体的字节长度
     * 对同一个`Body`对象，以上`toXXX()`类方法只能使用一个且仅能使用一次
 * `getError()`         执行中发生的异常，自动捕获执行请求是发生的 网络超时、网络错误 和 其它请求异常
 
 　　例如，下载文件到指定目录：
-    
+
 ```java
 String path = "D:/reports/2020-03-01.xlsx";    // 文件保存目录
 
@@ -274,15 +274,15 @@ System.out.println(call.isCanceled());     // true
 
 ```java
 http.sync("http://api.demo.com/orders")
-        .addHeader("Access-Token", "xxxxxx")
-        .addHeader("Content-Type", "application/json")
+        .addHeader("Token", "xxxxxx")
+        .addHeader("Accept", "application/json")
         .get();
 ```
 　　多个添加（同步异步添加方法一样）：
 
 ```java
 Map<String, String> headers = new HashMap<>()
-headers.put("Access-Token", "xxxxxx");
+headers.put("Token", "xxxxxx");
 headers.put("Accept", "application/json");
 
 http.sync("http://api.demo.com/orders")
