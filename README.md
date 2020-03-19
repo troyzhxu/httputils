@@ -563,7 +563,7 @@ HTTP http = HTTP.builder()
 HTTP http = HTTP.builder()
         .addPreprocessor((Process process) -> {
             HttpTask<?> task = process.getTask();// 获得当前的HTTP任务
-            if (!task.isTagged("Auth")) {      // 根据标签判断该任务是否需要Token
+            if (!task.isTagged("Auth")) {        // 根据标签判断该任务是否需要Token
                 return;
             }
             requestToken((String token) -> {     // 异步获取 Token
