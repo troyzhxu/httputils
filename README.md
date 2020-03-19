@@ -255,7 +255,7 @@ System.out.println(call.isCanceled());	 // true
 
 ### 4 构建HTTP任务
 
-　　`HTTP`对象的`sync`与`async`方法返回一个`HttpTask`对象，该对象提供了一系列可链式使用的`addXXX`、`setXXX` 与`tag`方法用于构建任务本身。
+　　`HTTP`对象的`sync`与`async`方法返回一个`HttpTask`对象，该对象提供了一系列可链式使用的`addXXX`与`setXXX`方法用于构建任务本身。
 
 #### 4.1 添加请求头
 
@@ -443,7 +443,7 @@ http.sync("http://api.demo.com/messages")
 
 ```java
 http.async("http://api.demo.com/users")
-		.tag("MyTag")
+		.setTag("MyTag")
 		.get();
 ```
 　　当任务被添加标签后，我们按标签批量的对HTTP任务进行取消：
@@ -519,9 +519,8 @@ HTTP http = HTTP.builder()
 ```java
 HTTP http = HTTP.builder()
 		.addPreprocessor((Process process) -> {
-			HttpTask<?> task = process.getTask();		// 获得当前的请求任务
-			String tag = task.getTag();					// 取得添加在任务上的标签
-			if (!"Auth".equals(tag)) {					// 根据标签判断该任务是否需要Token
+			HttpTask<?> task = process.getTask();		// 获得当前的HTTP任务
+			if (!task.tagMatched("Auth")) {				// 根据标签判断该任务是否需要Token
 				return;
 			}
 			requestToken((String token) -> {			// 异步获取 Token
@@ -542,9 +541,8 @@ HTTP http = HTTP.builder()
 ```java
 HTTP http = HTTP.builder()
 		.addSerialPreprocessor((Process process) -> {
-			HttpTask<?> task = process.getTask();		// 获得当前的请求任务
-			String tag = task.getTag();					// 取得添加在任务上的标签
-			if (!"Auth".equals(tag)) {					// 根据标签判断该任务是否需要Token
+			HttpTask<?> task = process.getTask();		// 获得当前的HTTP任务
+			if (!task.tagMatched("Auth")) {				// 根据标签判断该任务是否需要Token
 				return;
 			}
 			// 检查过期，若需要则刷新Token
