@@ -28,17 +28,12 @@ public class HttpUtils {
 	}
 	
 	
-	static HTTP getHttp() {
+	static synchronized HTTP getHttp() {
 		if (http != null) {
 			return http;
 		}
-		synchronized (HttpUtils.class) {
-			if (http != null) {
-				return http;
-			}
-			http = HTTP.builder().build();
-			return http;
-		}
+		http = HTTP.builder().build();
+		return http;
 	}
 	
 	/**
