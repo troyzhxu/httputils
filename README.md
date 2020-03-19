@@ -446,7 +446,7 @@ http.async("http://api.demo.com/users")
 		.setTag("MyTag")
 		.get();
 ```
-　　当任务被添加标签后，我们按标签批量的对HTTP任务进行取消：
+　　当使用标签后，就可以按标签批量的对HTTP任务进行取消：
 
 ```java
 http.cancel("MyTag");
