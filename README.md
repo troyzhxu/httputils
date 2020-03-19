@@ -462,7 +462,7 @@ HTTP http = HTTP.builder()
 		.baseUrl("http://api.demo.com")		// 设置 BaseUrl
 		.build();
 ```
-　　该配置全局生效，在配置了`BaseUr`之后，具体的请求便可以省略`BaseUr`部分，使得代码更加简洁，例如：
+　　该配置全局生效，在配置了`BaseUrl`之后，具体的请求便可以省略`BaseUrl`部分，使得代码更加简洁，例如：
 
 ```java
 http.sync("/users").get()					// http://api.demo.com/users
