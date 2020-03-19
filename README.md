@@ -274,15 +274,15 @@ System.out.println(call.isCanceled());	 // true
 
 ```java
 http.sync("http://api.demo.com/orders")
-		.addHeader("Access-Token", "xxxxxx")
-		.addHeader("Content-Type", "application/json")
+		.addHeader("Token", "xxxxxx")
+		.addHeader("Accept", "application/json")
 		.get();
 ```
 　　多个添加（同步异步添加方法一样）：
 
 ```java
 Map<String, String> headers = new HashMap<>()
-headers.put("Access-Token", "xxxxxx");
+headers.put("Token", "xxxxxx");
 headers.put("Accept", "application/json");
 
 http.sync("http://api.demo.com/orders")
