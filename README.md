@@ -443,13 +443,31 @@ http.sync("http://api.demo.com/messages")
 
 ```java
 http.async("http://api.demo.com/users")
-		.setTag("MyTag")
-		.get();
+		.setTag("A")
+		.get();								//（1）
+		
+http.async("http://api.demo.com/users")
+		.setTag("A.B")
+		.get();								//（2）
+		
+http.async("http://api.demo.com/users")
+		.setTag("B")
+		.get();								//（3）
+		
+http.async("http://api.demo.com/users")
+		.setTag("B.C")
+		.get();								//（4）
+		
+http.async("http://api.demo.com/users")
+		.setTag("C")
+		.get();								//（5）
 ```
 　　当使用标签后，就可以按标签批量的对HTTP任务进行取消：
 
 ```java
-http.cancel("MyTag");
+// 所有标签包含"B"的任务都会被取消
+int count = http.cancel("B");				//（2）（3）（4）会被取消
+System.out.println(count);					// 输出 3
 ```
 　　也可以在统一配置的预处理器中，以标签对任务进行分类处理，参见[并行预处理器](#54-并行预处理器)与[串行预处理器](#55-串行预处理器)。
 
