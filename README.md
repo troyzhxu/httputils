@@ -70,7 +70,7 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 #### 1.1 构建 HTTP
 
 ```java
-	HTTP http = HTTP.builder().build();		
+HTTP http = HTTP.builder().build();		
 ```
 　　`HTTP`对象有以下三个方法：
 
