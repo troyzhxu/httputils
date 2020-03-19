@@ -217,7 +217,6 @@ http.async("http://api.demo.com/users/1")
     * `toJsonObject()`                返回Json对象
     * `toJsonArray()`                 返回Json数组
     * `toBean(Class<T> type)`         返回根据type自动json解析后的JavaBean
-    * `toBean(TypeReference<T> type)` 返回根据type自动json解析后的JavaBean
     * `toList(Class<T> type)`         返回根据type自动json解析后的JavaBean列表
     * `toFile(String filePath)`       下载到指定路径并返回保存后的文件
     * `toFile(File file)`             下载到指定文件并返回保存后的文件
@@ -552,7 +551,7 @@ HTTP http = HTTP.builder()
 HTTP http = HTTP.builder()
         .addPreprocessor((Process process) -> {
             HttpTask<?> task = process.getTask();// 获得当前的HTTP任务
-            if (!task.tagMatched("Auth")) {      // 根据标签判断该任务是否需要Token
+            if (!task.isTagged("Auth")) {      // 根据标签判断该任务是否需要Token
                 return;
             }
             requestToken((String token) -> {     // 异步获取 Token
@@ -574,7 +573,7 @@ HTTP http = HTTP.builder()
 HTTP http = HTTP.builder()
         .addSerialPreprocessor((Process process) -> {
             HttpTask<?> task = process.getTask();
-            if (!task.tagMatched("Auth")) {
+            if (!task.isTagged("Auth")) {
                 return;
             }
             // 检查过期，若需要则刷新Token
