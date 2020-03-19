@@ -377,7 +377,7 @@ http.sync("http://api.demo.com/signin")
 　　多个添加（同步异步添加方法一样）：
 
 ```java
-Map<String, String> params = new HashMap<>()
+Map<String, Object> params = new HashMap<>()
 params.put("username", "Jackson");
 params.put("password", "xxxxxx");
 
