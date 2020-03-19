@@ -472,7 +472,7 @@ http.sync("/auth/signin")					// http://api.demo.com/auth/signin
 		.addBodyParam("password", "xxxxxx")
 		.post()								// POST请求
 ```
-　　在配置了`BaseUrl`之后，仍然可以请求全路径的接口，如：
+　　在配置了`BaseUrl`之后，如有特殊请求任务，仍然可以使用全路径的方式，一点都不妨碍：
 
 ```java
 http.sync("https://www.baidu.com").get()
