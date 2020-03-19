@@ -18,7 +18,7 @@ import okhttp3.MediaType;
 public interface HttpResult {
 
 
-	enum State {
+	public enum State {
 		
 		/**
 		 * 执行异常
@@ -50,7 +50,7 @@ public interface HttpResult {
 	/**
 	 * HTTP响应报文体
 	 */
-	interface Body {
+	public interface Body {
 		
 		/**
 		 * @return 媒体类型
