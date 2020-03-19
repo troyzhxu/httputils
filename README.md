@@ -517,6 +517,7 @@ HTTP http = HTTP.builder()
 		})
 		.build();
 ```
+　　该配置影响的回调为：`OnResponse`、`OnException`和`OnComplete`。
 
 #### 5.3 配置 OkHttpClient
 
