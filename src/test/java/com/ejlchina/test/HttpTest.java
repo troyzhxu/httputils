@@ -13,6 +13,7 @@ import com.ejlchina.http.HttpCall;
 import com.ejlchina.http.Preprocessor.Process;
 import com.ejlchina.http.internal.HttpClient;
 import com.ejlchina.http.HttpResult;
+import com.ejlchina.http.HttpResult.State;
 
 import okhttp3.ConnectionPool;
 import okhttp3.Interceptor.Chain;
@@ -99,9 +100,15 @@ public class HttpTest {
 			.baseUrl("http://localhost:8080")
 			.build();
 		
-		HttpCall call = http.async("/user/show/1")
+		http.async("/user/show/1")
 				.setOnResponse((HttpResult result) -> {
 					System.out.println(result);
+				})
+				.setOnException((Exception e) -> {
+					System.out.println("异常捕获：" + e.getMessage());
+				})
+				.setOnComplete((State state) -> {
+					System.out.println(state);
 				})
 				.setTag("A")
 				.get();
@@ -112,7 +119,7 @@ public class HttpTest {
 				.setOnResponse((HttpResult result) -> {
 					System.out.println(result);
 				})
-				.setTag("A")
+				.setTag("A.B")
 				.get();
 		
 		System.out.println(((HttpClient) http).getTagCallCount());
@@ -121,7 +128,7 @@ public class HttpTest {
 				.setOnResponse((HttpResult result) -> {
 					System.out.println(result);
 				})
-				.setTag("A")
+				.setTag("B.C")
 				.get();
 		
 		System.out.println(((HttpClient) http).getTagCallCount());
@@ -130,22 +137,28 @@ public class HttpTest {
 				.setOnResponse((HttpResult result) -> {
 					System.out.println(result);
 				})
-				.setTag("B")
+				.setTag("C")
 				.get();
 		
 		System.out.println(((HttpClient) http).getTagCallCount());
 		
-		System.out.println("单独取消：" + call.cancel());
-
-		((HttpClient) http).getTagCallCount();
 		
 		System.out.println("标签取消：" + http.cancel("B"));
 		
 		System.out.println(((HttpClient) http).getTagCallCount());
 		
-		sleep(2000);
+		sleep(5000);
 
 		System.out.println(((HttpClient) http).getTagCallCount());
+		
+		sleep(5000);
+		
+		System.out.println(((HttpClient) http).getTagCallCount());
+		
+		sleep(5000);
+		
+		System.out.println(((HttpClient) http).getTagCallCount());
+		
 //		System.out.println("isDone = " + call.isDone());
 //		System.out.println("isCanceled = " + call.isCanceled());
 //		
