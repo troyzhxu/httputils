@@ -153,7 +153,7 @@ public class AsyncHttpTask extends HttpTask<AsyncHttpTask> {
 		}
 
 		@Override
-		public synchronized RealHttpResult getResult() {
+		public synchronized HttpResult getResult() {
 			if (canceled) {
 				return new RealHttpResult(State.CANCELED);
 			}
@@ -175,7 +175,7 @@ public class AsyncHttpTask extends HttpTask<AsyncHttpTask> {
     class OkHttpCall implements HttpCall {
 
     	private Call call;
-    	private RealHttpResult result;
+    	private HttpResult result;
     	
 		public OkHttpCall(Call call) {
 			this.call = call;
@@ -201,7 +201,7 @@ public class AsyncHttpTask extends HttpTask<AsyncHttpTask> {
 		}
 
 		@Override
-		public synchronized RealHttpResult getResult() {
+		public synchronized HttpResult getResult() {
 			if (result == null) {
 				try {
 					wait();
@@ -212,7 +212,7 @@ public class AsyncHttpTask extends HttpTask<AsyncHttpTask> {
 			return result;
 		}
 
-		public void setResult(RealHttpResult result) {
+		public void setResult(HttpResult result) {
 			synchronized (this) {
 				this.result = result;
 				notify();
@@ -240,7 +240,7 @@ public class AsyncHttpTask extends HttpTask<AsyncHttpTask> {
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-            	RealHttpResult result = new RealHttpResult(response);
+            	HttpResult result = new RealHttpResult(response);
             	doOnResponse(result);
             	httpCall.setResult(result);
             }
@@ -250,7 +250,7 @@ public class AsyncHttpTask extends HttpTask<AsyncHttpTask> {
     }
     
 
-	private void doOnResponse(RealHttpResult result) {
+	private void doOnResponse(HttpResult result) {
 		httpClient.executeCallback(() -> {
 			if (onComplete != null) {
 			    onComplete.on(State.RESPONSED);
