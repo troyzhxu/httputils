@@ -277,24 +277,19 @@ System.out.println(call.isCanceled());     // true
 
 ```java
 http.async("http://api.demo.com/users")    //（1）
-        .setTag("A")
-        .get();
+        .setTag("A").get();
         
 http.async("http://api.demo.com/users")    //（2）
-        .setTag("A.B")
-        .get();
+        .setTag("A.B").get();
         
 http.async("http://api.demo.com/users")    //（3）
-        .setTag("B")
-        .get();
+        .setTag("B").get();
         
 http.async("http://api.demo.com/users")    //（4）
-        .setTag("B.C")
-        .get();
+        .setTag("B.C").get();
         
 http.async("http://api.demo.com/users")    //（5）
-        .setTag("C")
-        .get();
+        .setTag("C").get();
 ```
 　　当使用标签后，就可以按标签批量的对HTTP任务进行取消：
 
