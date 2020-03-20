@@ -608,7 +608,7 @@ HTTP http = HTTP.builder()
 * `async(String url)`  开始一个异步请求 （内容通过一个`HTTP`单例实现）
 * `sync(String url)`   开始一个同步请求 （内容通过一个`HTTP`单例实现）
 * `cancel(String tag)` 按标签取消请求（内容通过一个`HTTP`单例实现）
-* `of(HTTP http)`      配置`HttpUtils`持有的`HTTP`实例（不调用此方法前默认使用一个没有没有经过任何配置的`HTTP`实例）
+* `of(HTTP http)`      配置`HttpUtils`持有的`HTTP`实例（不调用此方法前默认使用一个没有没有经过任何配置的`HTTP`懒实例）
 
 　　也就是说，能使用`http`实例的地方，都可以使用`HttpUtils`类，例如：
 
