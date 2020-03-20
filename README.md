@@ -58,13 +58,7 @@
   - [3.2 HttpResult](#32-HttpResult)
   - [3.3 HttpCall](#33-HttpCall)
 + [4 构建HTTP任务](#4-构建HTTP任务)
-  - [4.1 添加请求头](#41-添加请求头)
-  - [4.2 添加路径参数](#42-添加路径参数)
-  - [4.3 添加查询参数](#43-添加查询参数)
-  - [4.4 添加表单参数](#44-添加表单参数)
-  - [4.5 添加Json参数](#45-添加Json参数)
-  - [4.6 添加文件参数](#46-添加文件参数)
-  - [4.7 添加标签](#47-添加标签)
++ [5 使用标签](#5-使用标签)
 + [5 配置 HTTP](#5-配置-http)
   - [5.1 设置 BaseUrl](#51-设置-baseurl)
   - [5.2 回调执行器](#52-回调执行器)
@@ -283,53 +277,8 @@ System.out.println(call.isCanceled());     // true
 
 * `setTag(String tag)` 为HTTP任务添加标签
 
-　　举例：
 
-```java
-http.sync("http://api.demo.com/shops/{sName}/products/{pId}")
-        .addPathParam("sName", "taobao")
-        .addPathParam("pId", 20)
-        .get();
-
-http.sync("http://api.demo.com/products")
-        .addUrlParam("name", "手机")
-        .addUrlParam("type", "5G")
-        .get();
-
-http.sync("http://api.demo.com/signin")
-        .addBodyParam("username", "Jackson")
-        .addBodyParam("password", "xxxxxx")
-        .post();
-
-http.sync("http://api.demo.com/signin")
-        .addJsonParam("username", "Jackson")
-        .addJsonParam("password", "xxxxxx")
-        .post();
-
-http.sync("http://api.demo.com/signin")
-        .setRequestJson("\"username\":\"Jackson\",\"password\":\"xxxxxx\"")
-        .post();
-
-Login login = new Login();
-login.setUsername("Jackson");
-login.setPassword("xxxxxx");
-
-http.sync("http://api.demo.com/signin")
-        .setRequestJson(login)
-        .post();
-
-http.sync("http://api.demo.com/upload")
-        .addFileParam("image1", new File("D:/1.jpg"))
-        .addFileParam("image2", new File("D:/2.jpg"))
-        .post();
-
-http.sync("http://api.demo.com/messages")
-        .addBodyParam("name", "广告图")
-        .addFileParam("image", new File("D:/image.jpg"))
-        .post();
-```
-
-#### 4.7 添加标签
+### 5 使用标签
 
 　　有时候我们想对HTTP任务加以分类，这时候可以使用标签功能：
 
