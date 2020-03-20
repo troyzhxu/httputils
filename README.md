@@ -124,16 +124,16 @@ http.async("http://api.demo.com/users/{id}")
 
 ```java
 // 同步 GET
-HttpResult result1 = http.sync("http://api.demo.com/users").get();
+HttpResult res1 = http.sync("http://api.demo.com/users").get();
 
 // 同步 POST
-HttpResult result2 = http.sync("http://api.demo.com/users")post();
+HttpResult res2 = http.sync("http://api.demo.com/users")post();
 
 // 同步 PUT
-HttpResult result3 = http.sync("http://api.demo.com/users/1").put();
+HttpResult res3 = http.sync("http://api.demo.com/users/1").put();
 
 // 同步 DELETE
-HttpResult result4 = http.sync("http://api.demo.com/users/1").delete();
+HttpResult res4 = http.sync("http://api.demo.com/users/1").delete();
 
 // 异步 GET
 HttpCall call1 = http.async("http://api.demo.com/users").get();
@@ -250,135 +250,66 @@ System.out.println(call.isCanceled());     // true
 
 ### 4 构建HTTP任务
 
-　　`HTTP`对象的`sync`与`async`方法返回一个`HttpTask`对象，该对象提供了一系列可链式使用的`addXXX`与`setXXX`方法用于构建任务本身。
+　　`HTTP`对象的`sync`与`async`方法返回一个`HttpTask`对象，该对象提供了一系列可链式调用的`addXXX`与`setXXX`方法用于构建任务本身。
 
-#### 4.1 添加请求头
+* `addHeader(String name, String value)`    添加请求头  
+* `addHeader(Map<String, String> headers)`  添加请求头  
 
-　　单个添加（同步异步添加方法一样）：
+* `addPathParam(String name, String value)` 添加路径参数：替换URL里的{name}占位符
+* `addPathParam(String name, Number value)` 添加路径参数：替换URL里的{name}占位符
+* `addPathParam(Map<String, ?> params)`     添加路径参数：替换URL里的{name}占位符
+
+* `addUrlParam(String name, String value)`  添加URL参数：拼接在URL的?之后（查询参数）
+* `addUrlParam(String name, Number value)`  添加URL参数：拼接在URL的?之后（查询参数）
+* `addUrlParam(Map<String, ?> params)`      添加URL参数：拼接在URL的?之后（查询参数）
+
+* `addBodyParam(String name, String value)` 添加Body参数：以表单key=value&的形式放在报文体内（表单参数）
+* `addBodyParam(String name, Number value)` 添加Body参数：以表单key=value&的形式放在报文体内（表单参数）
+* `addBodyParam(Map<String, ?> params)`     添加Body参数：以表单key=value&的形式放在报文体内（表单参数）
+
+* `addJsonParam(String name, String value)` 添加Json参数：请求体为Json（只支持单层结构）
+* `addJsonParam(String name, Number value)` 添加Json参数：请求体为Json（只支持单层结构）
+* `addJsonParam(Map<String, ?> params)`     添加Json参数：请求体为Json（只支持单层结构）
+
+* `setRequestJson(String json)`             设置请求体的Json字符串（支持多层结构）
+* `setRequestJson(Object bean)`             将依据 bean的get方法序列化为 json 字符串（支持多层结构）
+* `setRequestJson(Object bean, String dateFormat)` 将依据 bean的get方法序列化为 json 字符串，并执行日期转换格式（支持多层结构）
+
+* `addFileParam(String name, File file)` 添加待上传的本地文件
+* `addFileParam(String name, String type, InputStream inputStream)` 添加待上传的文件输入流
+* `addFileParam(String name, String type, String fileName, InputStream input)` 添加待上传的文件输入流
+* `addFileParam(String name, String type, byte[] content)` 添加待上传的文件内容
+* `addFileParam(String name, String type, String fileName, byte[] content)` 添加待上传的文件内容
+
+* `setTag(String tag)` 为HTTP任务添加标签
+
+　　举例：
 
 ```java
-http.sync("http://api.demo.com/orders")
-        .addHeader("Token", "xxxxxx")
-        .addHeader("Accept", "application/json")
+http.sync("http://api.demo.com/shops/{sName}/products/{pId}")
+        .addPathParam("sName", "taobao")
+        .addPathParam("pId", 20)
         .get();
-```
-　　多个添加（同步异步添加方法一样）：
 
-```java
-Map<String, String> headers = new HashMap<>()
-headers.put("Token", "xxxxxx");
-headers.put("Accept", "application/json");
-
-http.sync("http://api.demo.com/orders")
-        .addHeader(headers)
-        .get();
-```
-
-#### 4.2 添加路径参数
-
-　　路径参数用于替换URL字符串中的占位符。
-
-　　单个添加（同步异步添加方法一样）：
-
-```java
-http.sync("http://api.demo.com/shops/{shopName}/products/{productId}")
-        .addPathParam("shopName", "taobao")
-        .addPathParam("productId", 20)
-        .get();
-```
-　　多个添加（同步异步添加方法一样）：
-
-```java
-Map<String, String> params = new HashMap<>()
-params.put("shopName", "taobao");
-params.put("productId", 20);
-
-http.sync("http://api.demo.com/shops/{shopName}/products/{productId}")
-        .addPathParam(params)
-        .get();
-```
-
-#### 4.3 添加查询参数
-
-　　查询参数（URL参数）用于拼接在 url 字符串的 ? 之后。
-
-　　单个添加（同步异步添加方法一样）：
-
-```java
 http.sync("http://api.demo.com/products")
         .addUrlParam("name", "手机")
         .addUrlParam("type", "5G")
         .get();
-```
-　　多个添加（同步异步添加方法一样）：
 
-```java
-Map<String, String> params = new HashMap<>()
-params.put("name", "手机");
-params.put("type", "5G");
-
-http.sync("http://api.demo.com/products")
-        .addUrlParam(params)
-        .get();
-```
-
-#### 4.4 添加表单参数
-
-　　表单参数（Body参数）以 key=value& 的形式携带与请求报文体内。
-
-　　单个添加（同步异步添加方法一样）：
-
-```java
 http.sync("http://api.demo.com/signin")
         .addBodyParam("username", "Jackson")
         .addBodyParam("password", "xxxxxx")
         .post();
-```
-　　多个添加（同步异步添加方法一样）：
 
-```java
-Map<String, String> params = new HashMap<>()
-params.put("username", "Jackson");
-params.put("password", "xxxxxx");
-
-http.sync("http://api.demo.com/signin")
-        .addBodyParam(params)
-        .post();
-```
-
-#### 4.5 添加Json参数
-
-　　JSON 参数最终以 json 字符串的形式携带与请求报文体内。
-
-　　单个添加（同步异步添加方法一样）：
-
-```java
 http.sync("http://api.demo.com/signin")
         .addJsonParam("username", "Jackson")
         .addJsonParam("password", "xxxxxx")
         .post();
-```
-　　多个添加（同步异步添加方法一样）：
 
-```java
-Map<String, Object> params = new HashMap<>()
-params.put("username", "Jackson");
-params.put("password", "xxxxxx");
-
-http.sync("http://api.demo.com/signin")
-        .addJsonParam(params)
-        .post();
-```
-　　直接设置JSON字符串：
-
-```java
 http.sync("http://api.demo.com/signin")
         .setRequestJson("\"username\":\"Jackson\",\"password\":\"xxxxxx\"")
         .post();
-```
-　　JavaBean 自动转 JSON：
 
-```java
 Login login = new Login();
 login.setUsername("Jackson");
 login.setPassword("xxxxxx");
@@ -386,49 +317,15 @@ login.setPassword("xxxxxx");
 http.sync("http://api.demo.com/signin")
         .setRequestJson(login)
         .post();
-```
-
-#### 4.6 添加文件参数
-
-　　上传本地文件：
-
-```java
-File file1 = new File("D:/1.jpg");
-File file2 = new File("D:/2.jpg");
 
 http.sync("http://api.demo.com/upload")
-        .addFileParam("image1", file1)
-        .addFileParam("image2", file2)
+        .addFileParam("image1", new File("D:/1.jpg"))
+        .addFileParam("image2", new File("D:/2.jpg"))
         .post();
-```
-　　使用文件输入流上传：
-
-```java
-// 获得文件的输入流
-InputStream input = ...
-
-http.sync("http://api.demo.com/upload")
-        .addFileParam("image", "jpg", input)
-        .post();
-```
-　　使用文件字节数组上传：
-
-```java
-// 获得文件的字节数组
-byte[] content = ...
-
-http.sync("http://api.demo.com/upload")
-        .addFileParam("image", "jpg", content)
-        .post();
-```
-　　文件参数和表单参数可以一起添加：
-
-```java
-File file = new File("D:/首页广告.jpg");
 
 http.sync("http://api.demo.com/messages")
         .addBodyParam("name", "广告图")
-        .addFileParam("image", file)
+        .addFileParam("image", new File("D:/image.jpg"))
         .post();
 ```
 

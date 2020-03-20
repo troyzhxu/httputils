@@ -352,7 +352,7 @@ public abstract class HttpTask<C extends HttpTask<?>> {
 
     /**
      * 请求体为json
-     * @param bean Java对象，将跟换 bean的get方法序列化程 json 字符串
+     * @param bean Java对象，将依据 bean的get方法序列化为 json 字符串
      * @return HttpTask 实例
      **/
     public C setRequestJson(Object bean) {
