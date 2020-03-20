@@ -94,12 +94,11 @@ HTTP http = HTTP.builder()
 　　使用方法`sync(String url)`开始一个同步请求：
 
 ```java
-// 最终路径 http://api.demo.com/users?name=Jack
-User user = http.sync("/users")
-        .addUrlParam("name", "Jack")                // 添加查询参数
-        .get()                                      // 发送GET请求
-        .getBody()                                  // 获取响应报文体
-        .toBean(User.class);                        // 得到目标数据
+User user = http.sync("/users")      // http://api.demo.com/users?name=Jack
+        .addUrlParam("name", "Jack") // 添加查询参数
+        .get()                       // GET请求
+        .getBody()                   // 获取响应报文体
+        .toBean(User.class);         // 得到目标数据
 ```
 　　方法`sync`返回一个同步`HttpTask`，可链式使用。
 
@@ -108,14 +107,13 @@ User user = http.sync("/users")
 　　使用方法`async(String url)`开始一个异步请求：
 
 ```java
-// 最终路径为 http://api.demo.com/users/1
-http.async("/users/{id}")
+http.async("/users/{id}")           //  http://api.demo.com/users/1
         .addPathParam("id", 1)
         .setOnResponse((HttpResult result) -> {
             // 得到目标数据
             User user = result.getBody().toBean(User.class);
         })
-        .get();          // GET请求
+        .get();                     // GET请求
 ```
 　　方法`async`返回一个异步`HttpTask`，可链式使用。
 
