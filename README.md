@@ -53,7 +53,7 @@
   - [1.2 同步请求](#12-同步请求)
   - [1.3 异步请求](#13-异步请求)
 + [2 请求方法（GET|POST|PUT|DELETE）](#2-请求方法getpostputdelete)
-+ [3 解析执行结果](#3-解析执行结果)
++ [3 解析请求结果](#3-解析请求结果)
   - [3.1 回调函数](#31-回调函数)
   - [3.2 HttpResult](#32-HttpResult)
   - [3.3 HttpCall](#33-HttpCall)
@@ -131,7 +131,7 @@ HttpCall call2 = http.async("/users").post();    // 异步 POST
 HttpCall call3 = http.async("/users/1").put();   // 异步 PUT
 HttpCall call4 = http.async("/users/1").delete();// 异步 DELETE
 ```
-### 3 解析执行结果
+### 3 解析请求结果
 
 #### 3.1 回调函数
 
