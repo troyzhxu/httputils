@@ -59,13 +59,13 @@
   - [3.3 HttpCall](#33-HttpCall)
 + [4 构建HTTP任务](#4-构建HTTP任务)
 + [5 使用标签](#5-使用标签)
-+ [5 配置 HTTP](#5-配置-http)
-  - [5.1 设置 BaseUrl](#51-设置-baseurl)
-  - [5.2 回调执行器](#52-回调执行器)
-  - [5.3 配置 OkHttpClient](#53-配置-okhttpclient)
-  - [5.4 并行预处理器](#54-并行预处理器)
-  - [5.5 串行预处理器](#55-串行预处理器)
-+ [6 使用 HttpUtils 类](#6-使用-httputils-类)
++ [6 配置 HTTP](#65-配置-http)
+  - [6.1 设置 BaseUrl](#61-设置-baseurl)
+  - [6.2 回调执行器](#62-回调执行器)
+  - [6.3 配置 OkHttpClient](#63-配置-okhttpclient)
+  - [6.4 并行预处理器](#64-并行预处理器)
+  - [6.5 串行预处理器](#65-串行预处理器)
++ [7 使用 HttpUtils 类](#6-使用-httputils-类)
 
 ### 1 简单示例
 
@@ -293,9 +293,9 @@ System.out.println(count);                 // 输出 3
 ```
 　　同样的，只有异步HTTP任务才可以被取消。标签除了可以用来取消任务，在预处理器中它也可以发挥作用，请参见[并行预处理器](#54-并行预处理器)与[串行预处理器](#55-串行预处理器)。
 
-### 5 配置 HTTP
+### 6 配置 HTTP
 
-#### 5.1 设置 BaseUrl
+#### 6.1 设置 BaseUrl
 
 ```java
 HTTP http = HTTP.builder()
@@ -318,7 +318,7 @@ http.sync("/auth/signin")                  // http://api.demo.com/auth/signin
 http.sync("https://www.baidu.com").get()
 ```
 
-#### 5.2 回调执行器
+#### 6.2 回调执行器
 
 　　如何想改变执行回调函数的线程时，可以配置回调执行器。例如在Android里，让所有的回调函数都在UI线程执行，则可以在构建`HTTP`时配置如下：
 
@@ -331,7 +331,7 @@ HTTP http = HTTP.builder()
 ```
 　　该配置影响的回调为：`OnResponse`、`OnException`和`OnComplete`。
 
-#### 5.3 配置 OkHttpClient
+#### 6.3 配置 OkHttpClient
 
 　　与其他封装`OkHttp`的框架不同，`HttpUtils`并不会遮蔽`OkHttp`本身就很好用的功能，如下：
 
@@ -353,7 +353,7 @@ HTTP http = HTTP.builder()
     .build();
 ```
 
-#### 5.4 并行预处理器
+#### 6.4 并行预处理器
 
 　　预处理器（`Preprocessor`）可以让我们在请求发出之前对请求本身做一些改变，但与`OkHttp`的拦截器（`Interceptor`）不同：预处理器可以让我们**异步**处理这些问题。
 
@@ -375,7 +375,7 @@ HTTP http = HTTP.builder()
 ```
 　　和`Interceptor`一样，`Preprocessor`也可以添加多个。
 
-#### 5.5 串行预处理器
+#### 6.5 串行预处理器
 
 　　普通预处理器都是可并行处理的，然而有时我们希望某个预处理器同时只处理一个任务。比如 当`Token`过期时我们需要去刷新获取新`Token`，而刷新`Token`这个操作只能有一个任务去执行，因为如果`n`个任务同时执行的话，那么必有`n-1`个任务刚刷新得到的`Token`可能就立马失效了，而这是我们所不希望的。
 
@@ -398,7 +398,7 @@ HTTP http = HTTP.builder()
 ```
 　　串行预处理器实现了让HTTP任务排队串行处理的功能，但值得一提的是：它并没有因此而阻塞任何线程！
 
-### 6 使用 HttpUtils 类
+### 7 使用 HttpUtils 类
 
 　　类`HttpUtils`本是 1.x 版本里的最重要的核心类，由于在 2.x 版本里抽象出了`HTTP`接口，使得它的重要性已不如往昔。但合理的使用它，仍然可以带来不少便利，特别是在没有IOC容器的环境里，比如在Android开发和一些工具项目的开发中。
 
