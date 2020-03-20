@@ -11,7 +11,7 @@ import com.ejlchina.http.HttpCall;
 import com.ejlchina.http.HttpResult;
 import com.ejlchina.http.HttpUtils;
 import com.ejlchina.http.HttpResult.State;
-import com.ejlchina.http.Preprocessor.Process;
+import com.ejlchina.http.Preprocessor.PreChain;
 import com.ejlchina.http.internal.HttpClient;
 
 import okhttp3.ConnectionPool;
@@ -39,20 +39,20 @@ public class HttpTest {
 		
 		HTTP http = HTTP.builder()
 			.baseUrl("http://localhost:8080")
-			.addPreprocessor((Process process) -> {
+			.addPreprocessor((PreChain chain) -> {
 				System.out.println("并行预处理-开始");
 //				new Thread(() -> {
 					sleep(2000);
 					System.out.println("并行预处理-结束");
-					process.proceed();
+					chain.proceed();
 //				}).start();
 			})
-			.addSerialPreprocessor((Process process) -> {
+			.addSerialPreprocessor((PreChain chain) -> {
 				System.out.println("串行预处理-开始");
 				new Thread(() -> {
 					sleep(3000);
 					System.out.println("串行预处理-结束");
-					process.proceed();
+					chain.proceed();
 				}).start();
 			})
 			.build();
@@ -192,7 +192,7 @@ public class HttpTest {
 				.callbackExecutor((Runnable run) -> {
 					runOnUiThread(run);
 				})
-				.addPreprocessor((Process process) -> {
+				.addPreprocessor((PreChain process) -> {
 					new Thread(() -> {
 						try {
 							Thread.sleep(100);
@@ -205,7 +205,7 @@ public class HttpTest {
 						
 					}).start();
 				})
-				.addPreprocessor((Process process) -> {
+				.addPreprocessor((PreChain process) -> {
 					new Thread(() -> {
 
 						process.getTask().addUrlParam("actor", "Alice");

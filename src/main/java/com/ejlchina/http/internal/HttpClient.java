@@ -131,7 +131,7 @@ public class HttpClient implements HTTP {
 
 	public void preprocess(HttpTask<? extends HttpTask<?>> httpTask, Runnable request) {
     	if (preprocessors.length > 0) {
-    		HttpProcess process = new HttpProcess(preprocessors, 
+    		RealPreChain process = new RealPreChain(preprocessors, 
     				httpTask, request);
     		preprocessors[0].doProcess(process);
     	} else {
@@ -148,7 +148,7 @@ public class HttpClient implements HTTP {
     	// 预处理器
     	private Preprocessor preprocessor;
     	// 待处理的任务队列
-    	private Queue<Process> pendings;
+    	private Queue<PreChain> pendings;
     	// 是否有任务正在执行
     	private boolean running = false;
     	
@@ -158,7 +158,7 @@ public class HttpClient implements HTTP {
 		}
 
 		@Override
-		public void doProcess(Process process) {
+		public void doProcess(PreChain process) {
 			boolean should = true;
 			synchronized (this) {
 				if (running) {
@@ -174,7 +174,7 @@ public class HttpClient implements HTTP {
 		}
 		
 		public void afterProcess() {
-			Process process = null;
+			PreChain process = null;
 			synchronized (this) {
 				if (pendings.size() > 0) {
 					process = pendings.poll();
@@ -190,7 +190,7 @@ public class HttpClient implements HTTP {
     }
     
     
-    class HttpProcess implements Preprocessor.Process {
+    class RealPreChain implements Preprocessor.PreChain {
 
     	private int index;
     	
@@ -200,7 +200,7 @@ public class HttpClient implements HTTP {
     	
     	private Runnable request;
     	
-		public HttpProcess(Preprocessor[] preprocessors, 
+		public RealPreChain(Preprocessor[] preprocessors, 
 				HttpTask<?> httpTask, 
 						Runnable request) {
 			this.index = 1;

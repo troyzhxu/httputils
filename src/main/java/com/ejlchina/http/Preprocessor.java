@@ -9,12 +9,12 @@ public interface Preprocessor {
 
 	/**
 	 * 在HTTP请求开始之前执行
-	 * @param process HTTP请求进程
+	 * @param chain 预处理器链
 	 */
-	void doProcess(Process process);
+	void doProcess(PreChain chain);
 	
 	
-	interface Process {
+	interface PreChain {
 		
 		/**
 		 * @return 当前的请求任务
