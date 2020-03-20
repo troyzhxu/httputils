@@ -74,13 +74,13 @@
 ```java
 HTTP http = HTTP.builder().build();
 ```
-　　`HTTP`对象有以下三个方法：
+　　`HTTP`接口定义了以下三个方法：
 
 * `async(String urlPath)` 开始一个异步HTTP任务
 * `sync(String urlPath)` 开始一个同步HTTP任务
 * `cancel(String tag)` 根据标签批量取消HTTP任务
 
-　　为了简化文档，下文中出现的`http`均是已构建好的`HTTP`对象。
+　　为了简化文档，下文中出现的`http`均是已构建好的`HTTP`实例。
 
 #### 1.2 同步请求
 
@@ -153,11 +153,11 @@ http.async("http://api.demo.com/users/1")
         })
         .get();
 ```
-　　所有的同步请求方法均返回一个 HttpResult 对象，所有的异步请求方法均返回一个 HttpCall 对象。
+　　所有的同步请求方法均返回一个`HttpResult`实例，所有的异步请求方法均返回一个`HttpCall`实例。
 
 #### 3.2 HttpResult
 
-　　`HttpResult`对象是HTTP请求执行完后的结果，它是同步请求方法（ `get`、`post`、`put`、`delete`）的返回值，也是异步请求响应回调（`OnResponse`）的参数，它有如下方法：
+　　`HttpResult`是HTTP请求执行完后的结果，它是同步请求方法（ `get`、`post`、`put`、`delete`）的返回值，也是异步请求响应回调（`OnResponse`）的参数，它定义了如下方法：
 
 * `getState()`         得到请求执行状态枚举，它有以下取值：
     * `State.CANCELED`      请求被取消
@@ -168,7 +168,7 @@ http.async("http://api.demo.com/users/1")
 * `getStatus()`        得到HTTP状态码
 * `isSuccessful()`     是否响应成功，状态码在 [200..300) 之间
 * `getHeaders()`       得到HTTP响应头
-* `getBody()`          得到响应报文体`Body`对象，它有如下方法：
+* `getBody()`          得到响应报文体`Body`实例，它定义了如下方法（对同一个`Body`实例，以下的`toXXX()`类方法只能使用一个且仅能调用一次）：
     * `toBytes()`                     返回字节数组
     * `toByteStream()`                返回字节输入流
     * `toCharStream()`                返回字符输入流
@@ -181,7 +181,6 @@ http.async("http://api.demo.com/users/1")
     * `toFile(File file)`             下载到指定文件并返回保存后的文件
     * `getContentType()`              返回报文体的媒体类型
     * `getContentLength()`            返回报文体的字节长度
-    * 对同一个`Body`对象，以上`toXXX()`类方法只能使用一个且仅能使用一次
 * `getError()`         执行中发生的异常，自动捕获执行请求是发生的 网络超时、网络错误 和 其它请求异常
 
 　　示例，请求结果自动转Bean和List：
