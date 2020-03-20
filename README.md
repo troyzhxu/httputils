@@ -119,25 +119,18 @@ http.async("http://api.demo.com/users/{id}")
 ```java
 // 同步 GET
 HttpResult res1 = http.sync("http://api.demo.com/users").get();
-
 // 同步 POST
 HttpResult res2 = http.sync("http://api.demo.com/users")post();
-
 // 同步 PUT
 HttpResult res3 = http.sync("http://api.demo.com/users/1").put();
-
 // 同步 DELETE
 HttpResult res4 = http.sync("http://api.demo.com/users/1").delete();
-
 // 异步 GET
 HttpCall call1 = http.async("http://api.demo.com/users").get();
-
 // 异步 POST
 HttpCall call2 = http.async("http://api.demo.com/users").post();
-
 // 异步 PUT
 HttpCall call3 = http.async("http://api.demo.com/users/1").put();
-
 // 异步 DELETE
 HttpCall call4 = http.async("http://api.demo.com/users/1").delete();
 ```
