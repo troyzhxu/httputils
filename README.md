@@ -615,8 +615,7 @@ HTTP http = HTTP.builder()
 ```java
 // 在没有配置HTTP实例之前，只能使用全路径方式
 List<Role> roles = HttpUtils.sync("http://api.demo.com/roles")
-        .get().getBody()
-        .toList(Role.class);
+        .get().getBody().toList(Role.class);
 
 // 配置HTTP实例,全局生效
 HttpUtils.of(HTTP.builder()
@@ -625,8 +624,7 @@ HttpUtils.of(HTTP.builder()
 
 // 内部使用新的HTTP实例
 List<User> users = HttpUtils.sync("/users")
-        .get().getBody()
-        .toList(User.class);
+        .get().getBody().toList(User.class);
 ```
 
 ## 参与贡献
