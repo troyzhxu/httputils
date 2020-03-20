@@ -80,7 +80,7 @@ HTTP http = HTTP.builder().build();
 * `sync(String url)` 开始一个同步HTTP任务
 * `cancel(String tag)` 根据标签批量取消HTTP任务
 
-　　为了使用方便，我们在构建`HTTP`实例的时候，更愿意指定一个`BaseUrl`（详细请参见[5.1 设置 BaseUrl](#51-设置-baseurl)）:
+　　为了使用方便，在构建`HTTP`实例的时候，我们更愿意指定一个`BaseUrl`（请参见[5.1 设置 BaseUrl](#51-设置-baseurl)）:
 
 ```java
 HTTP http = HTTP.builder()
