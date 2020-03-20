@@ -127,49 +127,44 @@ http.async("http://api.demo.com/users/{id}")
 　　同步与异步的`HttpTask`都拥有`get`、`post`、`put`与`delete`方法。不同的是：同步`HttpTask`的这些方法返回一个`HttpResult`，而异步`HttpTask`的这些方法返回一个`HttpCall`。
 
 ```java
-HttpResult result = http.sync("http://api.demo.com/users").get();     // 同步 GET
-
-HttpCall call = http.async("http://api.demo.com/users")
-        .setOnResponse((HttpResult result) -> {
-        
-        }).get();                                                     // 异步 GET
-```
-
-```java
-HttpResult result = http.sync("http://api.demo.com/users")
+// 同步 GET
+HttpResult result1 = http.sync("http://api.demo.com/users").get();
+// 同步 POST
+HttpResult result2 = http.sync("http://api.demo.com/users")
         .addBodyParam("name", "Jack")
         .addBodyParam("age", 20)
-        .post();                                                      // 同步 POST
-
-HttpCall call = http.async("http://api.demo.com/users")
-        .addBodyParam("name", "Jack")
-        .addBodyParam("age", 20)
-        .setOnResponse((HttpResult result) -> {
-        
-        }).post();                                                    // 异步 POST
-```
-
-```java
-HttpResult result = http.sync("http://api.demo.com/users/1")
+        .post();
+// 同步 PUT
+HttpResult result3 = http.sync("http://api.demo.com/users/1")
         .addJsonParam("name", "Jack")
-        .put();                                                       // 同步 PUT
-
-HttpCall call = http.async("http://api.demo.com/users/1")
+        .put();
+// 同步 DELETE
+HttpResult result4 = http.sync("http://api.demo.com/users/1").delete();
+// 异步 GET
+HttpCall call1 = http.async("http://api.demo.com/users")
+        .setOnResponse((HttpResult result) -> {
+        
+        }).get();
+// 异步 POST
+HttpCall call2 = http.async("http://api.demo.com/users")
+        .addBodyParam("name", "Jack")
+        .addBodyParam("age", 20)
+        .setOnResponse((HttpResult result) -> {
+        
+        }).post();
+// 异步 PUT
+HttpCall call3 = http.async("http://api.demo.com/users/1")
         .addJsonParam("name", "Jack")
         .setOnResponse((HttpResult result) -> {
         
         })
-        .put();                                                       // 异步 PUT
-```
-
-```java
-HttpResult result = http.sync("http://api.demo.com/users/1").delete();// 同步 DELETE
-
-HttpCall call = http.async("http://api.demo.com/users/1")
+        .put();
+// 异步 DELETE
+HttpCall call4 = http.async("http://api.demo.com/users/1")
         .setOnResponse((HttpResult result) -> {
         
         })
-        .delete();                                                    // 异步 DELETE
+        .delete();
 ```
 ### 3 解析执行结果
 
