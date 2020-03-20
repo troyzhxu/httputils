@@ -136,7 +136,6 @@ HttpCall call4 = http.async("/users/1").delete();// 异步 DELETE
 #### 3.1 回调函数
 
 　　只有异步请求才可以设置回调函数：
-
 ```java
 http.async("/users/1")
         .setOnResponse((HttpResult result) -> {
