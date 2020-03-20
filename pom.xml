@@ -3,7 +3,7 @@
 	
 	<groupId>com.ejlchina</groupId>
 	<artifactId>httputils</artifactId>
-	<version>1.0.1</version>
+	<version>1.0.2</version>
 	<name>HttpUtils</name>
  
 	<properties>
@@ -32,7 +32,7 @@
 		<connection>scm:git://gitee.com/ejlchina-zhxu/httputils.git</connection>
 		<developerConnection>scm:http://gitee.com/ejlchina-zhxu/httputils</developerConnection>
 		<url>https://gitee.com/ejlchina-zhxu/httputils</url>
-		<tag>v1.0.1</tag>
+		<tag>v1.0.2</tag>
 	</scm>
 	
 	<dependencies>
@@ -47,13 +47,13 @@
         <dependency>
         	<groupId>com.alibaba</groupId>
 			<artifactId>fastjson</artifactId>
-			<version>1.2.8</version>
+			<version>1.2.67</version>
 		</dependency>
 		 
 		<dependency>
 			<groupId>com.squareup.okhttp3</groupId>
 			<artifactId>okhttp</artifactId>
-			<version>3.3.1</version>
+			<version>3.14.7</version>
 		</dependency>
 
 	</dependencies>
