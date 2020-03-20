@@ -65,7 +65,7 @@
   - [6.3 配置 OkHttpClient](#63-配置-okhttpclient)
   - [6.4 并行预处理器](#64-并行预处理器)
   - [6.5 串行预处理器](#65-串行预处理器)
-+ [7 使用 HttpUtils 类](#6-使用-httputils-类)
++ [7 使用 HttpUtils 类](#7-使用-httputils-类)
 
 ### 1 简单示例
 
