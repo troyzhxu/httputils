@@ -28,7 +28,7 @@
 
  * 邮箱：zhou.xu@ejlchina.com
 
-### 当前文档版本[2.1.1]
+### 当前文档版本[2.1.2]
 #### [查阅[2.1.0]点我](https://gitee.com/ejlchina-zhxu/httputils/blob/master/README-2.1.0.md) | [查阅[2.0.0]点我](https://gitee.com/ejlchina-zhxu/httputils/blob/master/README-2.0.0.md) | [查阅[1.x.x]点我](https://gitee.com/ejlchina-zhxu/httputils/blob/1.x/README.md)
 
 ## 安装教程
