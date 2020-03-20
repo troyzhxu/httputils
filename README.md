@@ -149,7 +149,6 @@ http.async("/users/{id}")             // http://api.demo.com/users/1
         })
         .get();
 ```
-　　所有的同步请求方法均返回一个`HttpResult`实例，所有的异步请求方法均返回一个`HttpCall`实例。
 
 #### 3.2 HttpResult
 
@@ -413,7 +412,7 @@ HTTP http = HTTP.builder()
 　　也就是说，能使用`http`实例的地方，都可以使用`HttpUtils`类，例如：
 
 ```java
-// 在没有配置HTTP实例之前，只能使用全路径方式
+// 在配置HTTP实例之前，只能使用全路径方式
 List<Role> roles = HttpUtils.sync("http://api.demo.com/roles")
         .get().getBody().toList(Role.class);
 
