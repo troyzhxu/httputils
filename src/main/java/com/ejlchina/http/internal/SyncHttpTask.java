@@ -61,7 +61,7 @@ public class SyncHttpTask extends HttpTask<SyncHttpTask> {
             try {
                 Response response = call.execute();
                 synchronized (SyncHttpTask.this) {
-                	result.response(response);
+                	result.response(response, getCallbackExecutor());
                 	SyncHttpTask.this.notify();
                 }
             } catch (IOException e) {

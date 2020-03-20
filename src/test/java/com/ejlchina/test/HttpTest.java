@@ -22,7 +22,7 @@ import okhttp3.Request;
 
 public class HttpTest {
 
-	
+
 	@Test
 	public void testToList() {
 		HttpUtils.of(HTTP.builder()

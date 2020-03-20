@@ -121,13 +121,17 @@ public class HttpClient implements HTTP {
         return MediaType.parse("application/octet-stream");
     }
 
-	public void executeCallback(Runnable callback) {
-    	if (callbackExecutor != null) {
-    		callbackExecutor.execute(callback);
-    	} else {
-    		callback.run();
-    	}
-    }
+	public Executor getCallbackExecutor() {
+		if (callbackExecutor == null) {
+			callbackExecutor = new Executor() {
+				@Override
+				public void execute(Runnable command) {
+					command.run();
+				}
+			};
+		}
+		return callbackExecutor;
+	}
 
 	public void preprocess(HttpTask<? extends HttpTask<?>> httpTask, Runnable request) {
     	if (preprocessors.length > 0) {

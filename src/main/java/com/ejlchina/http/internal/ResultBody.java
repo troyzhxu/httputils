@@ -1,29 +1,29 @@
 package com.ejlchina.http.internal;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.Reader;
 import java.util.List;
+import java.util.concurrent.Executor;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.ejlchina.http.Download;
 import com.ejlchina.http.HttpResult.Body;
 
 import okhttp3.MediaType;
 import okhttp3.ResponseBody;
-import okhttp3.internal.Util;
 
 public class ResultBody implements Body {
 
 	private ResponseBody body;
+	private Executor callbackExecutor;
 
-	ResultBody(ResponseBody body) {
+	ResultBody(ResponseBody body, Executor callbackExecutor) {
 		this.body = body;
+		this.callbackExecutor = callbackExecutor;
 	}
 
 	@Override
@@ -85,12 +85,12 @@ public class ResultBody implements Body {
 	}
 
 	@Override
-	public File toFile(String filePath) {
+	public Download toFile(String filePath) {
 		return toFile(new File(filePath));
 	}
 
 	@Override
-	public File toFile(File file) {
+	public Download toFile(File file) {
 		if (file.exists() && !file.delete()) {
 			throw new HttpException(
 					"Destination file [" + file.getAbsolutePath() + "] already exists and could not be deleted");
@@ -101,26 +101,7 @@ public class ResultBody implements Body {
 			throw new HttpException(
 					"Cannot create file [" + file.getAbsolutePath() + "]");
 		}
-		OutputStream output;
-		try {
-			output = new FileOutputStream(file);
-		} catch (FileNotFoundException e) {
-			throw new HttpException("无法获取文件[" + file.getAbsolutePath() + "]的输入流", e);
-		}
-		InputStream input = body.byteStream();
-		try {
-			byte[] buff = new byte[1024];
-			int len = -1;
-			while ((len = input.read(buff)) != -1) {
-				output.write(buff, 0, len);
-			}
-		} catch (IOException e) {
-			throw new HttpException("流传输失败", e);
-		} finally {
-			Util.closeQuietly(output);
-			body.close();
-		}
-		return file;
+		return new Download(file, body.byteStream(), callbackExecutor).start();
 	}
 	
 }

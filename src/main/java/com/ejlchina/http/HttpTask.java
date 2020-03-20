@@ -10,6 +10,7 @@ import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Executor;
 
 import com.alibaba.fastjson.JSON;
 import com.ejlchina.http.internal.HttpClient;
@@ -471,6 +472,10 @@ public abstract class HttpTask<C extends HttpTask<?>> {
 			this.content = content;
 		}
     	
+    }
+    
+    protected Executor getCallbackExecutor() {
+    	return httpClient.getCallbackExecutor();
     }
     
     protected Call prepareCall(String method) {
