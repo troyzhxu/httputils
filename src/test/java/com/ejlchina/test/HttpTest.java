@@ -1,8 +1,6 @@
 package com.ejlchina.test;
 
 
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -10,10 +8,11 @@ import org.junit.Test;
 
 import com.ejlchina.http.HTTP;
 import com.ejlchina.http.HttpCall;
+import com.ejlchina.http.HttpResult;
+import com.ejlchina.http.HttpUtils;
+import com.ejlchina.http.HttpResult.State;
 import com.ejlchina.http.Preprocessor.Process;
 import com.ejlchina.http.internal.HttpClient;
-import com.ejlchina.http.HttpResult;
-import com.ejlchina.http.HttpResult.State;
 
 import okhttp3.ConnectionPool;
 import okhttp3.Interceptor.Chain;
@@ -23,23 +22,17 @@ import okhttp3.Request;
 
 public class HttpTest {
 
+	
 	@Test
-	public void testIterator() {
-		List<Integer> list = new ArrayList<>();
-		list.add(0);
-		list.add(1);
-		list.add(2);
-		list.add(3);
-		
-		Iterator<Integer> it = list.iterator();
-		
-		it.next();
-		it.next();
-		it.remove();
-		
+	public void testToList() {
+		HttpUtils.of(HTTP.builder()
+				.baseUrl("http://tst-api-mini.cdyun.vip/ejlchina")
+				.build());
+		List<User> list = HttpUtils.sync("/comm/provinces")
+				.get().getBody().toList(User.class);
 		System.out.println(list);
-		
 	}
+	
 	
 	@Test
 	public void testPreprocessor() {
@@ -323,26 +316,6 @@ public class HttpTest {
 
 	static void runOnUiThread(Runnable run) {
 		run.run();
-	}
-	
-	
-	static class User {
-		
-		int id;
-		String name;
-		
-		public void setId(int id) {
-			this.id = id;
-		}
-		public void setName(String name) {
-			this.name = name;
-		}
-		
-		@Override
-		public String toString() {
-			return "User [id=" + id + ", name=" + name + "]";
-		}
-		
 	}
 	
 }
