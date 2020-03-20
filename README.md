@@ -74,7 +74,7 @@
 ```java
 HTTP http = HTTP.builder().build();
 ```
-　　以上代码构建了一个最简单的`HTTP`实例，`HTTP`接口中定义了以下三个方法：
+　　以上代码构建了一个最简单的`HTTP`实例，它拥有以下三个方法：
 
 * `async(String urlPath)` 开始一个异步HTTP任务
 * `sync(String urlPath)` 开始一个同步HTTP任务
