@@ -18,8 +18,8 @@ import okhttp3.Response;
  */
 public class SyncHttpTask extends HttpTask<SyncHttpTask> {
 
-	public SyncHttpTask(HttpClient client, String urlPath) {
-		super(client, urlPath);
+	public SyncHttpTask(HttpClient client, String url) {
+		super(client, url);
 	}
 	
     /**

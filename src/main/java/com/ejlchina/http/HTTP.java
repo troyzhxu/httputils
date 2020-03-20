@@ -13,17 +13,17 @@ public interface HTTP {
 
 	/**
 	 * 异步请求
-	 * @param urlPath 请求地址
+	 * @param url 请求地址
 	 * @return 异步HTTP任务
 	 */
-    AsyncHttpTask async(String urlPath);
+    AsyncHttpTask async(String url);
 
 	/**
 	 * 同步请求
-	 * @param urlPath 请求地址
+	 * @param url 请求地址
 	 * @return 同步HTTP任务
 	 */
-    SyncHttpTask sync(String urlPath);
+    SyncHttpTask sync(String url);
 	
     /**
      * 根据标签取消HTTP任务，只要任务的标签包含指定的Tag就会被取消

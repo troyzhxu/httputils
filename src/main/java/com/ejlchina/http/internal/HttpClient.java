@@ -47,13 +47,13 @@ public class HttpClient implements HTTP {
 	}
 	
 	@Override
-    public AsyncHttpTask async(String urlPath) {
-        return new AsyncHttpTask(this, urlPath(urlPath));
+    public AsyncHttpTask async(String url) {
+        return new AsyncHttpTask(this, urlPath(url));
     }
 
 	@Override
-    public SyncHttpTask sync(String urlPath) {
-        return new SyncHttpTask(this, urlPath(urlPath));
+    public SyncHttpTask sync(String url) {
+        return new SyncHttpTask(this, urlPath(url));
     }
    
 	@Override

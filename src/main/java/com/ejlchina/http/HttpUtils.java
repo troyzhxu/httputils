@@ -38,20 +38,20 @@ public class HttpUtils {
 	
 	/**
 	 * 异步请求
-	 * @param urlPath 请求地址
+	 * @param url 请求地址
 	 * @return 异步 HttpTask
 	 */
-    public static AsyncHttpTask async(String urlPath) {
-    	return getHttp().async(urlPath);
+    public static AsyncHttpTask async(String url) {
+    	return getHttp().async(url);
     }
 
 	/**
 	 * 同步请求
-	 * @param urlPath 请求地址
+	 * @param url 请求地址
 	 * @return 同步 HttpTask
 	 */
-    public static SyncHttpTask sync(String urlPath) {
-    	return getHttp().sync(urlPath);
+    public static SyncHttpTask sync(String url) {
+    	return getHttp().sync(url);
     }
     
     /**

@@ -26,8 +26,8 @@ public class AsyncHttpTask extends HttpTask<AsyncHttpTask> {
     private OnCallback<Exception> onException;
     private OnCallback<State> onComplete;
 
-	public AsyncHttpTask(HttpClient client, String urlPath) {
-		super(client, urlPath);
+	public AsyncHttpTask(HttpClient client, String url) {
+		super(client, url);
 	}
 
 

@@ -50,9 +50,9 @@ public abstract class HttpTask<C extends HttpTask<?>> {
     protected String tag;
 
     
-    public HttpTask(HttpClient httpClient, String urlPath) {
+    public HttpTask(HttpClient httpClient, String url) {
     	this.httpClient = httpClient;
-    	this.urlPath = urlPath;
+    	this.urlPath = url;
     }
 
     /**
