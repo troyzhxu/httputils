@@ -94,7 +94,7 @@ HTTP http = HTTP.builder()
 　　使用方法`sync(String url)`开始一个同步请求：
 
 ```java
-List<User> users = http.sync("/users") // http://api.demo.com/users/1
+List<User> users = http.sync("/users") // http://api.demo.com/users
         .get()                         // GET请求
         .getBody()                     // 获取响应报文体
         .toList(User.class);           // 得到目标数据
@@ -136,7 +136,8 @@ HttpCall call4 = http.async("/users/1").delete();// 异步 DELETE
 　　只有异步请求才可以设置回调函数：
 
 ```java
-http.async("/users/1")
+http.async("/users/{id}")             // http://api.demo.com/users/1
+        .addPathParam("id", 1)
         .setOnResponse((HttpResult result) -> {
             // 响应回调
         })
