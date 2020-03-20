@@ -87,7 +87,7 @@ HTTP http = HTTP.builder()
         .baseUrl("http://api.demo.com")
         .build();
 ```
-　　为了简化文档，下文中出现的`http`均是已构建好的`HTTP`实例。
+　　为了简化文档，下文中出现的`http`均是已构建好并设置了`BaseUrl`的`HTTP`实例。
 
 #### 1.2 同步请求
 
