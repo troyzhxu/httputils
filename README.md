@@ -273,7 +273,7 @@ System.out.println(call.isCanceled());     // true
 
 * `setRequestJson(String json)`             设置请求体的Json字符串（支持多层结构）
 * `setRequestJson(Object bean)`             将依据 bean的get方法序列化为 json 字符串（支持多层结构）
-* `setRequestJson(Object bean, String dateFormat)` 将依据 bean的get方法序列化为 json 字符串，并执行日期转换格式（支持多层结构）
+* `setRequestJson(Object bean, String dateFormat)` 将依据 bean的get方法序列化为 json 字符串（支持多层结构）
 
 * `addFileParam(String name, File file)` 上传文件
 * `addFileParam(String name, String type, InputStream inputStream)` 上传文件
