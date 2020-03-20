@@ -26,13 +26,13 @@ Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前
 <dependency>
      <groupId>com.ejlchina</groupId>
      <artifactId>httputils</artifactId>
-     <version>1.0.1</version>
+     <version>1.0.2</version>
 </dependency>
 ```
 
 ### Gradle
 
-`compile 'com.ejlchina:httputils:1.0.1'`
+`compile 'com.ejlchina:httputils:1.0.2'`
 
 ## 使用说明
 
