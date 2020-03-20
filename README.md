@@ -95,7 +95,7 @@ HTTP http = HTTP.builder()
 
 ```java
 // 最终路径 http://api.demo.com/users?name=Jack
-User user = http.sync("http://api.demo.com/users")
+User user = http.sync("/users")
         .addUrlParam("name", "Jack")                // 添加查询参数
         .get()                                      // 发送GET请求
         .getBody()                                  // 获取响应报文体
@@ -109,7 +109,7 @@ User user = http.sync("http://api.demo.com/users")
 
 ```java
 // 最终路径为 http://api.demo.com/users/1
-http.async("http://api.demo.com/users/{id}")
+http.async("/users/{id}")
         .addPathParam("id", 1)
         .setOnResponse((HttpResult result) -> {
             // 得到目标数据
@@ -125,21 +125,21 @@ http.async("http://api.demo.com/users/{id}")
 
 ```java
 // 同步 GET
-HttpResult res1 = http.sync("http://api.demo.com/users").get();
+HttpResult res1 = http.sync("/users").get();
 // 同步 POST
-HttpResult res2 = http.sync("http://api.demo.com/users")post();
+HttpResult res2 = http.sync("/users")post();
 // 同步 PUT
-HttpResult res3 = http.sync("http://api.demo.com/users/1").put();
+HttpResult res3 = http.sync("/users/1").put();
 // 同步 DELETE
-HttpResult res4 = http.sync("http://api.demo.com/users/1").delete();
+HttpResult res4 = http.sync("/users/1").delete();
 // 异步 GET
-HttpCall call1 = http.async("http://api.demo.com/users").get();
+HttpCall call1 = http.async("/users").get();
 // 异步 POST
-HttpCall call2 = http.async("http://api.demo.com/users").post();
+HttpCall call2 = http.async("/users").post();
 // 异步 PUT
-HttpCall call3 = http.async("http://api.demo.com/users/1").put();
+HttpCall call3 = http.async("/users/1").put();
 // 异步 DELETE
-HttpCall call4 = http.async("http://api.demo.com/users/1").delete();
+HttpCall call4 = http.async("/users/1").delete();
 ```
 ### 3 解析执行结果
 
@@ -148,7 +148,7 @@ HttpCall call4 = http.async("http://api.demo.com/users/1").delete();
 　　只有异步请求才可以设置回调函数：
 
 ```java
-http.async("http://api.demo.com/users/1")
+http.async("/users/1")
         .setOnResponse((HttpResult result) -> {
             // 响应回调
         })
@@ -194,11 +194,11 @@ http.async("http://api.demo.com/users/1")
 
 ```java
 // 自动转Bean
-Order order = http.sync("http://api.demo.com/orders/1")
+Order order = http.sync("/orders/1")
         .get().getBody().toBean(Order.class);
         
 // 自动转List
-List<Order> orders = http.sync("http://api.demo.com/orders")
+List<Order> orders = http.sync("/orders")
         .get().getBody().toList(Order.class);
 ```
 
@@ -208,11 +208,11 @@ List<Order> orders = http.sync("http://api.demo.com/orders")
 String path = "D:/reports/2020-03-01.xlsx";    // 文件保存目录
 
 // 同步下载
-http.sync("http://api.demo.com/reports/2020-03-01.xlsx")
+http.sync("/reports/2020-03-01.xlsx")
         .get().getBody().toFile(path);
 
 // 异步下载
-http.async("http://api.demo.com/reports/2020-03-01.xlsx")
+http.async("/reports/2020-03-01.xlsx")
         .setOnResponse((HttpResult result) -> {
             result.getBody().toFile(path);
         })
@@ -231,7 +231,7 @@ http.async("http://api.demo.com/reports/2020-03-01.xlsx")
 　　取消一个异步请求示例：
 
 ```java
-HttpCall call = http.async("http://api.demo.com/users/1").get();
+HttpCall call = http.async("/users/1").get();
 
 System.out.println(call.isCanceled());     // false
 
@@ -282,19 +282,19 @@ System.out.println(call.isCanceled());     // true
 　　有时候我们想对HTTP任务加以分类，这时候可以使用标签功能：
 
 ```java
-http.async("http://api.demo.com/users")    //（1）
+http.async("/users")    //（1）
         .setTag("A").get();
         
-http.async("http://api.demo.com/users")    //（2）
+http.async("/users")    //（2）
         .setTag("A.B").get();
         
-http.async("http://api.demo.com/users")    //（3）
+http.async("/users")    //（3）
         .setTag("B").get();
         
-http.async("http://api.demo.com/users")    //（4）
+http.async("/users")    //（4）
         .setTag("B.C").get();
         
-http.async("http://api.demo.com/users")    //（5）
+http.async("/users")    //（5）
         .setTag("C").get();
 ```
 　　当使用标签后，就可以按标签批量的对HTTP任务进行取消：
