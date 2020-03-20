@@ -599,7 +599,7 @@ HTTP http = HTTP.builder()
 ```
 　　串行预处理器实现了让HTTP任务排队串行处理的功能，但值得一提的是：它并没有因此而阻塞任何线程！
 
-### 5 使用 HttpUtils 类
+### 6 使用 HttpUtils 类
 
 　　类`HttpUtils`本是1.x版本的最重要的核心类，由于在2.x版本里抽象出了`HTTP`，使得它的重要性已不如往昔。但合理的使用它，仍然可以带来不少便捷，特别是在没有IOC容器的环境里，比如在Android开发和一些工具项目的开发中。
 
@@ -612,7 +612,7 @@ HTTP http = HTTP.builder()
 
 　　也就是说，能使用`http`实例的地方，都可以使用`HttpUtils`类，例如：
 
-```
+```java
 // 在没有配置HTTP实例之前，只能使用全路径方式
 List<Role> roles = HttpUtils.sync("http://api.demo.com/roles")
         .get().getBody()
