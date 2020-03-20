@@ -129,42 +129,27 @@ http.async("http://api.demo.com/users/{id}")
 ```java
 // 同步 GET
 HttpResult result1 = http.sync("http://api.demo.com/users").get();
+
 // 同步 POST
-HttpResult result2 = http.sync("http://api.demo.com/users")
-        .addBodyParam("name", "Jack")
-        .addBodyParam("age", 20)
-        .post();
+HttpResult result2 = http.sync("http://api.demo.com/users")post();
+
 // 同步 PUT
-HttpResult result3 = http.sync("http://api.demo.com/users/1")
-        .addJsonParam("name", "Jack")
-        .put();
+HttpResult result3 = http.sync("http://api.demo.com/users/1").put();
+
 // 同步 DELETE
 HttpResult result4 = http.sync("http://api.demo.com/users/1").delete();
+
 // 异步 GET
-HttpCall call1 = http.async("http://api.demo.com/users")
-        .setOnResponse((HttpResult result) -> {
-        
-        }).get();
+HttpCall call1 = http.async("http://api.demo.com/users").get();
+
 // 异步 POST
-HttpCall call2 = http.async("http://api.demo.com/users")
-        .addBodyParam("name", "Jack")
-        .addBodyParam("age", 20)
-        .setOnResponse((HttpResult result) -> {
-        
-        }).post();
+HttpCall call2 = http.async("http://api.demo.com/users").post();
+
 // 异步 PUT
-HttpCall call3 = http.async("http://api.demo.com/users/1")
-        .addJsonParam("name", "Jack")
-        .setOnResponse((HttpResult result) -> {
-        
-        })
-        .put();
+HttpCall call3 = http.async("http://api.demo.com/users/1").put();
+
 // 异步 DELETE
-HttpCall call4 = http.async("http://api.demo.com/users/1")
-        .setOnResponse((HttpResult result) -> {
-        
-        })
-        .delete();
+HttpCall call4 = http.async("http://api.demo.com/users/1").delete();
 ```
 ### 3 解析执行结果
 
