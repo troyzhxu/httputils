@@ -122,22 +122,14 @@ http.async("/users/{id}")           //  http://api.demo.com/users/1
 　　同步与异步的`HttpTask`都拥有`get`、`post`、`put`与`delete`方法。不同的是：同步`HttpTask`的这些方法返回一个`HttpResult`，而异步`HttpTask`的这些方法返回一个`HttpCall`。
 
 ```java
-// 同步 GET
-HttpResult res1 = http.sync("/users").get();
-// 同步 POST
-HttpResult res2 = http.sync("/users")post();
-// 同步 PUT
-HttpResult res3 = http.sync("/users/1").put();
-// 同步 DELETE
-HttpResult res4 = http.sync("/users/1").delete();
-// 异步 GET
-HttpCall call1 = http.async("/users").get();
-// 异步 POST
-HttpCall call2 = http.async("/users").post();
-// 异步 PUT
-HttpCall call3 = http.async("/users/1").put();
-// 异步 DELETE
-HttpCall call4 = http.async("/users/1").delete();
+HttpResult res1 = http.sync("/users").get();     // 同步 GET
+HttpResult res2 = http.sync("/users")post();     // 同步 POST
+HttpResult res3 = http.sync("/users/1").put();   // 同步 PUT
+HttpResult res4 = http.sync("/users/1").delete();// 同步 DELETE
+HttpCall call1 = http.async("/users").get();     // 异步 GET
+HttpCall call2 = http.async("/users").post();    // 异步 POST
+HttpCall call3 = http.async("/users/1").put();   // 异步 PUT
+HttpCall call4 = http.async("/users/1").delete();// 异步 DELETE
 ```
 ### 3 解析执行结果
 
