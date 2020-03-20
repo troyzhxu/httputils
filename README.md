@@ -252,8 +252,8 @@ System.out.println(call.isCanceled());     // true
 
 　　`HTTP`对象的`sync`与`async`方法返回一个`HttpTask`对象，该对象提供了一系列可链式调用的`addXXX`与`setXXX`方法用于构建任务本身。
 
-* `addHeader(String name, String value)`    添加请求头  
-* `addHeader(Map<String, String> headers)`  添加请求头  
+* `addHeader(String name, String value)`    添加请求头
+* `addHeader(Map<String, String> headers)`  添加请求头
 
 * `addPathParam(String name, String value)` 添加路径参数：替换URL里的{name}占位符
 * `addPathParam(String name, Number value)` 添加路径参数：替换URL里的{name}占位符
@@ -275,11 +275,11 @@ System.out.println(call.isCanceled());     // true
 * `setRequestJson(Object bean)`             将依据 bean的get方法序列化为 json 字符串（支持多层结构）
 * `setRequestJson(Object bean, String dateFormat)` 将依据 bean的get方法序列化为 json 字符串，并执行日期转换格式（支持多层结构）
 
-* `addFileParam(String name, File file)` 添加待上传的本地文件
-* `addFileParam(String name, String type, InputStream inputStream)` 添加待上传的文件输入流
-* `addFileParam(String name, String type, String fileName, InputStream input)` 添加待上传的文件输入流
-* `addFileParam(String name, String type, byte[] content)` 添加待上传的文件内容
-* `addFileParam(String name, String type, String fileName, byte[] content)` 添加待上传的文件内容
+* `addFileParam(String name, File file)` 上传文件
+* `addFileParam(String name, String type, InputStream inputStream)` 上传文件
+* `addFileParam(String name, String type, String fileName, InputStream input)` 上传文件
+* `addFileParam(String name, String type, byte[] content)` 上传文件
+* `addFileParam(String name, String type, String fileName, byte[] content)` 上传文件
 
 * `setTag(String tag)` 为HTTP任务添加标签
 
