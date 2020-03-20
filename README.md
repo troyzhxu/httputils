@@ -122,11 +122,9 @@ http.async("http://api.demo.com/users/{id}")
 ```
 　　方法`async`返回一个异步`HttpTask`，可链式使用。
 
-### 2 请求方法
+### 2 请求方法（GET|POST|PUT|DELETE）
 
 　　同步与异步的`HttpTask`都拥有`get`、`post`、`put`与`delete`方法。不同的是：同步`HttpTask`的这些方法返回一个`HttpResult`，而异步`HttpTask`的这些方法返回一个`HttpCall`。
-
-#### 2.1 GET
 
 ```java
 HttpResult result = http.sync("http://api.demo.com/users").get();     // 同步 GET
@@ -136,7 +134,6 @@ HttpCall call = http.async("http://api.demo.com/users")
         
         }).get();                                                     // 异步 GET
 ```
-#### 2.2 POST
 
 ```java
 HttpResult result = http.sync("http://api.demo.com/users")
@@ -151,7 +148,6 @@ HttpCall call = http.async("http://api.demo.com/users")
         
         }).post();                                                    // 异步 POST
 ```
-#### 2.3 PUT
 
 ```java
 HttpResult result = http.sync("http://api.demo.com/users/1")
@@ -165,7 +161,6 @@ HttpCall call = http.async("http://api.demo.com/users/1")
         })
         .put();                                                       // 异步 PUT
 ```
-#### 2.4 DELETE
 
 ```java
 HttpResult result = http.sync("http://api.demo.com/users/1").delete();// 同步 DELETE
