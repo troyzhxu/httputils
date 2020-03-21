@@ -43,13 +43,14 @@ public class HttpTest {
 
 		long t0 = System.currentTimeMillis();
 		
+		// TODO: 只有 调用了 setSkipBytes 和使用 toFile 方法，才能启用 断点续传
 		http.sync(url)
 				.setSkipBytes(179785)
 				.get().getBody()
 //				.toFolder("D:/WorkSpace/download/")
 				.toFile("D:\\WorkSpace\\download\\CocosDashboard-v1.0.1-win32-031816(8).exe")
 				.setStepRate(0.01)
-				.resumeBreakpoint()
+				.resumeBreakpoint() // 启用 断点续传
 				.setOnProcess((Process process) -> {
 					print(t0, process.getDoneBytes() + "/" + process.getTotalBytes() + "\t" + process.getRate(), false);
 				})
