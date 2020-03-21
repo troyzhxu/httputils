@@ -12,13 +12,18 @@ public interface Process {
 	double getRate();
 
 	/**
-	 * @return 总任务量
+	 * @return 总
 	 */
-	long getTotal();
+	long getTotalBytes();
 	
 	/**
 	 * @return 已完成任务量
 	 */
-	long getDone();
+	long getDoneBytes();
+	
+	/**
+	 * @return 任务是否完成
+	 */
+	boolean isDone();
 	
 }

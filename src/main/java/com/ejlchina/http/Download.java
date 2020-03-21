@@ -24,12 +24,14 @@ public class Download {
 	private InputStream input;
 	private OnCallback<Process> onProcess;
 	private OnCallback<File> onDone;
+	private OnCallback<Error> onError;
 	private Executor callbackExecutor;
 	private long totalBytes;
 	private long step = 0;
 	private long stepBytes = 8192;
 	private int buffSize = 2048;
 	private volatile int status;
+	private RealProcess process;
 	private Object lock = new Object();
 	
 	public Download(File file, InputStream input, long totalBytes, Executor executor) {
@@ -37,6 +39,7 @@ public class Download {
 		this.input = input;
 		this.totalBytes = totalBytes;
 		this.callbackExecutor = executor;
+		this.process = new RealProcess(totalBytes);
 	}
 
 	/**
@@ -77,27 +80,56 @@ public class Download {
 	
 	/**
 	 * 设置下载进度回调
-	 * @param onProcess
-	 * @return
+	 * @param onProcess 进度回调函数
+	 * @return Download
 	 */
 	public Download setOnProcess(OnCallback<Process> onProcess) {
 		this.onProcess = onProcess;
 		return this;
 	}
 	
+	/**
+	 * 设置下载完成回调
+	 * @param onDone 完成回调函数
+	 * @return Download
+	 */
 	public Download setOnDone(OnCallback<File> onDone) {
 		this.onDone = onDone;
 		return this;
 	}
 	
+	/**
+	 * 设置下载失败回调
+	 * @param onError 失败回调函数
+	 * @return Download
+	 */
+	public Download setOnError(OnCallback<Error> onError) {
+		this.onError = onError;
+		return this;
+	}
+	
+	/**
+	 * 开始下载
+	 * @return 下载控制器
+	 */
 	public Ctrl start() {
-		status = Ctrl.STATUS__DOWNLOADING;
-		new Thread(() -> {
-			doDownload();
-		}).start();
-		return new Ctrl();
+		return start(0);
 	}
 
+	/**
+	 * 开始下载，跳过 skipBytes 个字节（用于断点续传）
+	 * @param skipBytes 跳过的字节数
+	 * @return 下载控制器
+	 */
+	public Ctrl start(long skipBytes) {
+		status = Ctrl.STATUS__DOWNLOADING;
+		new Thread(() -> {
+			doDownload(skipBytes);
+		}).start();
+		return new Ctrl();
+		
+	}
+	
 	public class Ctrl {
 		
 		/**
@@ -143,7 +175,6 @@ public class Download {
 			synchronized (lock) {
 				if (status == STATUS__DOWNLOADING) {
 					status = STATUS__PAUSED;
-					System.out.println("已暂停");
 				}
 			}
 		}
@@ -155,7 +186,6 @@ public class Download {
 			synchronized (lock) {
 				if (status == STATUS__PAUSED) {
 					status = STATUS__DOWNLOADING;
-					System.out.println("已继续");
 				}
 			}
 		}
@@ -167,14 +197,47 @@ public class Download {
 			synchronized (lock) {
 				if (status == STATUS__PAUSED || status == STATUS__DOWNLOADING) {
 					status = STATUS__CANCELED;
-					System.out.println("已取消");
 				}
 			}
 		}
 		
 	}
 	
-	private void doDownload() {
+	public class Error {
+		
+		private long doneBytes;
+		
+		private IOException exception;
+
+		Error(long doneBytes, IOException exception) {
+			this.doneBytes = doneBytes;
+			this.exception = exception;
+		}
+		
+		/**
+		 * @return 下载文件
+		 */
+		public File getFile() {
+			return file;
+		}
+		
+		/**
+		 * @return 已下载字节数
+		 */
+		public long getDoneBytes() {
+			return doneBytes;
+		}
+
+		/**
+		 * @return 异常信息
+		 */
+		public IOException getException() {
+			return exception;
+		}
+		
+	}
+	
+	private void doDownload(long skipBytes) {
 		OutputStream output;
 		try {
 			output = new FileOutputStream(file);
@@ -183,15 +246,15 @@ public class Download {
 			Util.closeQuietly(input);
 			throw new HttpException("无法获取文件[" + file.getAbsolutePath() + "]的输入流", e);
 		}
-		RealProcess process = new RealProcess(totalBytes);
 		try {
 			while (status != Ctrl.STATUS__CANCELED && status != Ctrl.STATUS__DONE) {
 				if (status == Ctrl.STATUS__DOWNLOADING) {
 					byte[] buff = new byte[buffSize];
 					int len = -1;
+					input.skip(skipBytes);
 					while ((len = input.read(buff)) != -1) {
 						output.write(buff, 0, len);
-						process.addDone(len);
+						process.addDoneBytes(len);
 						doOnProcess(process);
 						if (status == Ctrl.STATUS__CANCELED 
 								|| status == Ctrl.STATUS__PAUSED) {
@@ -205,16 +268,21 @@ public class Download {
 					}
 				}
 			}
-			System.out.println("已跳出循环");
 		} catch (IOException e) {
 			synchronized (lock) {
 				status = Ctrl.STATUS__ERROR;
 			}
-			throw new HttpException("流传输失败", e);
+			if (onError != null) {
+				callbackExecutor.execute(() -> {
+					onError.on(new Error(process.getDoneBytes(), e));
+				});
+			} else {
+				throw new HttpException("流传输失败", e);
+			}
 		} finally {
 			Util.closeQuietly(output);
 			Util.closeQuietly(input);
-			if (status == Ctrl.STATUS__CANCELED || status == Ctrl.STATUS__ERROR) {
+			if (status == Ctrl.STATUS__CANCELED) {
 				file.delete();
 			}
 		}
@@ -222,7 +290,7 @@ public class Download {
 	
 	
 	private void doOnProcess(Process process) {
-		long done = process.getDone();
+		long done = process.getDoneBytes();
 		if (done < step * stepBytes 
 				&& done < totalBytes) {
 			return;

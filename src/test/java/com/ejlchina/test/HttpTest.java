@@ -41,7 +41,7 @@ public class HttpTest {
 	@Test
 	public void testD() {
 
-		System.out.println(indexFileName("a.bc", 1));
+		System.out.println(10_000);
 
 	}
 	
@@ -49,35 +49,19 @@ public class HttpTest {
 	public void testDownload() {
 		HTTP http = HTTP.builder()
 				.config((Builder builder) -> {
-					builder.readTimeout(20, TimeUnit.SECONDS);
+					builder.readTimeout(100, TimeUnit.MILLISECONDS);
 				})
 				.build();
 		
-		long t0 = System.currentTimeMillis();
 		String url = "https://download.cocos.com/CocosDashboard/v1.0.1/CocosDashboard-v1.0.1-win32-031816.exe";
-//		String url = "https://charge-pile.oss-cn-hangzhou.aliyuncs.com/ejl-test.zip";
-		
-//		HttpResult result = http.sync(url).get();
-//		
-//		System.out.println(result.getHeaders());
-//		
-//		result.getBody()
-//				.toFolder("D:/WorkSpace/download/")
-//				.setStepRate(0.05)
-//				.setOnProcess((Process process) -> {
-//					print(t0, process.getDone() + "/" + process.getTotal() + "\t" + process.getRate(), false);
-//				})
-//				.setOnDone((File file) -> {
-//					print(t0, file.getAbsolutePath(), true);
-//				})
-//				.start();
-		
+
+		long t0 = System.currentTimeMillis();
 		
 		Ctrl ctrl = http.sync(url).get().getBody()
 				.toFolder("D:/WorkSpace/download/")
 				.setStepRate(0.005)
 				.setOnProcess((Process process) -> {
-					print(t0, process.getDone() + "/" + process.getTotal() + "\t" + process.getRate(), false);
+					print(t0, process.getDoneBytes() + "/" + process.getTotalBytes() + "\t" + process.getRate(), false);
 				})
 				.setOnDone((File file) -> {
 					print(t0, file.getAbsolutePath(), true);
@@ -85,27 +69,8 @@ public class HttpTest {
 				.start();
 
 		
-		sleep(5000);
-		ctrl.pause();
-		
-		sleep(5000);
-		ctrl.cancel();
-//		
-		
-		sleep(5000);
-		
-//		ctrl.resume();
-//		
-//		sleep(5000);
-//		
-//		ctrl.pause();
-//		
-//		sleep(5000);
-//		
-//		ctrl.resume();
-//		
-//		
-//		sleep(10000);
+		sleep(20000);
+
 	}
 	
 	void print(long t0, String str, boolean ln) {

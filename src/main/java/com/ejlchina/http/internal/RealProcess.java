@@ -5,40 +5,37 @@ import com.ejlchina.http.Process;
 public class RealProcess implements Process {
 
 	// 总字节数
-	private long total;
+	private long totalBytes;
 	// 已经完成字节数
-	private long done;
+	private long doneBytes;
 	
 	
-	public RealProcess(long total) {
-		this.total = total;
+	public RealProcess(long totalBytes) {
+		this.totalBytes = totalBytes;
 	}
 	
-	/**
-	 * @return 完成比例
-	 */
+	@Override
 	public double getRate() {
-		return (double) done / total;
+		return (double) doneBytes / totalBytes;
 	}
 
-	public long getTotal() {
-		return total;
+	@Override
+	public long getTotalBytes() {
+		return totalBytes;
+	}
+
+	@Override
+	public long getDoneBytes() {
+		return doneBytes;
 	}
 	
-	public void setTotal(long total) {
-		this.total = total;
+	@Override
+	public boolean isDone() {
+		return doneBytes >= totalBytes;
 	}
 	
-	public long getDone() {
-		return done;
-	}
-	
-	public void setDone(long done) {
-		this.done = done;
-	}
-	
-	public void addDone(long delt) {
-		this.done += delt;
+	public void addDoneBytes(long delt) {
+		this.doneBytes += delt;
 	}
 	
 }
