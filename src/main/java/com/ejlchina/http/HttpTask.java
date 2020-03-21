@@ -145,6 +145,15 @@ public abstract class HttpTask<C extends HttpTask<?>> {
     }
     
     /**
+     * 设置接收报文体时跳过的字节数，用于断点续传
+     * @param skipBytes 跳过的字节数（已经下载的字节数，即上次的断点）
+     * @return HttpTask 实例
+     */
+    public C setSkipBytes(long skipBytes) {
+    	return addHeader("RANGE","bytes=" + skipBytes + "-");
+    }
+    
+    /**
      * 路径参数：替换URL里的{name}
      * @param name 参数名
      * @param value 参数值
