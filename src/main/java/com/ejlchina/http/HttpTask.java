@@ -10,12 +10,11 @@ import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.Executor;
 
 import com.alibaba.fastjson.JSON;
+import com.ejlchina.http.HttpResult.State;
 import com.ejlchina.http.internal.HttpClient;
 import com.ejlchina.http.internal.HttpException;
-import com.ejlchina.http.HttpResult.State;
 
 import okhttp3.Call;
 import okhttp3.FormBody;
@@ -49,6 +48,7 @@ public abstract class HttpTask<C extends HttpTask<?>> {
     private String requestJson;
     protected boolean nothrow;
     protected String tag;
+    protected long skipBytes;
 
     
     public HttpTask(HttpClient httpClient, String url) {
@@ -150,7 +150,8 @@ public abstract class HttpTask<C extends HttpTask<?>> {
      * @return HttpTask 实例
      */
     public C setSkipBytes(long skipBytes) {
-    	return addHeader("RANGE","bytes=" + skipBytes + "-");
+    	this.skipBytes = skipBytes;
+    	return addHeader("RANGE", "bytes=" + skipBytes + "-");
     }
     
     /**
@@ -483,9 +484,6 @@ public abstract class HttpTask<C extends HttpTask<?>> {
     	
     }
     
-    protected Executor getCallbackExecutor() {
-    	return httpClient.getCallbackExecutor();
-    }
     
     protected Call prepareCall(String method) {
     	assertNotConflict("GET".equals(method));

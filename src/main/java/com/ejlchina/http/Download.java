@@ -2,10 +2,9 @@ package com.ejlchina.http;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.RandomAccessFile;
 import java.util.concurrent.Executor;
 
 import com.ejlchina.http.internal.HttpException;
@@ -20,6 +19,8 @@ import okhttp3.internal.Util;
  */
 public class Download {
 	
+	static final int DEFAULT_SIZE = 8192;
+	
 	private File file;
 	private InputStream input;
 	private OnCallback<Process> onProcess;
@@ -28,18 +29,20 @@ public class Download {
 	private Executor callbackExecutor;
 	private long totalBytes;
 	private long step = 0;
-	private long stepBytes = 8192;
-	private int buffSize = 8192;
+	private long stepBytes = 0;
+	private int buffSize = 0;
+	private long seekBytes = 0;
+	private double stepRate = -1;
+	private boolean breakpointResumed;
 	private volatile int status;
-	private RealProcess process;
 	private Object lock = new Object();
 	
-	public Download(File file, InputStream input, long totalBytes, Executor executor) {
+	public Download(File file, InputStream input, long totalBytes, Executor executor, long skipBytes) {
 		this.file = file;
 		this.input = input;
 		this.totalBytes = totalBytes;
 		this.callbackExecutor = executor;
-		this.process = new RealProcess(totalBytes);
+		this.seekBytes = skipBytes;
 	}
 
 	/**
@@ -72,9 +75,16 @@ public class Download {
 	 * @return Download
 	 */
 	public Download setStepRate(double stepRate) {
-		if (stepRate > 0 && stepRate <= 1) {
-			this.stepBytes = (long) (totalBytes * stepRate);
-		}
+		this.stepRate = stepRate;
+		return this;
+	}
+	
+	/**
+	 * 启用断点续传
+	 * @return Download
+	 */
+	public Download resumeBreakpoint() {
+		this.breakpointResumed = true;
 		return this;
 	}
 	
@@ -114,6 +124,18 @@ public class Download {
 	 */
 	public Ctrl start() {
 		status = Ctrl.STATUS__DOWNLOADING;
+		if (breakpointResumed) {
+			totalBytes += seekBytes;
+		}
+		if (stepRate > 0 && stepRate <= 1) {
+			this.stepBytes = (long) (totalBytes * stepRate);
+		}
+		if (stepBytes == 0) {
+			stepBytes = DEFAULT_SIZE;
+		}
+		if (buffSize == 0) {
+			buffSize = DEFAULT_SIZE;
+		}
 		new Thread(() -> {
 			doDownload();
 		}).start();
@@ -228,15 +250,25 @@ public class Download {
 	}
 	
 	private void doDownload() {
-		OutputStream output;
+		RandomAccessFile output;
 		try {
-			output = new FileOutputStream(file);
+			output = new RandomAccessFile(file, "rw");
 		} catch (FileNotFoundException e) {
 			status = Ctrl.STATUS__ERROR;
 			Util.closeQuietly(input);
 			throw new HttpException("无法获取文件[" + file.getAbsolutePath() + "]的输入流", e);
 		}
+		RealProcess process;
+		if (breakpointResumed) {
+			process = new RealProcess(totalBytes, seekBytes);
+			step = seekBytes / stepBytes;
+		} else {
+			process = new RealProcess(totalBytes, 0);
+		}
 		try {
+			if (breakpointResumed && seekBytes > 0) {
+				output.seek(seekBytes);
+			}
 			while (status != Ctrl.STATUS__CANCELED && status != Ctrl.STATUS__DONE) {
 				if (status == Ctrl.STATUS__DOWNLOADING) {
 					byte[] buff = new byte[buffSize];
@@ -279,9 +311,8 @@ public class Download {
 	
 	
 	private void doOnProcess(Process process) {
-		long done = process.getDoneBytes();
-		if (done < step * stepBytes 
-				&& done < totalBytes) {
+		if (process.getDoneBytes() < step * stepBytes 
+				&& !process.isDone()) {
 			return;
 		}
 		step++;
@@ -290,7 +321,7 @@ public class Download {
 				onProcess.on(process);
 			});
 		}
-		if (onSuccess != null && done >= totalBytes) {
+		if (onSuccess != null && process.isDone()) {
 			callbackExecutor.execute(() -> {
 				onSuccess.on(file);
 			});

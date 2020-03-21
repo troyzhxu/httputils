@@ -7,7 +7,6 @@ import java.util.concurrent.TimeUnit;
 
 import org.junit.Test;
 
-import com.ejlchina.http.Download.Ctrl;
 import com.ejlchina.http.Download.Failure;
 import com.ejlchina.http.HTTP;
 import com.ejlchina.http.HttpCall;
@@ -26,23 +25,9 @@ import okhttp3.Request;
 
 public class HttpTest {
 
-	private String indexFileName(String fileName, int index) {
-		int i = fileName.lastIndexOf('.');
-		if (i < 0) {
-			return fileName + "(" + index + ")";
-		}
-		String ext = fileName.substring(i);
-		if (i > 0) {
-			String name = fileName.substring(0, i);
-			return name + "(" + index + ")" + ext;
-		}
-		return "(" + index + ")" + ext;
-	}
 	
 	@Test
 	public void testD() {
-
-		System.out.println(10_000);
 
 	}
 	
@@ -50,7 +35,7 @@ public class HttpTest {
 	public void testDownload() {
 		HTTP http = HTTP.builder()
 				.config((Builder builder) -> {
-					builder.readTimeout(100, TimeUnit.MILLISECONDS);
+					builder.readTimeout(300, TimeUnit.MILLISECONDS);
 				})
 				.build();
 		
@@ -58,22 +43,26 @@ public class HttpTest {
 
 		long t0 = System.currentTimeMillis();
 		
-		Ctrl ctrl = http.sync(url).get().getBody()
-				.toFolder("D:/WorkSpace/download/")
-				.setStepRate(0.005)
+		http.sync(url)
+				.setSkipBytes(179785)
+				.get().getBody()
+//				.toFolder("D:/WorkSpace/download/")
+				.toFile("D:\\WorkSpace\\download\\CocosDashboard-v1.0.1-win32-031816(8).exe")
+				.setStepRate(0.01)
+				.resumeBreakpoint()
 				.setOnProcess((Process process) -> {
 					print(t0, process.getDoneBytes() + "/" + process.getTotalBytes() + "\t" + process.getRate(), false);
 				})
 				.setOnSuccess((File file) -> {
-					print(t0, file.getAbsolutePath(), true);
+					print(t0, "下载成功：" + file.getAbsolutePath(), true);
 				})
 				.setOnFailure((Failure failure) -> {
-					
+					print(t0, "下载失败：" + failure.getDoneBytes() + ", path = " + failure.getFile().getAbsolutePath(), true);
 				})
 				.start();
-
+//		RandomAccessFile
 		
-		sleep(20000);
+		sleep(30000);
 
 	}
 	

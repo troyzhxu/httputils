@@ -10,8 +10,9 @@ public class RealProcess implements Process {
 	private long doneBytes;
 	
 	
-	public RealProcess(long totalBytes) {
+	public RealProcess(long totalBytes, long doneBytes) {
 		this.totalBytes = totalBytes;
+		this.doneBytes = doneBytes;
 	}
 	
 	@Override

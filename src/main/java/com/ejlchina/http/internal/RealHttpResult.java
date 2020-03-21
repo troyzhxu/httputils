@@ -14,6 +14,7 @@ public class RealHttpResult implements HttpResult {
 	private Response response;
 	private Exception error;
 	private Executor callbackExecutor;
+	private long skipBytes;
 	
 	public RealHttpResult() {
 	}
@@ -22,8 +23,14 @@ public class RealHttpResult implements HttpResult {
 		this.state = state;
 	}
 	
-	public RealHttpResult(Response response, Executor callbackExecutor) {
-		response(response, callbackExecutor);
+	public RealHttpResult(Response response, long skipBytes, Executor callbackExecutor) {
+		this(skipBytes, callbackExecutor);
+		response(response);
+	}
+	
+	public RealHttpResult(long skipBytes, Executor callbackExecutor) {
+		this.skipBytes = skipBytes;
+		this.callbackExecutor = callbackExecutor;
 	}
 	
 	public RealHttpResult(State state, Exception error) {
@@ -35,10 +42,9 @@ public class RealHttpResult implements HttpResult {
 		this.error = error;
 	}
 	
-	public void response(Response response, Executor callbackExecutor) {
+	public void response(Response response) {
 		this.state = State.RESPONSED;
 		this.response = response;
-		this.callbackExecutor = callbackExecutor;
 	}
 	
 	@Override
@@ -73,7 +79,7 @@ public class RealHttpResult implements HttpResult {
 	@Override
 	public Body getBody() {
 		if (response != null) {
-			return new ResultBody(response, callbackExecutor);
+			return new ResultBody(response, callbackExecutor, skipBytes);
 		}
 		return null;
 	}

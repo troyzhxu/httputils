@@ -23,10 +23,12 @@ public class ResultBody implements Body {
 
 	private Response response;
 	private Executor callbackExecutor;
+	private long skipBytes;
 
-	ResultBody(Response response, Executor callbackExecutor) {
+	ResultBody(Response response, Executor callbackExecutor, long skipBytes) {
 		this.response = response;
 		this.callbackExecutor = callbackExecutor;
+		this.skipBytes = skipBytes;
 	}
 
 	@Override
@@ -86,49 +88,29 @@ public class ResultBody implements Body {
 	public <T> List<T> toList(Class<T> type) {
 		return JSON.parseArray(toString(), type);
 	}
-
+	
 	@Override
 	public Download toFile(String filePath) {
-		return toFile(new File(filePath), false);
+		return toFile(new File(filePath));
 	}
 
 	@Override
 	public Download toFile(File file) {
-		return toFile(file, false);
-	}
-	
-	@Override
-	public Download toFile(String filePath, boolean replaceIfExists) {
-		return toFile(new File(filePath), replaceIfExists);
-	}
-
-	@Override
-	public Download toFile(File file, boolean replaceIfExists) {
-		if (file.exists()) {
-			if (replaceIfExists) {
-				if (!file.delete()) {
-					response.body().close();
-					throw new HttpException(
-							"Destination file [" + file.getAbsolutePath() + "] already exists and could not be deleted");
+		if (!file.exists()) {
+			try {
+				File parent = file.getParentFile();
+				if (!parent.exists()) {
+					parent.mkdirs();
 				}
-			} else {
+				file.createNewFile();
+			} catch (IOException e) {
 				response.body().close();
-				throw new HttpException("目标文件[" + file.getAbsolutePath() + "]已存在");
+				throw new HttpException(
+						"Cannot create file [" + file.getAbsolutePath() + "]", e);
 			}
-		}
-		try {
-			File parent = file.getParentFile();
-			if (!parent.exists()) {
-				parent.mkdirs();
-			}
-			file.createNewFile();
-		} catch (IOException e) {
-			response.body().close();
-			throw new HttpException(
-					"Cannot create file [" + file.getAbsolutePath() + "]", e);
 		}
 		ResponseBody body = response.body();
-		return new Download(file, body.byteStream(), body.contentLength(), callbackExecutor);
+		return new Download(file, body.byteStream(), body.contentLength(), callbackExecutor, skipBytes);
 	}
 	
 	@Override
@@ -142,9 +124,8 @@ public class ResultBody implements Body {
 			filePath = resolveFilePath(dirPath, indexFileName);
 			file = new File(filePath);
 		}
-		return toFile(file, false);
+		return toFile(file);
 	}
-
 
 	@Override
 	public Download toFolder(File dir) {

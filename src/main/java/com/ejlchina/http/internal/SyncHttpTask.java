@@ -55,13 +55,14 @@ public class SyncHttpTask extends HttpTask<SyncHttpTask> {
     }
     
     private HttpResult request(String method) {
-    	RealHttpResult result = new RealHttpResult();
+    	RealHttpResult result = new RealHttpResult(skipBytes, 
+    			httpClient.getCallbackExecutor());
     	httpClient.preprocess(this, () -> {
         	Call call = prepareCall(method);
             try {
                 Response response = call.execute();
                 synchronized (SyncHttpTask.this) {
-                	result.response(response, getCallbackExecutor());
+                	result.response(response);
                 	SyncHttpTask.this.notify();
                 }
             } catch (IOException e) {

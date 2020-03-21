@@ -240,8 +240,8 @@ public class AsyncHttpTask extends HttpTask<AsyncHttpTask> {
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-            	HttpResult result = new RealHttpResult(response, 
-            			getCallbackExecutor());
+            	HttpResult result = new RealHttpResult(response, skipBytes,
+            			httpClient.getCallbackExecutor());
             	doOnResponse(result);
             	httpCall.setResult(result);
             }
@@ -252,7 +252,7 @@ public class AsyncHttpTask extends HttpTask<AsyncHttpTask> {
     
 
 	private void doOnResponse(HttpResult result) {
-		getCallbackExecutor().execute(() -> {
+		httpClient.getCallbackExecutor().execute(() -> {
 			if (onComplete != null) {
 			    onComplete.on(State.RESPONSED);
 			}
@@ -263,7 +263,7 @@ public class AsyncHttpTask extends HttpTask<AsyncHttpTask> {
 	}
 	
 	private void doOnException(State state, Exception e) {
-		getCallbackExecutor().execute(() -> {
+		httpClient.getCallbackExecutor().execute(() -> {
 			if (onComplete != null) {
 	            onComplete.on(state);
 	        }

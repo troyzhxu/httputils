@@ -115,7 +115,7 @@ public interface HttpResult {
 		<T> List<T> toList(Class<T> type);
 		
 		/**
-		 * 下载到指定路径，如果目标路径的文件存在，则报错
+		 * 下载到指定路径
 		 * 同一个 Body 对象的 toXXX 类方法只可使用一个并且只能调用一次
 		 * @param filePath 目标路径
 		 * @return 下载过程 #Download
@@ -123,30 +123,12 @@ public interface HttpResult {
 		Download toFile(String filePath);
 
 		/**
-		 * 下载到指定文件，如果目标文件存在，则报错
+		 * 下载到指定文件
 		 * 同一个 Body 对象的 toXXX 类方法只可使用一个并且只能调用一次
 		 * @param file 目标文件
 		 * @return 下载过程 #Download
 		 */
 		Download toFile(File file);
-	
-		/**
-		 * 下载到指定路径
-		 * 同一个 Body 对象的 toXXX 类方法只可使用一个并且只能调用一次
-		 * @param filePath 目标路径
-		 * @param replaceIfExists 如果目标路径的文件存在，是否覆盖原文件
-		 * @return 下载过程 #Download
-		 */
-		Download toFile(String filePath, boolean replaceIfExists);
-
-		/**
-		 * 下载到指定文件
-		 * 同一个 Body 对象的 toXXX 类方法只可使用一个并且只能调用一次
-		 * @param file 目标文件
-		 * @param replaceIfExists 目标文件存在，是否覆盖原文件
-		 * @return 下载过程 #Download
-		 */
-		Download toFile(File file, boolean replaceIfExists);
 	
 		/**
 		 * 下载到指定文件夹
@@ -163,6 +145,7 @@ public interface HttpResult {
 		 * @return 下载过程 #Download
 		 */
 		Download toFolder(File dir);
+
 	}
 	
 
