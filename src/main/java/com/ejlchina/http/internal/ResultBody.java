@@ -101,7 +101,7 @@ public class ResultBody implements Body {
 			throw new HttpException(
 					"Cannot create file [" + file.getAbsolutePath() + "]");
 		}
-		return new Download(file, body.byteStream(), callbackExecutor).start();
+		return new Download(file, body.byteStream(), body.contentLength(), callbackExecutor);
 	}
 	
 }

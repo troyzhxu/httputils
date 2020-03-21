@@ -10,9 +10,8 @@ public class RealProcess implements Process {
 	private long done;
 	
 	
-	public RealProcess(long total, long done) {
+	public RealProcess(long total) {
 		this.total = total;
-		this.done = done;
 	}
 	
 	/**
@@ -36,6 +35,10 @@ public class RealProcess implements Process {
 	
 	public void setDone(long done) {
 		this.done = done;
+	}
+	
+	public void addDone(long delt) {
+		this.done += delt;
 	}
 	
 }
