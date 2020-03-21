@@ -10,11 +10,11 @@ import org.junit.Test;
 import com.ejlchina.http.HTTP;
 import com.ejlchina.http.HttpCall;
 import com.ejlchina.http.HttpResult;
-import com.ejlchina.http.HttpUtils;
 import com.ejlchina.http.HttpResult.State;
+import com.ejlchina.http.HttpUtils;
 import com.ejlchina.http.Preprocessor.PreChain;
-import com.ejlchina.http.internal.HttpClient;
 import com.ejlchina.http.Process;
+import com.ejlchina.http.internal.HttpClient;
 
 import okhttp3.ConnectionPool;
 import okhttp3.Interceptor.Chain;
@@ -24,28 +24,67 @@ import okhttp3.Request;
 
 public class HttpTest {
 
+	private String indexFileName(String fileName, int index) {
+		int i = fileName.lastIndexOf('.');
+		if (i < 0) {
+			return fileName + "(" + index + ")";
+		}
+		String ext = fileName.substring(i);
+		if (i > 0) {
+			String name = fileName.substring(0, i);
+			return name + "(" + index + ")" + ext;
+		}
+		return "(" + index + ")" + ext;
+	}
+	
 	@Test
 	public void testD() {
-		int a = (int) Long.MAX_VALUE;
-		System.out.println(a);
+
+		System.out.println(indexFileName("a.bc", 1));
+
 	}
 	
 	@Test
 	public void testDownload() {
-		HTTP http = HTTP.builder().build();
+		HTTP http = HTTP.builder()
+				.config((Builder builder) -> {
+					builder.readTimeout(20, TimeUnit.SECONDS);
+				})
+				.build();
 		
 		long t0 = System.currentTimeMillis();
-		http.sync("https://download.cocos.com/CocosCreator/v2.3.1/CocosCreator_v2.3.1_20200303_win.7z")
-				.get()
-				.getBody()
-				.toFile("D:/WorkSpace/CocosCreator.zip")
+//		String url = "https://download.cocos.com/CocosDashboard/v1.0.1/CocosDashboard-v1.0.1-win32-031816.exe";
+		String url = "https://charge-pile.oss-cn-hangzhou.aliyuncs.com/ejl-test.zip";
+		
+//		HttpResult result = http.sync(url).get();
+//		
+//		System.out.println(result.getHeaders());
+//		
+//		result.getBody()
+//				.toFolder("D:/WorkSpace/download/")
+//				.setStepRate(0.05)
+//				.setOnProcess((Process process) -> {
+//					print(t0, process.getDone() + "/" + process.getTotal() + "\t" + process.getRate(), false);
+//				})
+//				.setOnDone((File file) -> {
+//					print(t0, file.getAbsolutePath(), true);
+//				})
+//				.start();
+		
+		
+		http.sync(url).get().getBody()
+				.toFolder("D:/WorkSpace/download/")
+				.setStepRate(0.05)
 				.setOnProcess((Process process) -> {
-					print(t0, process.getDone() + " / " + process.getTotal() + "\t" + process.getRate(), false);
+					print(t0, process.getDone() + "/" + process.getTotal() + "\t" + process.getRate(), false);
 				})
 				.setOnDone((File file) -> {
-					print(t0, "filePath = " + file.getAbsolutePath(), true);
+					print(t0, file.getAbsolutePath(), true);
 				})
 				.start();
+		
+		
+		
 	}
 	
 	void print(long t0, String str, boolean ln) {

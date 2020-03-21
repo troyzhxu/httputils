@@ -51,7 +51,7 @@ public class Download {
 	}
 	
 	/**
-	 * 设置回调步进字节，默认 8K（8192）
+	 * 设置回调步进字节，默认 8K（8192），该值若小于 buffSize，就相当与 buffSize
 	 * 表示每下载 stepBytes 个字节，执行一次进度回调
 	 * @param stepBytes 步进字节
 	 * @return Download 

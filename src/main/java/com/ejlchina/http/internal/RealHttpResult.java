@@ -73,7 +73,7 @@ public class RealHttpResult implements HttpResult {
 	@Override
 	public Body getBody() {
 		if (response != null) {
-			return new ResultBody(response.body(), callbackExecutor);
+			return new ResultBody(response, callbackExecutor);
 		}
 		return null;
 	}
@@ -81,6 +81,10 @@ public class RealHttpResult implements HttpResult {
 	@Override
 	public Exception getError() {
 		return error;
+	}
+
+	public Response getResponse() {
+		return response;
 	}
 
 	@Override
