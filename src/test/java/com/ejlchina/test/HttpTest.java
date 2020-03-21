@@ -1,6 +1,7 @@
 package com.ejlchina.test;
 
 
+import java.io.File;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -13,6 +14,7 @@ import com.ejlchina.http.HttpUtils;
 import com.ejlchina.http.HttpResult.State;
 import com.ejlchina.http.Preprocessor.PreChain;
 import com.ejlchina.http.internal.HttpClient;
+import com.ejlchina.http.Process;
 
 import okhttp3.ConnectionPool;
 import okhttp3.Interceptor.Chain;
@@ -22,6 +24,41 @@ import okhttp3.Request;
 
 public class HttpTest {
 
+	@Test
+	public void testD() {
+		int a = (int) Long.MAX_VALUE;
+		System.out.println(a);
+	}
+	
+	@Test
+	public void testDownload() {
+		HTTP http = HTTP.builder().build();
+		
+		long t0 = System.currentTimeMillis();
+		http.sync("https://download.cocos.com/CocosCreator/v2.3.1/CocosCreator_v2.3.1_20200303_win.7z")
+				.get()
+				.getBody()
+				.toFile("D:/WorkSpace/CocosCreator.zip")
+				.setOnProcess((Process process) -> {
+					print(t0, process.getDone() + " / " + process.getTotal() + "\t" + process.getRate(), false);
+				})
+				.setOnDone((File file) -> {
+					print(t0, "filePath = " + file.getAbsolutePath(), true);
+				})
+				.start();
+	}
+	
+	void print(long t0, String str, boolean ln) {
+		long now = System.currentTimeMillis() - t0;
+		System.out.println((now / 1000) + "\t" + str);
+		if (ln) {
+			System.out.println();
+		}
+	}
+	
+	long now(long t0) {
+		return System.currentTimeMillis() - t0;
+	}
 
 	@Test
 	public void testToList() {
