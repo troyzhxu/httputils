@@ -23,8 +23,8 @@ public class Download {
 	private File file;
 	private InputStream input;
 	private OnCallback<Process> onProcess;
-	private OnCallback<File> onDone;
-	private OnCallback<Error> onError;
+	private OnCallback<File> onSuccess;
+	private OnCallback<Failure> onFailure;
 	private Executor callbackExecutor;
 	private long totalBytes;
 	private long step = 0;
@@ -89,22 +89,22 @@ public class Download {
 	}
 	
 	/**
-	 * 设置下载完成回调
-	 * @param onDone 完成回调函数
+	 * 设置下载成功回调
+	 * @param onSuccess 成功回调函数
 	 * @return Download
 	 */
-	public Download setOnDone(OnCallback<File> onDone) {
-		this.onDone = onDone;
+	public Download setOnSuccess(OnCallback<File> onSuccess) {
+		this.onSuccess = onSuccess;
 		return this;
 	}
 	
 	/**
 	 * 设置下载失败回调
-	 * @param onError 失败回调函数
+	 * @param onFailure 失败回调函数
 	 * @return Download
 	 */
-	public Download setOnError(OnCallback<Error> onError) {
-		this.onError = onError;
+	public Download setOnFailure(OnCallback<Failure> onFailure) {
+		this.onFailure = onFailure;
 		return this;
 	}
 	
@@ -113,21 +113,11 @@ public class Download {
 	 * @return 下载控制器
 	 */
 	public Ctrl start() {
-		return start(0);
-	}
-
-	/**
-	 * 开始下载，跳过 skipBytes 个字节（用于断点续传）
-	 * @param skipBytes 跳过的字节数
-	 * @return 下载控制器
-	 */
-	public Ctrl start(long skipBytes) {
 		status = Ctrl.STATUS__DOWNLOADING;
 		new Thread(() -> {
-			doDownload(skipBytes);
+			doDownload();
 		}).start();
 		return new Ctrl();
-		
 	}
 	
 	public class Ctrl {
@@ -203,13 +193,13 @@ public class Download {
 		
 	}
 	
-	public class Error {
+	public class Failure {
 		
 		private long doneBytes;
 		
 		private IOException exception;
 
-		Error(long doneBytes, IOException exception) {
+		Failure(long doneBytes, IOException exception) {
 			this.doneBytes = doneBytes;
 			this.exception = exception;
 		}
@@ -237,7 +227,7 @@ public class Download {
 		
 	}
 	
-	private void doDownload(long skipBytes) {
+	private void doDownload() {
 		OutputStream output;
 		try {
 			output = new FileOutputStream(file);
@@ -251,7 +241,6 @@ public class Download {
 				if (status == Ctrl.STATUS__DOWNLOADING) {
 					byte[] buff = new byte[buffSize];
 					int len = -1;
-					input.skip(skipBytes);
 					while ((len = input.read(buff)) != -1) {
 						output.write(buff, 0, len);
 						process.addDoneBytes(len);
@@ -272,9 +261,9 @@ public class Download {
 			synchronized (lock) {
 				status = Ctrl.STATUS__ERROR;
 			}
-			if (onError != null) {
+			if (onFailure != null) {
 				callbackExecutor.execute(() -> {
-					onError.on(new Error(process.getDoneBytes(), e));
+					onFailure.on(new Failure(process.getDoneBytes(), e));
 				});
 			} else {
 				throw new HttpException("流传输失败", e);
@@ -301,9 +290,9 @@ public class Download {
 				onProcess.on(process);
 			});
 		}
-		if (onDone != null && done >= totalBytes) {
+		if (onSuccess != null && done >= totalBytes) {
 			callbackExecutor.execute(() -> {
-				onDone.on(file);
+				onSuccess.on(file);
 			});
 		}
 	}

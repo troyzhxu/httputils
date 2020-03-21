@@ -8,6 +8,7 @@ import java.util.concurrent.TimeUnit;
 import org.junit.Test;
 
 import com.ejlchina.http.Download.Ctrl;
+import com.ejlchina.http.Download.Failure;
 import com.ejlchina.http.HTTP;
 import com.ejlchina.http.HttpCall;
 import com.ejlchina.http.HttpResult;
@@ -63,8 +64,11 @@ public class HttpTest {
 				.setOnProcess((Process process) -> {
 					print(t0, process.getDoneBytes() + "/" + process.getTotalBytes() + "\t" + process.getRate(), false);
 				})
-				.setOnDone((File file) -> {
+				.setOnSuccess((File file) -> {
 					print(t0, file.getAbsolutePath(), true);
+				})
+				.setOnFailure((Failure failure) -> {
+					
 				})
 				.start();
 
