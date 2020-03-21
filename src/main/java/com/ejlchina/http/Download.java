@@ -29,7 +29,7 @@ public class Download {
 	private long totalBytes;
 	private long step = 0;
 	private long stepBytes = 8192;
-	private int buffSize = 2048;
+	private int buffSize = 8192;
 	private volatile int status;
 	private RealProcess process;
 	private Object lock = new Object();
