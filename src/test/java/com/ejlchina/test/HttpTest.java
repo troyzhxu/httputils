@@ -7,6 +7,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.junit.Test;
 
+import com.ejlchina.http.Download.Ctrl;
 import com.ejlchina.http.HTTP;
 import com.ejlchina.http.HttpCall;
 import com.ejlchina.http.HttpResult;
@@ -53,8 +54,8 @@ public class HttpTest {
 				.build();
 		
 		long t0 = System.currentTimeMillis();
-//		String url = "https://download.cocos.com/CocosDashboard/v1.0.1/CocosDashboard-v1.0.1-win32-031816.exe";
-		String url = "https://charge-pile.oss-cn-hangzhou.aliyuncs.com/ejl-test.zip";
+		String url = "https://download.cocos.com/CocosDashboard/v1.0.1/CocosDashboard-v1.0.1-win32-031816.exe";
+//		String url = "https://charge-pile.oss-cn-hangzhou.aliyuncs.com/ejl-test.zip";
 		
 //		HttpResult result = http.sync(url).get();
 //		
@@ -72,9 +73,9 @@ public class HttpTest {
 //				.start();
 		
 		
-		http.sync(url).get().getBody()
+		Ctrl ctrl = http.sync(url).get().getBody()
 				.toFolder("D:/WorkSpace/download/")
-				.setStepRate(0.05)
+				.setStepRate(0.005)
 				.setOnProcess((Process process) -> {
 					print(t0, process.getDone() + "/" + process.getTotal() + "\t" + process.getRate(), false);
 				})
@@ -82,9 +83,29 @@ public class HttpTest {
 					print(t0, file.getAbsolutePath(), true);
 				})
 				.start();
+
 		
+		sleep(5000);
+		ctrl.pause();
 		
+		sleep(5000);
+		ctrl.cancel();
+//		
 		
+		sleep(5000);
+		
+//		ctrl.resume();
+//		
+//		sleep(5000);
+//		
+//		ctrl.pause();
+//		
+//		sleep(5000);
+//		
+//		ctrl.resume();
+//		
+//		
+//		sleep(10000);
 	}
 	
 	void print(long t0, String str, boolean ln) {

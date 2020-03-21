@@ -29,7 +29,8 @@ public class Download {
 	private long step = 0;
 	private long stepBytes = 8192;
 	private int buffSize = 2048;
-
+	private volatile int status;
+	private Object lock = new Object();
 	
 	public Download(File file, InputStream input, long totalBytes, Executor executor) {
 		this.file = file;
@@ -89,27 +90,133 @@ public class Download {
 		return this;
 	}
 	
-	public void start() {
+	public Ctrl start() {
+		status = Ctrl.STATUS__DOWNLOADING;
+		new Thread(() -> {
+			doDownload();
+		}).start();
+		return new Ctrl();
+	}
+
+	public class Ctrl {
+		
+		/**
+		 * 已取消
+		 */
+		public static final int STATUS__CANCELED = -1;
+		
+		/**
+		 * 下载中
+		 */
+		public static final int STATUS__DOWNLOADING = 1;
+		
+		/**
+		 * 已暂停
+		 */
+		public static final int STATUS__PAUSED = 2;
+		
+		/**
+		 * 已完成
+		 */
+		public static final int STATUS__DONE = 3;
+		
+		/**
+		 * 错误
+		 */
+		public static final int STATUS__ERROR = 4;
+		
+		/**
+		 * @set {@link #STATUS__CANCELED}
+		 * @set {@link #STATUS__DOWNLOADING}
+		 * @set {@link #STATUS__PAUSED}
+		 * @set {@link #STATUS__DONE}
+		 * @return 下载状态
+		 */
+		public int status() {
+			return status;
+		}
+		
+		/**
+		 * 暂停下载任务
+		 */
+		public void pause() {
+			synchronized (lock) {
+				if (status == STATUS__DOWNLOADING) {
+					status = STATUS__PAUSED;
+					System.out.println("已暂停");
+				}
+			}
+		}
+		
+		/**
+		 * 继续下载任务
+		 */
+		public void resume() {
+			synchronized (lock) {
+				if (status == STATUS__PAUSED) {
+					status = STATUS__DOWNLOADING;
+					System.out.println("已继续");
+				}
+			}
+		}
+		
+		/**
+		 * 取消下载任务
+		 */
+		public void cancel() {
+			synchronized (lock) {
+				if (status == STATUS__PAUSED || status == STATUS__DOWNLOADING) {
+					status = STATUS__CANCELED;
+					System.out.println("已取消");
+				}
+			}
+		}
+		
+	}
+	
+	private void doDownload() {
 		OutputStream output;
 		try {
 			output = new FileOutputStream(file);
 		} catch (FileNotFoundException e) {
+			status = Ctrl.STATUS__ERROR;
+			Util.closeQuietly(input);
 			throw new HttpException("无法获取文件[" + file.getAbsolutePath() + "]的输入流", e);
 		}
 		RealProcess process = new RealProcess(totalBytes);
 		try {
-			byte[] buff = new byte[buffSize];
-			int len = -1;
-			while ((len = input.read(buff)) != -1) {
-				output.write(buff, 0, len);
-				process.addDone(len);
-				doOnProcess(process);
+			while (status != Ctrl.STATUS__CANCELED && status != Ctrl.STATUS__DONE) {
+				if (status == Ctrl.STATUS__DOWNLOADING) {
+					byte[] buff = new byte[buffSize];
+					int len = -1;
+					while ((len = input.read(buff)) != -1) {
+						output.write(buff, 0, len);
+						process.addDone(len);
+						doOnProcess(process);
+						if (status == Ctrl.STATUS__CANCELED 
+								|| status == Ctrl.STATUS__PAUSED) {
+							break;
+						}
+					}
+					if (len == -1) {
+						synchronized (lock) {
+							status = Ctrl.STATUS__DONE;
+						}
+					}
+				}
 			}
+			System.out.println("已跳出循环");
 		} catch (IOException e) {
+			synchronized (lock) {
+				status = Ctrl.STATUS__ERROR;
+			}
 			throw new HttpException("流传输失败", e);
 		} finally {
 			Util.closeQuietly(output);
 			Util.closeQuietly(input);
+			if (status == Ctrl.STATUS__CANCELED || status == Ctrl.STATUS__ERROR) {
+				file.delete();
+			}
 		}
 	}
 	
