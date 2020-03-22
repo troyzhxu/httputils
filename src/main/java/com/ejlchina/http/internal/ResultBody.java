@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
 import java.net.URLDecoder;
 import java.nio.charset.Charset;
 import java.util.List;
@@ -210,6 +211,9 @@ public class ResultBody implements Body {
 	
 	private long getRangeStart() {
 		long rangeStart = 0;
+		if (response.code() != HttpURLConnection.HTTP_PARTIAL) {
+			return rangeStart;
+		}
 		String range = response.header("Content-Range");
 		if (range != null && range.startsWith("bytes")) {
 			int index = range.indexOf('-');
