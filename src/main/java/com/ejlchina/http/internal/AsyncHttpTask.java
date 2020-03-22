@@ -240,8 +240,7 @@ public class AsyncHttpTask extends HttpTask<AsyncHttpTask> {
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-            	HttpResult result = new RealHttpResult(response, skipBytes,
-            			httpClient.getCallbackExecutor());
+            	HttpResult result = new RealHttpResult(response, httpClient.getCallbackExecutor());
             	doOnResponse(result);
             	httpCall.setResult(result);
             }

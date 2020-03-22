@@ -28,14 +28,14 @@ public class HttpTest {
 	
 	@Test
 	public void testD() {
-
+		System.out.println(Long.parseLong("12"));
 	}
 	
 	@Test
 	public void testDownload() {
 		HTTP http = HTTP.builder()
 				.config((Builder builder) -> {
-					builder.readTimeout(300, TimeUnit.MILLISECONDS);
+					builder.readTimeout(500, TimeUnit.MILLISECONDS);
 				})
 				.build();
 		
@@ -44,16 +44,22 @@ public class HttpTest {
 		long t0 = System.currentTimeMillis();
 		
 		// TODO: 只有 调用了 setSkipBytes 和使用 toFile 方法，才能启用 断点续传
-		http.sync(url)
-				.setSkipBytes(179785)
-				.get().getBody()
-//				.toFolder("D:/WorkSpace/download/")
-				.toFile("D:\\WorkSpace\\download\\CocosDashboard-v1.0.1-win32-031816(8).exe")
-				.setStepRate(0.01)
-				.resumeBreakpoint() // 启用 断点续传
+		HttpResult result = http.sync(url)
+//				.setSkipBytes(179785)
+				.get();
+		
+		print(t0, "状态码：" + result.getStatus(), true);
+		print(t0, "头信息：" + result.getHeaders(), true);
+		
+		result.getBody()
 				.setOnProcess((Process process) -> {
 					print(t0, process.getDoneBytes() + "/" + process.getTotalBytes() + "\t" + process.getRate(), false);
 				})
+				.toFolder("D:/WorkSpace/download/")
+//				.toFile("D:\\WorkSpace\\download\\CocosDashboard-v1.0.1-win32-031816(8).exe")
+//				.setStepRate(0.01)
+//				.resumeBreakpoint() // 启用 断点续传
+				
 				.setOnSuccess((File file) -> {
 					print(t0, "下载成功：" + file.getAbsolutePath(), true);
 				})

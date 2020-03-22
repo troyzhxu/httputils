@@ -8,7 +8,6 @@ import java.io.RandomAccessFile;
 import java.util.concurrent.Executor;
 
 import com.ejlchina.http.internal.HttpException;
-import com.ejlchina.http.internal.RealProcess;
 
 import okhttp3.internal.Util;
 
@@ -23,24 +22,19 @@ public class Download {
 	
 	private File file;
 	private InputStream input;
-	private OnCallback<Process> onProcess;
 	private OnCallback<File> onSuccess;
 	private OnCallback<Failure> onFailure;
 	private Executor callbackExecutor;
-	private long totalBytes;
-	private long step = 0;
-	private long stepBytes = 0;
+	private long doneBytes;
 	private int buffSize = 0;
 	private long seekBytes = 0;
-	private double stepRate = -1;
 	private boolean breakpointResumed;
 	private volatile int status;
 	private Object lock = new Object();
 	
-	public Download(File file, InputStream input, long totalBytes, Executor executor, long skipBytes) {
+	public Download(File file, InputStream input, Executor executor, long skipBytes) {
 		this.file = file;
 		this.input = input;
-		this.totalBytes = totalBytes;
 		this.callbackExecutor = executor;
 		this.seekBytes = skipBytes;
 	}
@@ -58,43 +52,11 @@ public class Download {
 	}
 	
 	/**
-	 * 设置回调步进字节，默认 8K（8192），该值若小于 buffSize，就相当与 buffSize
-	 * 表示每下载 stepBytes 个字节，执行一次进度回调
-	 * @param stepBytes 步进字节
-	 * @return Download 
-	 */
-	public Download setStepBytes(long stepBytes) {
-		this.stepBytes = stepBytes;
-		return this;
-	}
-	
-	/**
-	 * 设置回调步进比例
-	 * 表示每下载 stepRate 比例，执行一次进度回调
-	 * @param stepRate 步进比例
-	 * @return Download
-	 */
-	public Download setStepRate(double stepRate) {
-		this.stepRate = stepRate;
-		return this;
-	}
-	
-	/**
 	 * 启用断点续传
 	 * @return Download
 	 */
 	public Download resumeBreakpoint() {
 		this.breakpointResumed = true;
-		return this;
-	}
-	
-	/**
-	 * 设置下载进度回调
-	 * @param onProcess 进度回调函数
-	 * @return Download
-	 */
-	public Download setOnProcess(OnCallback<Process> onProcess) {
-		this.onProcess = onProcess;
 		return this;
 	}
 	
@@ -124,15 +86,6 @@ public class Download {
 	 */
 	public Ctrl start() {
 		status = Ctrl.STATUS__DOWNLOADING;
-		if (breakpointResumed) {
-			totalBytes += seekBytes;
-		}
-		if (stepRate > 0 && stepRate <= 1) {
-			this.stepBytes = (long) (totalBytes * stepRate);
-		}
-		if (stepBytes == 0) {
-			stepBytes = DEFAULT_SIZE;
-		}
 		if (buffSize == 0) {
 			buffSize = DEFAULT_SIZE;
 		}
@@ -216,13 +169,10 @@ public class Download {
 	}
 	
 	public class Failure {
-		
-		private long doneBytes;
-		
+
 		private IOException exception;
 
-		Failure(long doneBytes, IOException exception) {
-			this.doneBytes = doneBytes;
+		Failure(IOException exception) {
 			this.exception = exception;
 		}
 		
@@ -258,16 +208,16 @@ public class Download {
 			Util.closeQuietly(input);
 			throw new HttpException("无法获取文件[" + file.getAbsolutePath() + "]的输入流", e);
 		}
-		RealProcess process;
-		if (breakpointResumed) {
-			process = new RealProcess(totalBytes, seekBytes);
-			step = seekBytes / stepBytes;
-		} else {
-			process = new RealProcess(totalBytes, 0);
-		}
 		try {
 			if (breakpointResumed && seekBytes > 0) {
-				output.seek(seekBytes);
+				long length = output.length();
+				if (seekBytes <= length) {
+					output.seek(seekBytes);
+					doneBytes = seekBytes;
+				} else {
+					output.seek(length);
+					doneBytes = length;
+				}
 			}
 			while (status != Ctrl.STATUS__CANCELED && status != Ctrl.STATUS__DONE) {
 				if (status == Ctrl.STATUS__DOWNLOADING) {
@@ -275,8 +225,7 @@ public class Download {
 					int len = -1;
 					while ((len = input.read(buff)) != -1) {
 						output.write(buff, 0, len);
-						process.addDoneBytes(len);
-						doOnProcess(process);
+						doneBytes += len;
 						if (status == Ctrl.STATUS__CANCELED 
 								|| status == Ctrl.STATUS__PAUSED) {
 							break;
@@ -295,7 +244,7 @@ public class Download {
 			}
 			if (onFailure != null) {
 				callbackExecutor.execute(() -> {
-					onFailure.on(new Failure(process.getDoneBytes(), e));
+					onFailure.on(new Failure(e));
 				});
 			} else {
 				throw new HttpException("流传输失败", e);
@@ -307,25 +256,12 @@ public class Download {
 				file.delete();
 			}
 		}
-	}
-	
-	
-	private void doOnProcess(Process process) {
-		if (process.getDoneBytes() < step * stepBytes 
-				&& !process.isDone()) {
-			return;
-		}
-		step++;
-		if (onProcess != null) {
-			callbackExecutor.execute(() -> {
-				onProcess.on(process);
-			});
-		}
-		if (onSuccess != null && process.isDone()) {
+		if (status == Ctrl.STATUS__DONE 
+				&& onSuccess != null) {
 			callbackExecutor.execute(() -> {
 				onSuccess.on(file);
 			});
 		}
 	}
-	
+
 }

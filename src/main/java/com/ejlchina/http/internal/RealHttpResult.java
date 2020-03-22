@@ -1,5 +1,6 @@
 package com.ejlchina.http.internal;
 
+import java.util.List;
 import java.util.concurrent.Executor;
 
 import com.ejlchina.http.HttpResult;
@@ -10,11 +11,11 @@ import okhttp3.Response;
 
 public class RealHttpResult implements HttpResult {
 
+	
 	private State state;
 	private Response response;
 	private Exception error;
 	private Executor callbackExecutor;
-	private long skipBytes;
 	
 	public RealHttpResult() {
 	}
@@ -23,13 +24,12 @@ public class RealHttpResult implements HttpResult {
 		this.state = state;
 	}
 	
-	public RealHttpResult(Response response, long skipBytes, Executor callbackExecutor) {
-		this(skipBytes, callbackExecutor);
+	public RealHttpResult(Response response, Executor callbackExecutor) {
+		this(callbackExecutor);
 		response(response);
 	}
 	
-	public RealHttpResult(long skipBytes, Executor callbackExecutor) {
-		this.skipBytes = skipBytes;
+	public RealHttpResult(Executor callbackExecutor) {
 		this.callbackExecutor = callbackExecutor;
 	}
 	
@@ -75,11 +75,21 @@ public class RealHttpResult implements HttpResult {
 		}
 		return null;
 	}
+	
+	@Override
+	public List<String> getHeaders(String name) {
+	    return response.headers(name);
+	}
+
+	@Override
+	public String getHeader(String name) {
+	    return response.header(name);
+	}
 
 	@Override
 	public Body getBody() {
 		if (response != null) {
-			return new ResultBody(response, callbackExecutor, skipBytes);
+			return new ResultBody(response, callbackExecutor);
 		}
 		return null;
 	}
@@ -92,6 +102,7 @@ public class RealHttpResult implements HttpResult {
 	public Response getResponse() {
 		return response;
 	}
+	
 
 	@Override
 	public String toString() {

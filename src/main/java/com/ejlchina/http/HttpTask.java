@@ -24,6 +24,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
+import okhttp3.internal.Util;
 import okio.Buffer;
 
 
@@ -48,7 +49,6 @@ public abstract class HttpTask<C extends HttpTask<?>> {
     private String requestJson;
     protected boolean nothrow;
     protected String tag;
-    protected long skipBytes;
 
     
     public HttpTask(HttpClient httpClient, String url) {
@@ -150,8 +150,7 @@ public abstract class HttpTask<C extends HttpTask<?>> {
      * @return HttpTask 实例
      */
     public C setSkipBytes(long skipBytes) {
-    	this.skipBytes = skipBytes;
-    	return addHeader("RANGE", "bytes=" + skipBytes + "-");
+    	return addHeader("Range", "bytes=" + skipBytes + "-");
     }
     
     /**
@@ -434,6 +433,8 @@ public abstract class HttpTask<C extends HttpTask<?>> {
 				buffer.close();
 			} catch (IOException e) {
 				throw new HttpException("读取文件输入流出错：", e);
+			} finally {
+				Util.closeQuietly(input);
 			}
             addFileParam(name, type, fileName, content);
         }

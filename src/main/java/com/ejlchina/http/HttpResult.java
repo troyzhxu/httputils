@@ -63,6 +63,35 @@ public interface HttpResult {
 		long getContentLength();
 
 		/**
+		 * 设置报文体接收进度回调
+		 * @param onProcess 进度回调函数
+		 * @return Body
+		 */
+		Body setOnProcess(OnCallback<Process> onProcess);
+		
+		/**
+		 * 设置进度回调的步进字节，默认 8K（8192）
+		 * 表示每接收 stepBytes 个字节，执行一次进度回调
+		 * @param stepBytes 步进字节
+		 * @return Body 
+		 */
+		Body setStepBytes(long stepBytes);
+		
+		/**
+		 * 设置进度回调的步进比例
+		 * 表示每接收 stepRate 比例，执行一次进度回调
+		 * @param stepRate 步进比例
+		 * @return Body
+		 */
+		Body setStepRate(double stepRate);
+		
+		/**
+		 * 设置进度回调忽略响应的Range头信息，即进度回调会从0开始
+		 * @return Body
+		 */
+		Body setRangeIgnored();
+		
+		/**
 		 * 同一个 Body 对象的 toXXX 类方法只可使用一个并且只能调用一次
 		 * @return 报文体转字节流
 		 */
@@ -165,10 +194,20 @@ public interface HttpResult {
 	boolean isSuccessful();
 	
 	/**
-	 * @return 响应头信息
+	 * @return 响应头
 	 */
 	Headers getHeaders();
 
+	/**
+	 * @return 响应头
+	 */
+	List<String> getHeaders(String name);
+
+	/**
+	 * @return 响应头
+	 */
+	String getHeader(String name);
+	
 	/**
 	 * @return 响应报文体
 	 */

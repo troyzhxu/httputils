@@ -36,7 +36,15 @@ public class RealProcess implements Process {
 	}
 	
 	public void addDoneBytes(long delt) {
-		this.doneBytes += delt;
+		doneBytes += delt;
 	}
 	
+	public void increaseDoneBytes() {
+		doneBytes++;
+	}
+	
+	public boolean notDoneOrReached(long bytes) {
+		return doneBytes < bytes && doneBytes < totalBytes;
+	}
+
 }
