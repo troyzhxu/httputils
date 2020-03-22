@@ -182,21 +182,6 @@ public class ResultBody implements Body {
 		return new Download(file, toByteStream(), callbackExecutor, rangeStart);
 	}
 	
-	private long getRangeStart() {
-		long rangeStart = 0;
-		String range = response.header("Content-Range");
-		if (range != null && range.startsWith("bytes")) {
-			int index = range.indexOf('-');
-			if (index > 5) {
-				String start = range.substring(5, index).trim();
-				try {
-					rangeStart = Long.parseLong(start);
-				} catch (Exception ignore) {}
-			}
-		}
-		return rangeStart;
-	}
-	
 	@Override
 	public Download toFolder(String dirPath) {
 		String fileName = resolveFileName();
@@ -221,6 +206,21 @@ public class ResultBody implements Body {
 			dir.mkdirs();
 		}
 		return toFolder(dir.getAbsolutePath());
+	}
+	
+	private long getRangeStart() {
+		long rangeStart = 0;
+		String range = response.header("Content-Range");
+		if (range != null && range.startsWith("bytes")) {
+			int index = range.indexOf('-');
+			if (index > 5) {
+				String start = range.substring(5, index).trim();
+				try {
+					rangeStart = Long.parseLong(start);
+				} catch (Exception ignore) {}
+			}
+		}
+		return rangeStart;
 	}
 	
 	private String resolveFilePath(String dirPath, String fileName) {
