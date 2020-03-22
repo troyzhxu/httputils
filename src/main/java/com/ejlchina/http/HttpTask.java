@@ -148,12 +148,24 @@ public abstract class HttpTask<C extends HttpTask<?>> {
     }
     
     /**
-     * 设置接收报文体时跳过的字节数，用于断点续传
-     * @param skipBytes 跳过的字节数（已经下载的字节数，即上次的断点）
+     * 设置Range头信息
+     * 表示接收报文体时跳过的字节数，用于断点续传
+     * @param rangeStart 表示从 rangeStart 个字节处开始接收，通常是已经下载的字节数，即上次的断点）
      * @return HttpTask 实例
      */
-    public C setSkipBytes(long skipBytes) {
-    	return addHeader("Range", "bytes=" + skipBytes + "-");
+    public C setRangeHeader(long rangeStart) {
+    	return addHeader("Range", "bytes=" + rangeStart + "-");
+    }
+    
+    /**
+     * 设置Range头信息
+     * 设置接收报文体时接收的范围，用于分块下载
+     * @param rangeStart 表示从 rangeStart 个字节处开始接收
+     * @param rangeEnd 表示接收到 rangeEnd 个字节处
+     * @return HttpTask 实例
+     */
+    public C setRangeHeader(long rangeStart, long rangeEnd) {
+    	return addHeader("Range", "bytes=" + rangeStart + "-" + rangeEnd);
     }
     
 	/**
