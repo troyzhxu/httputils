@@ -7,7 +7,6 @@ import java.util.concurrent.TimeUnit;
 
 import org.junit.Test;
 
-import com.ejlchina.http.Download.Ctrl;
 import com.ejlchina.http.Download.Failure;
 import com.ejlchina.http.HTTP;
 import com.ejlchina.http.HttpCall;
@@ -30,6 +29,32 @@ public class HttpTest {
 	@Test
 	public void testD() {
 		System.out.println(Long.parseLong("12"));
+	}
+	
+	@Test
+	public void testUpload() {
+		String data = "0123456789abcdefghijklmnopqrstuvwsyz0123456789abcdefghijklmnopqrstuvwsyz0123456789abcdefghijklmnopqrstuvwsyz0123456789abcdefghijklmnopqrstuvwsyz0123456789abcdefghijklmnopqrstuvwsyz";
+		
+		HTTP http = HTTP.builder().build();
+		
+		long t0 = System.currentTimeMillis();
+		
+		String res = http.sync("http://localhost:8080/test/index")
+			.addBodyParam("data", data)
+			.addFileParam("file", "D:\\WorkSpace\\download\\CocosDashboard-v1.0.1-win32-031816.exe")
+			.setStepRate(0.01)
+			.setOnProcess((Process process) -> {
+				print(t0, "上传：" + process.getDoneBytes() + "/" + process.getTotalBytes() + "\t" + process.getRate(), false);
+			})
+			.post()
+			.getBody()
+			.setStepBytes(5)
+			.setOnProcess((Process process) -> {
+				print(t0, "下载：" + process.getDoneBytes() + "/" + process.getTotalBytes() + "\t" + process.getRate(), false);
+			})
+			.toString();
+		
+		System.out.println("响应：" + res);
 	}
 	
 	@Test
@@ -95,7 +120,7 @@ public class HttpTest {
 	
 	void print(long t0, String str, boolean ln) {
 		long now = System.currentTimeMillis() - t0;
-		System.out.println(now + "\t" + str);
+		System.out.println((now) + "\t" + str);
 		if (ln) {
 			System.out.println();
 		}

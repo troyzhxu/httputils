@@ -1,8 +1,6 @@
 package com.ejlchina.http;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.ConnectException;
@@ -425,18 +423,27 @@ public abstract class HttpTask<C extends HttpTask<?>> {
     /**
      * 添加文件参数
      * @param name 参数名
+     * @param filePath 文件路径
+     * @return HttpTask 实例
+     */
+    public C addFileParam(String name, String filePath) {
+        return addFileParam(name, new File(filePath));
+    }
+
+    /**
+     * 添加文件参数
+     * @param name 参数名
      * @param file 文件
      * @return HttpTask 实例
      */
     public C addFileParam(String name, File file) {
         if (name != null && file != null && file.exists()) {
-            String filename = file.getName();
-            String type = filename.substring(filename.lastIndexOf(".") + 1);
-            try {
-				addFileParam(name, type, filename, new FileInputStream(file));
-			} catch (FileNotFoundException e) {
-				throw new HttpException("上传的文件不存在！", e);
-			}
+            String fileName = file.getName();
+            String type = fileName.substring(fileName.lastIndexOf(".") + 1);
+            if (files == null) {
+                files = new HashMap<>();
+            }
+            files.put(name, new FilePara(type, fileName, file));
         }
         return (C) this;
     }
@@ -449,8 +456,7 @@ public abstract class HttpTask<C extends HttpTask<?>> {
      * @return HttpTask 实例
      */
     public C addFileParam(String name, String type, InputStream inputStream) {
-    	String fileName = System.currentTimeMillis() + "." + type;
-    	return addFileParam(name, type, fileName, inputStream);
+    	return addFileParam(name, type, null, inputStream);
     }
     
     /**
@@ -486,8 +492,7 @@ public abstract class HttpTask<C extends HttpTask<?>> {
      * @return HttpTask 实例
      */
     public C addFileParam(String name, String type, byte[] content) {
-    	String fileName = System.currentTimeMillis() + "." + type;
-    	return addFileParam(name, type, fileName, content);
+    	return addFileParam(name, type, null, content);
     }
     
     /**
@@ -513,13 +518,20 @@ public abstract class HttpTask<C extends HttpTask<?>> {
     	String type;
     	String fileName;
     	byte[] content;
+    	File file;
 
     	FilePara(String type, String fileName, byte[] content) {
 			this.type = type;
 			this.fileName = fileName;
 			this.content = content;
 		}
-    	
+
+		FilePara(String type, String fileName, File file) {
+			this.type = type;
+			this.fileName = fileName;
+			this.file = file;
+		}
+
     }
     
     
@@ -618,7 +630,13 @@ public abstract class HttpTask<C extends HttpTask<?>> {
             for (String name : files.keySet()) {
                 FilePara file = files.get(name);
                 MediaType type = httpClient.getMediaType(file.type);
-                builder.addFormDataPart(name, file.fileName, RequestBody.create(type, file.content));
+                RequestBody bodyPart;
+                if (file.file != null) {
+                	bodyPart = RequestBody.create(type, file.file);
+                } else {
+                	bodyPart = RequestBody.create(type, file.content);
+                }
+				builder.addFormDataPart(name, file.fileName, bodyPart);
             }
             return builder.build();
         } else if (requestJson != null) {
