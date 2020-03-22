@@ -205,27 +205,14 @@ public abstract class HttpTask<C extends HttpTask<?>> {
      * @param value 参数值
      * @return HttpTask 实例
      **/
-    public C addPathParam(String name, String value) {
+    public C addPathParam(String name, Object value) {
     	if (name != null && value != null) {
 	        if (pathParams == null) {
 	            pathParams = new HashMap<>();
 	        }
-	        pathParams.put(name, value);
+	        pathParams.put(name, value.toString());
     	}
         return (C) this;
-    }
-    
-    /**
-     * 路径参数：替换URL里的{name}
-     * @param name 参数名
-     * @param value 参数值
-     * @return HttpTask 实例
-     **/
-    public C addPathParam(String name, Number value) {
-    	if (value != null) {
-    		addPathParam(name, value.toString());
-    	}
-    	return (C) this;
     }
 
     /**
@@ -253,27 +240,14 @@ public abstract class HttpTask<C extends HttpTask<?>> {
      * @param value 参数值
      * @return HttpTask 实例
      **/
-    public C addUrlParam(String name, String value) {
+    public C addUrlParam(String name, Object value) {
     	if (name != null && value != null) {
 	        if (urlParams == null) {
 	            urlParams = new HashMap<>();
 	        }
-	        urlParams.put(name, value);
+	        urlParams.put(name, value.toString());
     	}
         return (C) this;
-    }
-
-    /**
-     * URL参数：拼接在URL后的参数
-     * @param name 参数名
-     * @param value 参数值
-     * @return HttpTask 实例
-     **/
-    public C addUrlParam(String name, Number value) {
-    	if (value != null) {
-    		addUrlParam(name, value.toString());
-    	}
-    	return (C) this;
     }
 
     /**
@@ -301,25 +275,12 @@ public abstract class HttpTask<C extends HttpTask<?>> {
      * @param value 参数值
      * @return HttpTask 实例
      **/
-    public C addBodyParam(String name, String value) {
+    public C addBodyParam(String name, Object value) {
     	if (name != null && value != null) {
 	        if (bodyParams == null) {
 	            bodyParams = new HashMap<>();
 	        }
-	        bodyParams.put(name, value);
-    	}
-        return (C) this;
-    }
-
-    /**
-     * Body参数：放在Body里的参数
-     * @param name 参数名
-     * @param value 参数值
-     * @return HttpTask 实例
-     **/
-    public C addBodyParam(String name, Number value) {
-    	if (value != null) {
-    		addBodyParam(name, value.toString());
+	        bodyParams.put(name, value.toString());
     	}
         return (C) this;
     }
@@ -377,26 +338,11 @@ public abstract class HttpTask<C extends HttpTask<?>> {
 
     /**
      * 设置 json 请求体
-     * @param json JSON字符串
+     * @param json JSON字符串 或 Java对象（将依据 对象的get方法序列化为 json 字符串）
      * @return HttpTask 实例
      **/
-    public C setRequestJson(String json) {
-        if (json != null) {
-            requestJson = json;
-        }
-        return (C) this;
-    }
-
-    /**
-     * 设置 json 请求体
-     * @param bean Java对象，将依据 bean的get方法序列化为 json 字符串
-     * @return HttpTask 实例
-     **/
-    public C setRequestJson(Object bean) {
-        if (bean != null) {
-            requestJson = JSON.toJSONString(bean);
-        }
-        return (C) this;
+    public C setRequestJson(Object json) {
+        return setRequestJson(json, null);
     }
 
     /**
@@ -405,9 +351,15 @@ public abstract class HttpTask<C extends HttpTask<?>> {
      * @param dateFormat 序列化json时对日期类型字段的处理格式
      * @return HttpTask 实例
      **/
-    public C setRequestJson(Object bean, String dateFormat) {
-        if (bean != null) {
-            requestJson = JSON.toJSONStringWithDateFormat(bean, dateFormat);
+    public C setRequestJson(Object json, String dateFormat) {
+        if (json != null) {
+        	if (json instanceof String) {
+        		requestJson = json.toString();
+        	} else if (dateFormat != null) {
+        		requestJson = JSON.toJSONStringWithDateFormat(json, dateFormat);
+        	} else {
+        		requestJson = JSON.toJSONString(json);
+        	}
         }
         return (C) this;
     }
