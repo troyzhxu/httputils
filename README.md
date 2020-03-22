@@ -39,12 +39,12 @@
 <dependency>
      <groupId>com.ejlchina</groupId>
      <artifactId>httputils</artifactId>
-     <version>2.1.2</version>
+     <version>2.2.0</version>
 </dependency>
 ```
 ### Gradle
 
-`compile 'com.ejlchina:httputils:2.1.2'`
+`compile 'com.ejlchina:httputils:2.2.0'`
 
 ## 使用说明
 
