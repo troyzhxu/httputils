@@ -61,6 +61,15 @@ public class Download {
 	}
 	
 	/**
+	 * 设置文件指针，从文件的 seekBytes 位置追加内容
+	 * @return Download
+	 */
+	public Download setFilePointer(long seekBytes) {
+		this.seekBytes = seekBytes;
+		return this;
+	}
+	
+	/**
 	 * 设置下载成功回调
 	 * @param onSuccess 成功回调函数
 	 * @return Download

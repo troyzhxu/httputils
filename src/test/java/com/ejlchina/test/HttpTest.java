@@ -73,7 +73,7 @@ public class HttpTest {
 		// TODO: 只有 调用了 setSkipBytes 和使用 toFile 方法，才能启用 断点续传
 //		Ctrl ctrl = 
 		http.sync(url)
-//				.setSkipBytes(24771214)
+				.setSkipBytes(24771214)
 				.get()
 				.getBody()
 				.setOnProcess((Process process) -> {
