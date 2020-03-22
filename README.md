@@ -247,24 +247,20 @@ System.out.println(call.isCanceled());     // true
 * `addHeader(String name, String value)`    添加请求头
 * `addHeader(Map<String, String> headers)`  添加请求头
 
-* `addPathParam(String name, String value)` 添加路径参数：替换URL里的{name}占位符
-* `addPathParam(String name, Number value)` 添加路径参数：替换URL里的{name}占位符
+* `addPathParam(String name, Object value)` 添加路径参数：替换URL里的{name}占位符
 * `addPathParam(Map<String, ?> params)`     添加路径参数：替换URL里的{name}占位符
 
-* `addUrlParam(String name, String value)`  添加URL参数：拼接在URL的?之后（查询参数）
-* `addUrlParam(String name, Number value)`  添加URL参数：拼接在URL的?之后（查询参数）
+* `addUrlParam(String name, Object value)`  添加URL参数：拼接在URL的?之后（查询参数）
 * `addUrlParam(Map<String, ?> params)`      添加URL参数：拼接在URL的?之后（查询参数）
 
-* `addBodyParam(String name, String value)` 添加Body参数：以表单key=value&的形式放在报文体内（表单参数）
-* `addBodyParam(String name, Number value)` 添加Body参数：以表单key=value&的形式放在报文体内（表单参数）
+* `addBodyParam(String name, Object value)` 添加Body参数：以表单key=value&的形式放在报文体内（表单参数）
 * `addBodyParam(Map<String, ?> params)`     添加Body参数：以表单key=value&的形式放在报文体内（表单参数）
 
 * `addJsonParam(String name, Object value)` 添加Json参数：请求体为Json（支持多层结构）
 * `addJsonParam(Map<String, ?> params)`     添加Json参数：请求体为Json（支持多层结构）
 
-* `setRequestJson(String json)`             设置请求体的Json字符串（支持多层结构）
-* `setRequestJson(Object bean)`             将依据 bean的get方法序列化为 json 字符串（支持多层结构）
-* `setRequestJson(Object bean, String dateFormat)` 将依据 bean的get方法序列化为 json 字符串（支持多层结构）
+* `setRequestJson(Object json)`             设置请求体的Json字符串 或待转换为 Json的 JavaBean        
+* `setRequestJson(Object bean, String dateFormat)` 设置请求体的Json字符串 或待转换为 Json的 JavaBean 
 
 * `addFileParam(String name, String filePath)` 上传文件
 * `addFileParam(String name, File file)` 上传文件
