@@ -45,8 +45,7 @@ public abstract class HttpTask<C extends HttpTask<?>> {
     private Map<String, String> pathParams;
     private Map<String, String> urlParams;
     private Map<String, String> bodyParams;
-    private Map<String, String> jsonStrParams;
-    private Map<String, Integer> jsonIntParams;
+    private Map<String, Object> jsonParams;
     private Map<String, FilePara> files;
     private String requestJson;
     private OnCallback<Process> onProcess;
@@ -345,36 +344,21 @@ public abstract class HttpTask<C extends HttpTask<?>> {
     }
 
     /**
-     * Json参数：请求体为Json，只支持单层Json
-     * 若请求json为多层结构，请使用setRequestJson方法
+     * Json参数：请求体为Json，支持多层结构
      * @param name JSON键名
      * @param value JSON键值
      * @return HttpTask 实例
      */
-    public C addJsonParam(String name, String value) {
+    public C addJsonParam(String name, Object value) {
     	if (name != null && value != null) {
-	        if (jsonStrParams == null) {
-	            jsonStrParams = new HashMap<>();
+	        if (jsonParams == null) {
+	        	jsonParams = new HashMap<>();
 	        }
-	        jsonStrParams.put(name, value);
+	        jsonParams.put(name, value);
     	}
         return (C) this;
     }
 
-    /**
-     * Json参数：请求体为Json，只支持单层Json
-     * 若请求json为多层结构，请使用setRequestJson方法
-     * @param name JSON键名
-     * @param value JSON键值
-     * @return HttpTask 实例
-     */
-    public C addJsonParam(String name, Number value) {
-    	if (value != null) {
-    		addJsonParam(name, value.toString());
-    	}
-    	return (C) this;
-    }
-    
     /**
      * Json参数：请求体为Json，只支持单层Json
      * 若请求json为多层结构，请使用setRequestJson方法
@@ -383,20 +367,16 @@ public abstract class HttpTask<C extends HttpTask<?>> {
      */
     public C addJsonParam(Map<String, Object> params) {
     	if (params != null) {
-            if (jsonStrParams == null) {
-            	jsonStrParams = new HashMap<>();
+            if (jsonParams == null) {
+            	jsonParams = new HashMap<>();
             }
-            params.forEach((String name, Object value) -> {
-            	if (name != null && value != null) {
-            		jsonStrParams.put(name, value.toString());
-            	}
-            });
+            jsonParams.putAll(params);
         }
         return (C) this;
     }
 
     /**
-     * 请求体为json
+     * 设置 json 请求体
      * @param json JSON字符串
      * @return HttpTask 实例
      **/
@@ -408,7 +388,7 @@ public abstract class HttpTask<C extends HttpTask<?>> {
     }
 
     /**
-     * 请求体为json
+     * 设置 json 请求体
      * @param bean Java对象，将依据 bean的get方法序列化为 json 字符串
      * @return HttpTask 实例
      **/
@@ -626,10 +606,10 @@ public abstract class HttpTask<C extends HttpTask<?>> {
 		return State.EXCEPTION;
 	}
 
-	
+    
     private RequestBody buildRequestBody() {
-        if (jsonStrParams != null || jsonIntParams != null) {
-            requestJson = buildRequestJson();
+        if (jsonParams != null) {
+            requestJson = JSON.toJSONString(jsonParams);
         }
         if (files != null) {
             MultipartBody.Builder builder = new MultipartBody.Builder().setType(MultipartBody.FORM);
@@ -665,25 +645,7 @@ public abstract class HttpTask<C extends HttpTask<?>> {
         }
     }
 
-    private String buildRequestJson() {
-        String json = "{";
-        if (jsonStrParams != null) {
-            for (String name : jsonStrParams.keySet()) {
-                String value = jsonStrParams.get(name);
-                if (value != null) {
-                    json += "\"" + name + "\":\"" + value + "\",";
-                } else {
-                    json += "\"" + name + "\":null,";
-                }
-            }
-        }
-        if (jsonIntParams != null) {
-            for (String name : jsonIntParams.keySet()) {
-                json += "\"" + name + "\":" + jsonIntParams.get(name) + ",";
-            }
-        }
-        return json.substring(0, json.length() - 1) + "}";
-    }
+
 
     private String buildUrlPath() {
     	String url = urlPath;
@@ -731,7 +693,7 @@ public abstract class HttpTask<C extends HttpTask<?>> {
             if (requestJson != null) {
                 throw new HttpException("GET 请求 不能调用 setRequestJson 方法！");
             }
-            if (jsonStrParams != null || jsonIntParams != null) {
+            if (jsonParams != null) {
                 throw new HttpException("GET 请求 不能调用 addJsonParam 方法！");
             }
             if (bodyParams != null) {
@@ -742,7 +704,7 @@ public abstract class HttpTask<C extends HttpTask<?>> {
             }
         }
         if (requestJson != null) {
-            if (jsonStrParams != null || jsonIntParams != null) {
+            if (jsonParams != null) {
                 throw new HttpException("方法 addJsonParam 与 setRequestJson 不能同时调用！");
             }
             if (bodyParams != null) {
@@ -752,7 +714,7 @@ public abstract class HttpTask<C extends HttpTask<?>> {
                 throw new HttpException("方法 addFileParam 与 setRequestJson 不能同时调用！");
             }
         }
-        if (jsonStrParams != null || jsonIntParams != null) {
+        if (jsonParams != null) {
             if (bodyParams != null) {
                 throw new HttpException("方法 addBodyParam 与 addJsonParam 不能同时调用！");
             }

@@ -259,9 +259,8 @@ System.out.println(call.isCanceled());     // true
 * `addBodyParam(String name, Number value)` 添加Body参数：以表单key=value&的形式放在报文体内（表单参数）
 * `addBodyParam(Map<String, ?> params)`     添加Body参数：以表单key=value&的形式放在报文体内（表单参数）
 
-* `addJsonParam(String name, String value)` 添加Json参数：请求体为Json（只支持单层结构）
-* `addJsonParam(String name, Number value)` 添加Json参数：请求体为Json（只支持单层结构）
-* `addJsonParam(Map<String, ?> params)`     添加Json参数：请求体为Json（只支持单层结构）
+* `addJsonParam(String name, Object value)` 添加Json参数：请求体为Json（支持多层结构）
+* `addJsonParam(Map<String, ?> params)`     添加Json参数：请求体为Json（支持多层结构）
 
 * `setRequestJson(String json)`             设置请求体的Json字符串（支持多层结构）
 * `setRequestJson(Object bean)`             将依据 bean的get方法序列化为 json 字符串（支持多层结构）
@@ -342,7 +341,7 @@ HTTP http = HTTP.builder()
         })
         .build();
 ```
-　　该配置影响的回调为：`OnResponse`、`OnException`和`OnComplete`。
+　　该配置影响所有回调。
 
 #### 6.3 配置 OkHttpClient
 
@@ -443,16 +442,32 @@ List<User> users = HttpUtils.sync("/users")
 
 #### 8.1 下载进度监听
 
+文档待完善，抢先体验可阅读源码
+
 #### 8.2 下载过程控制
+
+文档待完善，抢先体验可阅读源码
 
 #### 8.3 文件断点续传
 
+文档待完善，抢先体验可阅读源码
+
 #### 8.4 文件分块下载
+
+文档待完善，抢先体验可阅读源码
 
 #### 8.5 上传进度监听
 
+文档待完善，抢先体验可阅读源码
+
 #### 8.6 上传过程控制
 
+文档待完善，抢先体验可阅读源码
+
+## 计划开发
+
+* 多回调执行器配置，具体请求回调可以自由切换执行器
+* 
 
 ## 参与贡献
 
