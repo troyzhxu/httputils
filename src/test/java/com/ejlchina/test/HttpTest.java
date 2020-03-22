@@ -7,12 +7,13 @@ import java.util.concurrent.TimeUnit;
 
 import org.junit.Test;
 
+import com.ejlchina.http.Download.Ctrl;
 import com.ejlchina.http.Download.Failure;
 import com.ejlchina.http.HTTP;
 import com.ejlchina.http.HttpCall;
 import com.ejlchina.http.HttpResult;
+import com.ejlchina.http.HttpResult.Body;
 import com.ejlchina.http.HttpResult.State;
-import com.ejlchina.http.HttpUtils;
 import com.ejlchina.http.Preprocessor.PreChain;
 import com.ejlchina.http.Process;
 import com.ejlchina.http.internal.HttpClient;
@@ -35,7 +36,7 @@ public class HttpTest {
 	public void testDownload() {
 		HTTP http = HTTP.builder()
 				.config((Builder builder) -> {
-					builder.readTimeout(500, TimeUnit.MILLISECONDS);
+					builder.readTimeout(300, TimeUnit.MILLISECONDS);
 				})
 				.build();
 		
@@ -44,22 +45,17 @@ public class HttpTest {
 		long t0 = System.currentTimeMillis();
 		
 		// TODO: 只有 调用了 setSkipBytes 和使用 toFile 方法，才能启用 断点续传
-		HttpResult result = http.sync(url)
-//				.setSkipBytes(179785)
-				.get();
-		
-		print(t0, "状态码：" + result.getStatus(), true);
-		print(t0, "头信息：" + result.getHeaders(), true);
-		
-		result.getBody()
+		Ctrl ctrl = http.sync(url)
+//				.setSkipBytes(24771214)
+				.get()
+				.getBody()
 				.setOnProcess((Process process) -> {
 					print(t0, process.getDoneBytes() + "/" + process.getTotalBytes() + "\t" + process.getRate(), false);
 				})
+				.setStepRate(0.01)
 				.toFolder("D:/WorkSpace/download/")
-//				.toFile("D:\\WorkSpace\\download\\CocosDashboard-v1.0.1-win32-031816(8).exe")
-//				.setStepRate(0.01)
+//				.toFile("D:\\WorkSpace\\download\\CocosDashboard-v1.0.1-win32-031816(9).exe")
 //				.resumeBreakpoint() // 启用 断点续传
-				
 				.setOnSuccess((File file) -> {
 					print(t0, "下载成功：" + file.getAbsolutePath(), true);
 				})
@@ -67,15 +63,37 @@ public class HttpTest {
 					print(t0, "下载失败：" + failure.getDoneBytes() + ", path = " + failure.getFile().getAbsolutePath(), true);
 				})
 				.start();
-//		RandomAccessFile
 		
-		sleep(30000);
+		sleep(5000);
+		
+		ctrl.pause();
+		System.out.println("暂停");
+		sleep(5000);
+		
+		ctrl.resume();
+		System.out.println("继续");
+		sleep(5000);
+		
+		ctrl.cancel();
+		System.out.println("取消");
+		
 
+//		
+
+//		
+//		ctrl.pause();
+//		System.out.println("暂停");
+//		sleep(5000);
+//		
+//		ctrl.resume();
+//		System.out.println("继续");
+		sleep(5000);
+		
 	}
 	
 	void print(long t0, String str, boolean ln) {
 		long now = System.currentTimeMillis() - t0;
-		System.out.println((now / 1000) + "\t" + str);
+		System.out.println(now + "\t" + str);
 		if (ln) {
 			System.out.println();
 		}
@@ -87,12 +105,24 @@ public class HttpTest {
 
 	@Test
 	public void testToList() {
-		HttpUtils.of(HTTP.builder()
+		long t0 = System.currentTimeMillis();
+		
+		HTTP http = HTTP.builder()
 				.baseUrl("http://tst-api-mini.cdyun.vip/ejlchina")
-				.build());
-		List<User> list = HttpUtils.sync("/comm/provinces")
-				.get().getBody().toList(User.class);
-		System.out.println(list);
+				.build();
+		
+		Body body = http.sync("/comm/provinces")
+				.get().getBody();
+
+		print(t0, "total: " + body.getContentLength(), false);
+		
+		List<User> list = body.setStepRate(0.1)
+				.setOnProcess((Process process) -> {
+					print(t0, process.getDoneBytes() + "/" + process.getTotalBytes() + "\t" + process.getRate(), false);
+				})
+				.toList(User.class);
+		
+		print(t0, list.toString(), false);
 	}
 	
 	

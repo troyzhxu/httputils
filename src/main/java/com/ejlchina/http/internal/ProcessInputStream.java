@@ -15,7 +15,7 @@ public class ProcessInputStream extends InputStream {
 	private long stepBytes;
 	private long step = 0;
 	private RealProcess process;
-	
+	private boolean doneCalled = false;
 	
 	public ProcessInputStream(InputStream input, OnCallback<Process> onProcess, long totalBytes, long stepBytes,
 			long doneBytes, Executor callbackExecutor) {
@@ -24,15 +24,24 @@ public class ProcessInputStream extends InputStream {
 		this.stepBytes = stepBytes;
 		this.callbackExecutor = callbackExecutor;
 		this.process = new RealProcess(totalBytes, doneBytes);
+		this.step = doneBytes / stepBytes;
 	}
 
 
 	@Override
 	public int read() throws IOException {
 		int data = input.read();
-		process.increaseDoneBytes();
+		if (data > -1) {
+			process.increaseDoneBytes();
+		}
 		if (process.notDoneOrReached(step * stepBytes)) {
 			return data;
+		}
+		if (process.isDone()) {
+			if (doneCalled) {
+				return data;
+			}
+			doneCalled = true;
 		}
 		step++;
 		callbackExecutor.execute(() -> {
