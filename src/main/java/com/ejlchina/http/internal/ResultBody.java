@@ -90,7 +90,7 @@ public class ResultBody implements Body {
 			if (stepBytes <= 0) {
 				stepBytes = DEFAULT_STEP_BYTES;
 			}
-			return new ProcessInputStream(input, onProcess, totalBytes, stepBytes, 
+			return new ProcessStream(input, onProcess, totalBytes, stepBytes, 
 					rangeIgnored ? 0 : rangeStart, callbackExecutor);
 		}
 		return input;

@@ -7,7 +7,7 @@ import java.util.concurrent.Executor;
 import com.ejlchina.http.OnCallback;
 import com.ejlchina.http.Process;
 
-public class ProcessInputStream extends InputStream {
+public class ProcessStream extends InputStream {
 
 	private InputStream input;
 	private OnCallback<Process> onProcess;
@@ -17,7 +17,7 @@ public class ProcessInputStream extends InputStream {
 	private RealProcess process;
 	private boolean doneCalled = false;
 	
-	public ProcessInputStream(InputStream input, OnCallback<Process> onProcess, long totalBytes, long stepBytes,
+	public ProcessStream(InputStream input, OnCallback<Process> onProcess, long totalBytes, long stepBytes,
 			long doneBytes, Executor callbackExecutor) {
 		this.input = input;
 		this.onProcess = onProcess;
