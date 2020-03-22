@@ -27,8 +27,6 @@ import okhttp3.Response;
 import okio.Buffer;
 
 public class ResultBody implements Body {
-
-	static final int DEFAULT_STEP_BYTES = 8192;
 	
 	private Response response;
 	private Executor callbackExecutor;
@@ -89,7 +87,7 @@ public class ResultBody implements Body {
 				stepBytes = (long) (totalBytes * stepRate);
 			}
 			if (stepBytes <= 0) {
-				stepBytes = DEFAULT_STEP_BYTES;
+				stepBytes = Process.DEFAULT_STEP_BYTES;
 			}
 			return new ProcessInputStream(input, onProcess, totalBytes, stepBytes, 
 					rangeIgnored ? 0 : rangeStart, callbackExecutor);

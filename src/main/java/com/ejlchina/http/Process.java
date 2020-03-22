@@ -6,6 +6,8 @@ package com.ejlchina.http;
  */
 public interface Process {
 
+	static final int DEFAULT_STEP_BYTES = 8192;
+	
 	/**
 	 * @return 完成比例
 	 */

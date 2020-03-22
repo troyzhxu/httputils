@@ -15,6 +15,7 @@ import com.alibaba.fastjson.JSON;
 import com.ejlchina.http.HttpResult.State;
 import com.ejlchina.http.internal.HttpClient;
 import com.ejlchina.http.internal.HttpException;
+import com.ejlchina.http.internal.ProcessRequestBody;
 
 import okhttp3.Call;
 import okhttp3.FormBody;
@@ -38,6 +39,9 @@ public abstract class HttpTask<C extends HttpTask<?>> {
     private static String PATH_PARAM_REGEX = "[A-Za-z0-9_\\-/]*\\{[A-Za-z0-9_\\-]+\\}[A-Za-z0-9_\\-/]*";
 
     protected HttpClient httpClient;
+    protected boolean nothrow;
+    protected String tag;
+    
     private String urlPath;
     private Map<String, String> headers;
     private Map<String, String> pathParams;
@@ -47,8 +51,9 @@ public abstract class HttpTask<C extends HttpTask<?>> {
     private Map<String, Integer> jsonIntParams;
     private Map<String, FilePara> files;
     private String requestJson;
-    protected boolean nothrow;
-    protected String tag;
+    private OnCallback<Process> onProcess;
+	private long stepBytes = 0;
+	private double stepRate = -1;
 
     
     public HttpTask(HttpClient httpClient, String url) {
@@ -152,6 +157,38 @@ public abstract class HttpTask<C extends HttpTask<?>> {
     public C setSkipBytes(long skipBytes) {
     	return addHeader("Range", "bytes=" + skipBytes + "-");
     }
+    
+	/**
+	 * 设置报文体发送进度回调
+	 * @param onProcess 进度回调函数
+	 * @return HttpTask 实例
+	 */
+	public C setOnProcess(OnCallback<Process> onProcess) {
+		this.onProcess = onProcess;
+		return (C) this;
+	}
+	
+	/**
+	 * 设置进度回调的步进字节，默认 8K（8192）
+	 * 表示每接收 stepBytes 个字节，执行一次进度回调
+	 * @param stepBytes 步进字节
+	 * @return HttpTask 实例 
+	 */
+	public C setStepBytes(long stepBytes) {
+		this.stepBytes = stepBytes;
+		return (C) this;
+	}
+	
+	/**
+	 * 设置进度回调的步进比例
+	 * 表示每接收 stepRate 比例，执行一次进度回调
+	 * @param stepRate 步进比例
+	 * @return HttpTask 实例
+	 */
+	public C setStepRate(double stepRate) {
+		this.stepRate = stepRate;
+		return (C) this;
+	}
     
     /**
      * 路径参数：替换URL里的{name}
@@ -491,21 +528,45 @@ public abstract class HttpTask<C extends HttpTask<?>> {
         Request.Builder builder = new Request.Builder()
         		.url(buildUrlPath());
         buildHeaders(builder);
+		RequestBody reqBody = null;
+		if (!"GET".equals(method)) {
+			reqBody = buildRequestBody();
+			if (onProcess != null) {
+				long contentLength = contentLength(reqBody);
+				if (stepRate > 0 && stepRate <= 1) {
+					stepBytes = (long) (contentLength * stepRate);
+				}
+				if (stepBytes <= 0) {
+					stepBytes = Process.DEFAULT_STEP_BYTES;
+				}
+				reqBody = new ProcessRequestBody(reqBody, onProcess, 
+						httpClient.getCallbackExecutor(), 
+						contentLength, stepBytes);
+			}
+		}
 		switch (method) {
         case "GET":
         	builder.get();
         	break;
         case "POST":
-        	builder.post(buildRequestBody());
+        	builder.post(reqBody);
         	break;
         case "PUT":
-        	builder.put(buildRequestBody());
+        	builder.put(reqBody);
         	break;
         case "DELETE":
-        	builder.delete(buildRequestBody());
+        	builder.delete(reqBody);
         	break;
         }
 		return httpClient.callRequest(builder.build());
+	}
+
+	private long contentLength(RequestBody reqBody) {
+		try {
+			return reqBody.contentLength();
+		} catch (IOException e) {
+			throw new HttpException("无法获取请求体长度", e);
+		}
 	}
    
     

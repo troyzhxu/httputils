@@ -40,19 +40,21 @@ public class HttpTest {
 				})
 				.build();
 		
-		String url = "https://download.cocos.com/CocosDashboard/v1.0.1/CocosDashboard-v1.0.1-win32-031816.exe";
+//		String url = "https://download.cocos.com/CocosDashboard/v1.0.1/CocosDashboard-v1.0.1-win32-031816.exe";
+		String url = "http://47.100.7.202/ejl-test.zip";
 
 		long t0 = System.currentTimeMillis();
 		
 		// TODO: 只有 调用了 setSkipBytes 和使用 toFile 方法，才能启用 断点续传
-		Ctrl ctrl = http.sync(url)
+//		Ctrl ctrl = 
+		http.sync(url)
 //				.setSkipBytes(24771214)
 				.get()
 				.getBody()
 				.setOnProcess((Process process) -> {
 					print(t0, process.getDoneBytes() + "/" + process.getTotalBytes() + "\t" + process.getRate(), false);
 				})
-				.setStepRate(0.01)
+				.setStepRate(0.1)
 				.toFolder("D:/WorkSpace/download/")
 //				.toFile("D:\\WorkSpace\\download\\CocosDashboard-v1.0.1-win32-031816(9).exe")
 //				.resumeBreakpoint() // 启用 断点续传
@@ -64,18 +66,18 @@ public class HttpTest {
 				})
 				.start();
 		
-		sleep(5000);
+		sleep(10000);
 		
-		ctrl.pause();
-		System.out.println("暂停");
-		sleep(5000);
-		
-		ctrl.resume();
-		System.out.println("继续");
-		sleep(5000);
-		
-		ctrl.cancel();
-		System.out.println("取消");
+//		ctrl.pause();
+//		System.out.println("暂停");
+//		sleep(5000);
+//		
+//		ctrl.resume();
+//		System.out.println("继续");
+//		sleep(5000);
+//		
+//		ctrl.cancel();
+//		System.out.println("取消");
 		
 
 //		
@@ -111,10 +113,14 @@ public class HttpTest {
 				.baseUrl("http://tst-api-mini.cdyun.vip/ejlchina")
 				.build();
 		
-		Body body = http.sync("/comm/provinces")
-				.get().getBody();
+		HttpResult result = http.sync("/comm/provinces").get();
+		
+		print(t0, "status: " + result.getStatus(), true);
+		print(t0, "headers: " + result.getHeaders(), true);
+		
+		Body body = result.getBody();
 
-		print(t0, "total: " + body.getContentLength(), false);
+		print(t0, "total: " + body.getContentLength(), true);
 		
 		List<User> list = body.setStepRate(0.1)
 				.setOnProcess((Process process) -> {
