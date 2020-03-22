@@ -163,6 +163,8 @@ http.async("/users/{id}")             // http://api.demo.com/users/1
 * `getStatus()`        得到HTTP状态码
 * `isSuccessful()`     是否响应成功，状态码在 [200..300) 之间
 * `getHeaders()`       得到HTTP响应头
+* `getHeaders(String name)` 得到HTTP响应头
+* `getHeader(String name)`  得到HTTP响应头
 * `getBody()`          得到响应报文体`Body`实例，它定义了如下方法（对同一个`Body`实例，以下的`toXXX()`类方法只能使用一个且仅能调用一次）：
     * `toBytes()`                     返回字节数组
     * `toByteStream()`                返回字节输入流
@@ -172,8 +174,10 @@ http.async("/users/{id}")             // http://api.demo.com/users/1
     * `toJsonArray()`                 返回Json数组
     * `toBean(Class<T> type)`         返回根据type自动json解析后的JavaBean
     * `toList(Class<T> type)`         返回根据type自动json解析后的JavaBean列表
-    * `toFile(String filePath)`       下载到指定路径并返回保存后的文件
-    * `toFile(File file)`             下载到指定文件并返回保存后的文件
+    * `toFile(String filePath)`       下载到指定路径
+    * `toFile(File file)`             下载到指定文件
+    * `toFolder(String dirPath)`      下载到指定目录
+    * `toFolder(File dir)`            下载到指定目录
     * `getContentType()`              返回报文体的媒体类型
     * `getContentLength()`            返回报文体的字节长度
 * `getError()`         执行中发生的异常，自动捕获执行请求是发生的 网络超时、网络错误 和 其它请求异常
@@ -256,6 +260,7 @@ System.out.println(call.isCanceled());     // true
 * `setRequestJson(Object bean)`             将依据 bean的get方法序列化为 json 字符串（支持多层结构）
 * `setRequestJson(Object bean, String dateFormat)` 将依据 bean的get方法序列化为 json 字符串（支持多层结构）
 
+* `addFileParam(String name, String filePath)` 上传文件
 * `addFileParam(String name, File file)` 上传文件
 * `addFileParam(String name, String type, InputStream inputStream)` 上传文件
 * `addFileParam(String name, String type, String fileName, InputStream input)` 上传文件
@@ -263,7 +268,8 @@ System.out.println(call.isCanceled());     // true
 * `addFileParam(String name, String type, String fileName, byte[] content)` 上传文件
 
 * `setTag(String tag)` 为HTTP任务添加标签
-
+* `setRangeHeader(long rangeStart)` 设置Range头信息，用于断点续传
+* `setRangeHeader(long rangeStart, long rangeEnd)` 设置Range头信息，用于分块下载
 
 ### 5 使用标签
 
@@ -425,6 +431,19 @@ HttpUtils.of(HTTP.builder()
 List<User> users = HttpUtils.sync("/users")
         .get().getBody().toList(User.class);
 ```
+
+### 8 上传与下载文件
+
+#### 8.1 上传进度监听
+
+#### 8.1 下载进度监听
+
+#### 8.2 下载过程控制
+
+#### 8.3 文件断点续传
+
+#### 8.4 文件分块下载
+
 
 ## 参与贡献
 
