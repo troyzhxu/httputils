@@ -89,8 +89,9 @@ public class Download {
 		if (buffSize == 0) {
 			buffSize = DEFAULT_SIZE;
 		}
+		RandomAccessFile raFile = randomAccessFile();
 		new Thread(() -> {
-			doDownload();
+			doDownload(raFile);
 		}).start();
 		return new Ctrl();
 	}
@@ -199,23 +200,25 @@ public class Download {
 		
 	}
 	
-	private void doDownload() {
-		RandomAccessFile output;
+	private RandomAccessFile randomAccessFile() {
 		try {
-			output = new RandomAccessFile(file, "rw");
+			return new RandomAccessFile(file, "rw");
 		} catch (FileNotFoundException e) {
 			status = Ctrl.STATUS__ERROR;
 			Util.closeQuietly(input);
 			throw new HttpException("无法获取文件[" + file.getAbsolutePath() + "]的输入流", e);
 		}
+	}
+	
+	private void doDownload(RandomAccessFile raFile) {
 		try {
 			if (breakpointResumed && seekBytes > 0) {
-				long length = output.length();
+				long length = raFile.length();
 				if (seekBytes <= length) {
-					output.seek(seekBytes);
+					raFile.seek(seekBytes);
 					doneBytes = seekBytes;
 				} else {
-					output.seek(length);
+					raFile.seek(length);
 					doneBytes = length;
 				}
 			}
@@ -224,7 +227,7 @@ public class Download {
 					byte[] buff = new byte[buffSize];
 					int len = -1;
 					while ((len = input.read(buff)) != -1) {
-						output.write(buff, 0, len);
+						raFile.write(buff, 0, len);
 						doneBytes += len;
 						if (status == Ctrl.STATUS__CANCELED 
 								|| status == Ctrl.STATUS__PAUSED) {
@@ -250,7 +253,7 @@ public class Download {
 				throw new HttpException("流传输失败", e);
 			}
 		} finally {
-			Util.closeQuietly(output);
+			Util.closeQuietly(raFile);
 			Util.closeQuietly(input);
 			if (status == Ctrl.STATUS__CANCELED) {
 				file.delete();
