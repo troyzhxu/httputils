@@ -525,14 +525,14 @@ http.sync("/download/test.zip")
 
 ```java
 Body body = http.sync("/download/test.zip").get().getBody();
-long contentLength = body.getContentLength();        // 先获取需要下载的文件大小
+long totalSize = body.getContentLength();            // 先获取需要下载的文件大小
 body.close();                                        // 直接关闭（不下载）
 
 long size = 10 * 1024 * 1024;                        // 单次下载 10M  
 
-for (int i = 0; i * size < contentLength; i++) {     // 循环下载
+for (int i = 0; i * size < totalSize; i++) {         // 循环下载
     long start = i * size;
-    long end = Math.min(start + size, contentLength);
+    long end = Math.min(start + size, totalSize);
     http.sync("/download/test.zip")
             .setRangeHeader(start, end)              // 设置单次下载的范围
             .get()
