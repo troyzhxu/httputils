@@ -494,13 +494,16 @@ http.sync("/download/test.zip")
         .setOnFailure((Failure failure) -> {         // 下载失败回调
             IOException e = failure.getException();  // 具体的异常信息
             long doneBytes = failure.getDoneBytes(); // 已下载的字节数（断点），需要保存，用于断点续传
-            File file = failure.getFile();           // 下载保存的文件，需要保存 ，用于断点续传（只保存路径也可以）
+            File file = failure.getFile();           // 下载生成的文件，需要保存 ，用于断点续传（只保存路径也可以）
         })
         .start();
 ```
 　　下面代码实现断点续传：
 
 ```java
+long doneBytes = ...    // 拿到保存的断点
+File file =  ...        // 拿到保存的文件
+
 http.sync("/download/test.zip")
         .setRangeHeader(doneBytes)                   // 设置断点（已下载的字节数）
         .get()
@@ -527,7 +530,7 @@ body.close();                                        // 直接关闭（不下载
 
 long size = 10 * 1024 * 1024;                        // 单次下载 10M  
 
-for (int i = 0; i * size < contentLength; i++) {     // 循环分块下载
+for (int i = 0; i * size < contentLength; i++) {     // 循环下载
     long start = i * size;
     long end = Math.min(start + size, contentLength);
     http.sync("/download/test.zip")
