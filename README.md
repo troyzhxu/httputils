@@ -443,10 +443,19 @@ List<User> users = HttpUtils.sync("/users")
 
 ```java
 http.sync("/download/test.zip")
-        .get()
-        .getBody()
+        .get()                           // 使用 GET 方法（其它方法也可以，看服务器支持）
+        .getBody()                       // 得到报文体
         .toFile("D:/download/test.zip")  // 指定下载的目录，文件名将根据下载信息自动生成
         .start();                        // 启动下载
+```
+　　或者使用异步方式：
+
+```java
+http.async("/download/test.zip")
+        .setOnResponse((HttpResult result) -> {
+            result.getBody().toFile("D:/download/test.zip").start();
+        })
+        .get();
 ```
 
 #### 8.1 下载进度监听
@@ -470,7 +479,7 @@ http.sync("/download/test.zip")
         .setOnSuccess((File file) -> {   // 下载成功回调
             
         })
-        .start();                        // 启动下载
+        .start();
 ```
 
 #### 8.2 下载过程控制
