@@ -474,7 +474,7 @@ Ctrl ctrl = http.sync("/download/test.zip")
 ctrl.status();      // 下载状态
 ctrl.pause();       // 暂停下载
 ctrl.resume();      // 恢复下载
-ctrl.cancel();      // 取消下载（同时会删除文件）
+ctrl.cancel();      // 取消下载（同时会删除文件，不可恢复）
 ```
 
 #### 8.3 文件断点续传
