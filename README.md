@@ -448,7 +448,7 @@ http.sync("/download/test.zip")
         .toFile("D:/download/test.zip")  // 指定下载的目录，文件名将根据下载信息自动生成
         .start();                        // 启动下载
 ```
-　　或使用异步方式：
+　　或使用异步连接方式：
 
 ```java
 http.async("/download/test.zip")
@@ -457,6 +457,7 @@ http.async("/download/test.zip")
         })
         .get();
 ```
+　　这里要说明一下：`sync`与`async`的区别在于连接服务器并得到响应这个过程的同步与异步（这个过程的耗时在大文件下载时占比极小），而`start`方法启动的下载过程则都是异步的。
 
 #### 8.1 下载进度监听
 
