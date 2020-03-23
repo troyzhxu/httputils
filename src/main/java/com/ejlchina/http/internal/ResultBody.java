@@ -208,8 +208,9 @@ public class ResultBody implements Body {
 	}
 	
 	@Override
-	public void close() {
+	public Body close() {
 		response.close();
+		return this;
 	}
 	
 	private long getRangeStart() {

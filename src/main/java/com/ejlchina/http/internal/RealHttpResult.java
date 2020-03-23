@@ -116,10 +116,11 @@ public class RealHttpResult implements HttpResult {
 	}
 
 	@Override
-	public void close() {
+	public HttpResult close() {
 		if (response != null) {
 			response.close();
 		}
+		return this;
 	}
 	
 }

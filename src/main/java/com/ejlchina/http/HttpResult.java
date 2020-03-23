@@ -178,8 +178,9 @@ public interface HttpResult {
 		/**
 		 * 关闭报文体
 		 * 未对报文体做任何消费时使用，比如只读取长度
+		 * @return Body
 		 */
-		void close();
+		Body close();
 		
 	}
 	
@@ -227,7 +228,8 @@ public interface HttpResult {
 	/**
 	 * 关闭报文
 	 * 未对报文体做任何消费时使用，比如只读取报文头
+	 * @return HttpResult
 	 */
-	void close();
+	HttpResult close();
 
 }
