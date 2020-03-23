@@ -452,6 +452,7 @@ http.sync("/download/test.zip")
         .setStepBytes(1024)   // 设置每下载 1024 个字节执行一次进度回调（不设置默认为 8192）  
  //     .setStepRate(0.01)    // 设置每下载 1% 执行一次进度回调（不设置以 StepBytes 为准）  
         .toFolder("D:/download/")        // 指定下载的目录，文件名将根据下载信息自动生成
+ //     .toFile("D:/download/test.zip")  // 指定下载的路径，若文件已存在则覆盖
         .setOnSuccess((File file) -> {   // 下载成功回调
             
         })
