@@ -369,14 +369,14 @@ HTTP http = HTTP.builder()
 
 ```java
 HTTP http = HTTP.builder()
-        .addPreprocessor((Process process) -> {
-            HttpTask<?> task = process.getTask();// 获得当前的HTTP任务
-            if (!task.isTagged("Auth")) {        // 根据标签判断该任务是否需要Token
+        .addPreprocessor((PreChain chain) -> {
+            HttpTask<?> task = chain.getTask();// 获得当前的HTTP任务
+            if (!task.isTagged("Auth")) {      // 根据标签判断该任务是否需要Token
                 return;
             }
-            requestToken((String token) -> {     // 异步获取 Token
-                task.addHeader("Token", token);  // 为任务添加头信息
-                process.proceed();               // 继续当前的任务
+            requestToken((String token) -> {   // 异步获取 Token
+                task.addHeader("Token", token);// 为任务添加头信息
+                chain.proceed();               // 继续当前的任务
             });
         })
         .build();
@@ -391,15 +391,15 @@ HTTP http = HTTP.builder()
 
 ```java
 HTTP http = HTTP.builder()
-        .addSerialPreprocessor((Process process) -> {
-            HttpTask<?> task = process.getTask();
+        .addSerialPreprocessor((PreChain chain) -> {
+            HttpTask<?> task = chain.getTask();
             if (!task.isTagged("Auth")) {
                 return;
             }
             // 检查过期，若需要则刷新Token
             requestTokenAndRefreshIfExpired((String token) -> {
                 task.addHeader("Token", token);            
-                process.proceed();               // 调用此方法前，不会有其它任务进入该处理器
+                chain.proceed();               // 调用此方法前，不会有其它任务进入该处理器
             });
         })
         .build();
@@ -438,7 +438,25 @@ List<User> users = HttpUtils.sync("/users")
 
 #### 8.1 下载进度监听
 
-文档完善中，抢先体验可阅读源码
+```java
+http.sync("/download/test.zip")
+        .get()
+        .getBody()
+        // 下载进度回调
+        .setOnProcess((Process process) -> {
+            process.getDoneBytes();      // 已下载的字节数
+            process.getTotalBytes();     // 总共的字节数
+            process.getRate();           // 已下载的比例
+            process.isDone();            // 是否下载完成
+        })
+        .setStepBytes(1024)   // 设置每下载 1024 个字节执行一次进度回调（不设置默认为 8192）  
+ //     .setStepRate(0.01)    // 设置每下载 1% 执行一次进度回调（不设置以 StepBytes 为准）  
+        .toFolder("D:/download/")        // 指定下载的目录，文件名将根据下载信息自动生成
+        .setOnSuccess((File file) -> {   // 下载成功回调
+            
+        })
+        .start();                        // 开始启动下载
+```
 
 #### 8.2 下载过程控制
 
