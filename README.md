@@ -461,7 +461,7 @@ http.async("/download/test.zip")
 
 #### 8.1 下载进度监听
 
-　　直接上代码：
+　　就直接上代码啦，诸君一看便懂：
 
 ```java
 http.sync("/download/test.zip")
@@ -485,7 +485,7 @@ http.sync("/download/test.zip")
 
 #### 8.2 下载过程控制
 
-　　直接上代码：
+　　还是直接上代码，你说设计够不够优雅？
 
 ```java
 Ctrl ctrl = http.sync("/download/test.zip")
@@ -505,14 +505,14 @@ ctrl.cancel();      // 取消下载（同时会删除文件，不可恢复）
 
 #### 8.3 实现断点续传
 
-　　开启下载时，可以设置下载的失败回调，以便接收诸如网络错误等失败信息，在该回调中可以拿到**断点**，可用于续传：
+　　`HttpUtils`对断点续传并没有做高度的封装，因为这是app该去做的使用，它在设计上使各种网络问题的处理变简单的同时而力求纯粹。下面的例子可以看到，`HttpUtils`仅通过一失败回调拿到**断点**，便可复杂的断点续传问题变得简单：
 
 ```java
 http.sync("/download/test.zip")
         .get()
         .getBody()
         .toFolder("D:/download/")
-        .setOnFailure((Failure failure) -> {         // 下载失败回调
+        .setOnFailure((Failure failure) -> {         // 下载失败回调，以便接收诸如网络错误等失败信息
             IOException e = failure.getException();  // 具体的异常信息
             long doneBytes = failure.getDoneBytes(); // 已下载的字节数（断点），需要保存，用于断点续传
             File file = failure.getFile();           // 下载生成的文件，需要保存 ，用于断点续传（只保存路径也可以）
