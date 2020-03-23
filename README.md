@@ -588,7 +588,7 @@ static void doPartDownload(long totalSize, int index) {
             .setOnSuccess((File file) -> {
                 if (end < totalSize) {
                     // 若未下载完，则继续下载下一块
-                    download(index + 1, totalSize, size); 
+                    download(totalSize, index + 1); 
                 } else {
                     System.out.println("下载完成");
                 }
