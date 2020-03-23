@@ -525,7 +525,7 @@ long doneBytes = ...    // 拿到保存的断点
 File file =  ...        // 拿到保存的文件
 
 http.sync("/download/test.zip")
-        .setRangeHeader(doneBytes)                   // 设置断点（已下载的字节数）
+        .setRange(doneBytes)                         // 设置断点（已下载的字节数）
         .get()
         .getBody()
         .toFile(file)                                // 下载到同一个文件里
@@ -554,7 +554,7 @@ for (int i = 0; i * size < totalSize; i++) {         // 循环下载
     long start = i * size;
     long end = Math.min(start + size, totalSize);
     http.sync("/download/test.zip")
-            .setRangeHeader(start, end)              // 设置单次下载的范围
+            .setRange(start, end)                    // 设置单次下载的范围
             .get()
             .getBody()
             .toFile("D:/download/test.zip")          // 下载到同一个文件里
