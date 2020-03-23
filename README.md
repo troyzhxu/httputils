@@ -6,7 +6,7 @@
 
 ## 介绍
 
-　　Http工具包：OkHttp轻量封装 、功能全面、设计力求优雅与纯粹，Java领域前后端处Http问题的新选择。
+　　HttpUtils 是近期开源的对 OkHttp 轻量封装的框架，它独创的异步预处理器，特色的标签，灵活的上传下载进度监听与过程控制功能，在轻松解决很多原本另人头疼问题的同时，设计上也力求纯粹与优雅。
 
  * 链式调用，一点到底
  * BaseURL、URL占位符、JSON自动封装与解析
@@ -239,7 +239,7 @@ System.out.println(call.isCanceled());     // true
 
 ### 4 构建HTTP任务
 
-　　`HTTP`对象的`sync`与`async`方法返回一个`HttpTask`对象，该对象提供了一系列可链式调用的`addXXX`与`setXXX`方法用于构建任务本身。
+　　`HTTP`对象的`sync`与`async`方法返回一个`HttpTask`对象，该对象提供了可链式调用的`addXXX`与`setXXX`系列方法用于构建任务本身。
 
 * `addHeader(String name, String value)`    添加请求头
 * `addHeader(Map<String, String> headers)`  添加请求头
