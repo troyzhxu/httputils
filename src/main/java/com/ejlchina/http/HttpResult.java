@@ -175,6 +175,12 @@ public interface HttpResult {
 		 */
 		Download toFolder(File dir);
 
+		/**
+		 * 关闭报文体
+		 * 未对报文体做任何消费时使用，比如只读取报长度
+		 */
+		void close();
+		
 	}
 	
 
@@ -217,5 +223,11 @@ public interface HttpResult {
 	 * @return 执行中发生的异常
 	 */
 	Exception getError();
-	
+
+	/**
+	 * 关闭报文
+	 * 未对报文体做任何消费时使用，比如只读取报文头
+	 */
+	void close();
+
 }

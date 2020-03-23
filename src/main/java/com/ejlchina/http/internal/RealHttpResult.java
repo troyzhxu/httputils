@@ -11,7 +11,6 @@ import okhttp3.Response;
 
 public class RealHttpResult implements HttpResult {
 
-	
 	private State state;
 	private Response response;
 	private Exception error;
@@ -114,6 +113,13 @@ public class RealHttpResult implements HttpResult {
 			+ ",\n  body: " + body.toString();
 		}
 		return str + ",\n  error: " + error + "\n]";
+	}
+
+	@Override
+	public void close() {
+		if (response != null) {
+			response.close();
+		}
 	}
 	
 }

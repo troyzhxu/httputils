@@ -207,6 +207,11 @@ public class ResultBody implements Body {
 		return toFolder(dir.getAbsolutePath());
 	}
 	
+	@Override
+	public void close() {
+		response.close();
+	}
+	
 	private long getRangeStart() {
 		long rangeStart = 0;
 		if (response.code() != HttpURLConnection.HTTP_PARTIAL) {
