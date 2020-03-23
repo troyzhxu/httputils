@@ -557,18 +557,22 @@ http.sync("/download/test.zip")
 　　当文件很大时，有时候我们会考虑分块下载，与断点续传的思路是一样的：
 
 ```java
-String url = "/download/test.zip";        // 服务器文件地址
-String filePath = "D:/download/test.zip"; // 下载后保存路径
+static String url = "/download/test.zip";        // 服务器文件地址
+static String filePath = "D:/download/test.zip"; // 下载后保存路径
+static long size = 3 * 1024 * 1024;              // 每块下载 3M  
 
-long totalSize = http.sync(url).get().getBody()
-        .close()                          // 因为这次请求只是为了获得文件大小，不消费报文体，所以直接关闭
-        .getContentLength(); 
+public static void main(String[] args) {
 
-long size = 3 * 1024 * 1024;              // 每块下载 3M  
+    long totalSize = http.sync(url).get().getBody()
+            .close()                             // 因为这次请求只是为了获得文件大小，不消费报文体，所以直接关闭
+            .getContentLength(); 
+    
+    doPartDownload(totalSize, 0);                // 从第 0 块开始下载
+    
+    sleep(50000);                                // 等待下载完成
+}
 
-doPartDownload(0);                        // 从第 0 块开始下载
-
-void doPartDownload(int index) {
+static void doPartDownload(long totalSize, int index) {
     long start = index * size;
     long end = Math.min(start + size, totalSize);
     http.sync(url)
@@ -591,7 +595,6 @@ void doPartDownload(int index) {
             })
             .start();
 }
-
 ```
 
 ### 9 文件上传
