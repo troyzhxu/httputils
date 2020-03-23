@@ -18,8 +18,6 @@ import okhttp3.internal.Util;
  */
 public class Download {
 	
-	static final int DEFAULT_SIZE = 8192;
-	
 	private File file;
 	private InputStream input;
 	private OnCallback<File> onSuccess;
@@ -95,11 +93,11 @@ public class Download {
 	 * @return 下载控制器
 	 */
 	public Ctrl start() {
-		status = Ctrl.STATUS__DOWNLOADING;
 		if (buffSize == 0) {
-			buffSize = DEFAULT_SIZE;
+			buffSize = Process.DEFAULT_STEP_BYTES;
 		}
 		RandomAccessFile raFile = randomAccessFile();
+		status = Ctrl.STATUS__DOWNLOADING;
 		new Thread(() -> {
 			doDownload(raFile);
 		}).start();
