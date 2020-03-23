@@ -576,18 +576,17 @@ static void doPartDownload(long totalSize, int index) {
     long start = index * size;
     long end = Math.min(start + size, totalSize);
     http.sync(url)
-            .setRange(start, end)         // 设置本次下载的范围
+            .setRange(start, end)                // 设置本次下载的范围
             .get()
             .getBody()
-            .setRangeIgnored()            // 设置进度回调忽略Range,即每次下载比例都是从0到1
+            .setRangeIgnored()                   // 设置进度回调忽略Range,即每次下载比例都是从0到1
             .setOnProcess((Process process) -> {
                 System.out.println("进度：" + process.getRate());
             })
-            .toFile(filePath)             // 下载到同一个文件里
-            .setAppended()                // 开启文件追加模式
+            .toFile(filePath)                    // 下载到同一个文件里
+            .setAppended()                       // 开启文件追加模式
             .setOnSuccess((File file) -> {
-                if (end < totalSize) {
-                    // 若未下载完，则继续下载下一块
+                if (end < totalSize) {           // 若未下载完，则继续下载下一块
                     download(totalSize, index + 1); 
                 } else {
                     System.out.println("下载完成");
