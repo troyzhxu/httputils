@@ -563,13 +563,10 @@ static String filePath = "D:/download/test.zip"; // 下载后保存路径
 static long size = 3 * 1024 * 1024;              // 每块下载 3M  
 
 public static void main(String[] args) {
-
     long totalSize = http.sync(url).get().getBody()
             .close()                             // 因为这次请求只是为了获得文件大小，不消费报文体，所以直接关闭
             .getContentLength(); 
-    
     download(totalSize, 0);                      // 从第 0 块开始下载
-    
     sleep(50000);                                // 等待下载完成
 }
 
