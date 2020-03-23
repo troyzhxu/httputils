@@ -507,19 +507,19 @@ Ctrl ctrl = http.sync("/download/test.zip")
             System.out.println(process.getRate());
         })
         .toFolder("D:/download/")
-        .start();   // 该方法返回一个下载控制器
+        .start();   // 该方法返回一个下载过程控制器
  
 ctrl.status();      // 下载状态
 ctrl.pause();       // 暂停下载
 ctrl.resume();      // 恢复下载
 ctrl.cancel();      // 取消下载（同时会删除文件，不可恢复）
 ```
-　　无论是同步还是异步发起的下载请求，都可以做以上控制：
+　　无论是同步还是异步发起的下载请求，都可以做以上的控制：
 
 ```java
 http.async("/download/test.zip")
         .setOnResponse((HttpResult result) -> {
-            // 拿到过程控制对象
+            // 拿到下载控制器
             Ctrl ctrl = result.getBody().toFolder("D:/download/").start();
         })
         .get();
@@ -637,7 +637,7 @@ http.sync("/upload")
 
 #### 9.2 上传过程控制
 
-　　上传文件的过程控制很简单，和
+　　上传文件的过程控制就很简单，和常规请求一样，只有异步发起的上传可以取消：
 
 ```java
 HttpCall call = http.async("/upload")
@@ -647,11 +647,9 @@ HttpCall call = http.async("/upload")
         })
         .post()
 
-
-
+call.cancel();  // 取消上传
 ```
-
-
+　　上传就没有暂停和继续这个功能啦，应该没有人有这个需求吧?
 
 ## 计划开发
 
