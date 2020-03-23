@@ -27,13 +27,55 @@ import okhttp3.Request;
 public class HttpTest {
 
 	
+	static HTTP http = HTTP.builder().build();
+	static String url = "/download/test.zip";        // 服务器文件地址
+	static String filePath = "D:/download/test.zip"; // 下载后保存路径
+	static long size = 3 * 1024 * 1024;              // 每块下载 3M  
+
+	public static void main(String[] args) {
+
+	    long totalSize = http.sync(url).get().getBody()
+	            .close()                             // 因为这次请求只是为了获得文件大小，不消费报文体，所以直接关闭
+	            .getContentLength(); 
+	    
+	    download(totalSize, 0);                		 // 从第 0 块开始下载
+	    
+	    sleep(50000);                                // 等待下载完成
+	}
+
+	static void download(long totalSize, int index) {
+	    long start = index * size;
+	    long end = Math.min(start + size, totalSize);
+	    http.sync(url)
+	            .setRange(start, end)                // 设置本次下载的范围
+	            .get()
+	            .getBody()
+	            .setRangeIgnored()                   // 设置进度回调忽略Range,即每次下载比例都是从0到1
+	            .setOnProcess((Process process) -> {
+	                System.out.println("进度：" + process.getRate());
+	            })
+	            .toFile(filePath)                    // 下载到同一个文件里
+	            .setAppended()                       // 开启文件追加模式
+	            .setOnSuccess((File file) -> {
+	                if (end < totalSize) {           // 若未下载完，则继续下载下一块
+	                	download(totalSize, index + 1); 
+	                } else {
+	                    System.out.println("下载完成");
+	                }
+	            })
+	            .start();
+	}
+	
+	
+	
+	
 	@Test
 	public void testD() {
 		System.out.println(Long.parseLong("12"));
 	}
 	
-	HTTP http = HTTP.builder().build();
-	String url = "http://47.100.7.202/wxcode.zip";
+	
+
 	
 	@Test
 	public void testBlockDownload() {
@@ -474,7 +516,7 @@ public class HttpTest {
 	}
 
 	
-	private void sleep(int millis) {
+	private static void sleep(int millis) {
 		try {
 			Thread.sleep(millis);
 		} catch (InterruptedException e) {
