@@ -461,7 +461,30 @@ http.sync("/download/test.zip")
 
 #### 8.2 下载过程控制
 
-文档完善中，抢先体验可阅读源码
+```java
+Ctrl ctrl = http.sync("/download/test.zip")
+        .get()
+        .getBody()
+        .setOnProcess((Process process) -> {
+            System.out.println(process.getRate());
+        })
+        .toFolder("D:/download/")        // 指定下载的目录，文件名将根据下载信息自动生成
+        .start();                        // 启动下载
+ 
+ctrl.status();      // 获得下载状态
+
+sleep(1000);
+
+ctrl.pause();       // 暂停下载
+
+sleep(1000); 
+
+ctrl.resume();      // 恢复下载
+
+sleep(1000);
+
+ctrl.cancel();      // 取消下载（同时会删除文件）
+```
 
 #### 8.3 文件断点续传
 
