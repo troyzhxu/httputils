@@ -7,6 +7,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.junit.Test;
 
+import com.ejlchina.http.Download.Ctrl;
 import com.ejlchina.http.Download.Failure;
 import com.ejlchina.http.HTTP;
 import com.ejlchina.http.HttpCall;
@@ -71,7 +72,7 @@ public class HttpTest {
 		long t0 = System.currentTimeMillis();
 		
 		// TODO: 只有 调用了 setSkipBytes 和使用 toFile 方法，才能启用 断点续传
-//		Ctrl ctrl = 
+		Ctrl ctrl = 
 		http.sync(url)
 				.setRangeHeader(24771214)
 				.get()
@@ -82,7 +83,7 @@ public class HttpTest {
 				.setStepRate(0.1)
 				.toFolder("D:/WorkSpace/download/")
 //				.toFile("D:\\WorkSpace\\download\\CocosDashboard-v1.0.1-win32-031816(9).exe")
-//				.resumeBreakpoint() // 启用 断点续传
+				.setAppended() // 启用 断点续传
 				.setOnSuccess((File file) -> {
 					print(t0, "下载成功：" + file.getAbsolutePath(), true);
 				})
@@ -93,7 +94,8 @@ public class HttpTest {
 		
 		sleep(10000);
 		
-//		ctrl.pause();
+		ctrl.status();
+		ctrl.pause();
 //		System.out.println("暂停");
 //		sleep(5000);
 //		

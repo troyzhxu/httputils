@@ -70,7 +70,7 @@
   - [8.1 下载进度监听](#81-下载进度监听)
   - [8.2 下载过程控制](#82-下载过程控制)
   - [8.3 实现断点续传](#83-实现断点续传)
-  - [8.4 文件分块下载](#84-文件分块下载)
+  - [8.4 实现分块下载](#84-实现分块下载)
   - [8.5 上传进度监听](#85-上传进度监听)
   - [8.6 上传过程控制](#86-上传过程控制)
 
@@ -187,7 +187,9 @@ http.async("/users/{id}")             // http://api.demo.com/users/1
     * `toFolder(File dir)`            下载到指定目录
     * `getContentType()`              返回报文体的媒体类型
     * `getContentLength()`            返回报文体的字节长度
+    * `close()`                       关闭报文体，未对报文体做任何消费时使用，比如只读取报文头
 * `getError()`         执行中发生的异常，自动捕获执行请求是发生的 网络超时、网络错误 和 其它请求异常
+* `close()`            关闭报文，未对报文体做任何消费时使用，比如只读取长度
 
 　　示例，请求结果自动转Bean和List：
 
@@ -492,7 +494,7 @@ http.sync("/download/test.zip")
         .setOnFailure((Failure failure) -> {         // 下载失败回调
             IOException e = failure.getException();  // 具体的异常信息
             long doneBytes = failure.getDoneBytes(); // 已下载的字节数（断点），需要保存，用于断点续传
-            File file = failure.getFile();           // 下载保存的文件，需要保存，用于断点续传（可以只保存路径）
+            File file = failure.getFile();           // 下载保存的文件，需要保存 ，用于断点续传（只保存路径也可以）
         })
         .start();
 ```
@@ -504,7 +506,7 @@ http.sync("/download/test.zip")
         .get()
         .getBody()
         .toFile(file)                                // 下载到同一个文件里
-        .resumeBreakpoint()                          // 开启断点续传
+        .setAppended()                               // 开启文件追加模式
         .setOnSuccess((File file) -> {
 
         })
@@ -514,9 +516,30 @@ http.sync("/download/test.zip")
         .start();
 ```
 
-#### 8.4 文件分块下载
+#### 8.4 实现分块下载
 
-文档完善中，抢先体验可阅读源码
+　　当文件很大时，有时候我们会考虑分块下载，与断点续传的思路是一样的：
+
+```java
+Body body = http.sync("/download/test.zip").get().getBody();
+long contentLength = body.getContentLength();        // 先获取需要下载的文件大小
+body.close();                                        // 直接关闭（不下载）
+
+long size = 10 * 1024 * 1024;                        // 单次下载 10M  
+
+for (int i = 0; i * size < contentLength; i++) {     // 循环分块下载
+    long start = i * size;
+    long end = Math.min(start + size, contentLength);
+    http.sync("/download/test.zip")
+            .setRangeHeader(start, end)              // 设置单次下载的范围
+            .get()
+            .getBody()
+            .toFile("D:/download/test.zip")          // 下载到同一个文件里
+            .setAppended()                           // 开启文件追加模式
+            .start();
+}
+
+```
 
 #### 8.5 上传进度监听
 
