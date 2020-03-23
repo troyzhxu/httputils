@@ -444,7 +444,7 @@ http.sync("/download/test.zip")
         .getBody()
         // 下载进度回调
         .setOnProcess((Process process) -> {
-            process.getDoneBytes();      // 已下载的字节数
+            process.getDoneBytes();      // 已下载字节数
             process.getTotalBytes();     // 总共的字节数
             process.getRate();           // 已下载的比例
             process.isDone();            // 是否下载完成
