@@ -28,7 +28,7 @@ public class Download {
 	private long doneBytes;
 	private int buffSize = 0;
 	private long seekBytes = 0;
-	private boolean breakpointResumed;
+	private boolean appended;
 	private volatile int status;
 	private Object lock = new Object();
 	
@@ -52,11 +52,12 @@ public class Download {
 	}
 	
 	/**
-	 * 启用断点续传
+	 * 设置文件追加模式
+	 * 用预断点续传和分块下载
 	 * @return Download
 	 */
-	public Download resumeBreakpoint() {
-		this.breakpointResumed = true;
+	public Download setAppended() {
+		this.appended = true;
 		return this;
 	}
 	
@@ -221,7 +222,7 @@ public class Download {
 	
 	private void doDownload(RandomAccessFile raFile) {
 		try {
-			if (breakpointResumed && seekBytes > 0) {
+			if (appended && seekBytes > 0) {
 				long length = raFile.length();
 				if (seekBytes <= length) {
 					raFile.seek(seekBytes);
