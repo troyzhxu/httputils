@@ -19,8 +19,8 @@
  * GET|POST|PUT|DELETE
  * 文件上传下载（过程控制|进度监听）
 
-### 当前文档版本[2.1.2]
-#### [查阅[2.1.0]点我](https://gitee.com/ejlchina-zhxu/httputils/blob/master/README-2.1.0.md) | [查阅[2.0.0]点我](https://gitee.com/ejlchina-zhxu/httputils/blob/master/README-2.0.0.md) | [查阅[1.x.x]点我](https://gitee.com/ejlchina-zhxu/httputils/blob/1.x/README.md)
+### 当前文档版本[2.2.0]
+#### [查阅[2.1.x]点我](https://gitee.com/ejlchina-zhxu/httputils/blob/master/README-2.1.2.md) | [查阅[2.0.x]点我](https://gitee.com/ejlchina-zhxu/httputils/blob/master/README-2.0.0.md) | [查阅[1.0.x]点我](https://gitee.com/ejlchina-zhxu/httputils/blob/1.x/README.md)
 
 ## 目录
 
