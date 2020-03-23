@@ -482,6 +482,18 @@ http.sync("/download/test.zip")
         })
         .start();
 ```
+　　值得一提的是：由于`HttpUtils`并没有把下载做的很特别，这里设置的进度回调不只对下载文件起用作，即使对响应JSON的常规请求，只要设置了进度回调，它都会告诉你报文传输的进度（提前是服务器响应的报文有`Content-Length`头），例如：
+
+```java
+List<User> users = http.sync("/users")
+        .get()
+        .getBody()
+        .setOnProcess((Process process) -> {
+            System.out.println(process.getRate());
+        })
+        .setStepBytes(1)
+        .toList(User.class);
+```
 
 #### 8.2 下载过程控制
 
@@ -562,10 +574,17 @@ for (int i = 0; i * size < totalSize; i++) {         // 循环下载
             .setAppended()                           // 开启文件追加模式
             .start();
 }
-
 ```
 
 ### 9 文件上传
+
+　　`HttpUtils`并没有把文件的下载排除在常规的请求之外，同一套API，它优雅的设计使得下载与常规请求融合的毫无违和感，一个最简单的示例：
+
+```java
+http.sync("/upload")
+        
+        .post()
+```
 
 #### 9.1 上传进度监听
 
