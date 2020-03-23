@@ -69,7 +69,7 @@
 + [8 文件下载与上传](#8-文件下载与上传)
   - [8.1 下载进度监听](#81-下载进度监听)
   - [8.2 下载过程控制](#82-下载过程控制)
-  - [8.3 文件断点续传](#83-文件断点续传)
+  - [8.3 实现断点续传](#83-实现断点续传)
   - [8.4 文件分块下载](#84-文件分块下载)
   - [8.5 上传进度监听](#85-上传进度监听)
   - [8.6 上传过程控制](#86-上传过程控制)
@@ -438,16 +438,17 @@ List<User> users = HttpUtils.sync("/users")
 
 #### 8.1 下载进度监听
 
+　　直接上代码：
+
 ```java
 http.sync("/download/test.zip")
         .get()
         .getBody()
-        // 下载进度回调
-        .setOnProcess((Process process) -> {
-            process.getDoneBytes();      // 已下载字节数
-            process.getTotalBytes();     // 总共的字节数
-            process.getRate();           // 已下载的比例
-            process.isDone();            // 是否下载完成
+        .setOnProcess((Process process) -> {           // 下载进度回调
+            long doneBytes = process.getDoneBytes();   // 已下载字节数
+            long totalBytes = process.getTotalBytes(); // 总共的字节数
+            double rate = process.getRate();           // 已下载的比例
+            boolean isDone = process.isDone();         // 是否下载完成
         })
         .setStepBytes(1024)   // 设置每下载 1024 个字节执行一次进度回调（不设置默认为 8192）  
  //     .setStepRate(0.01)    // 设置每下载 1% 执行一次进度回调（不设置以 StepBytes 为准）  
@@ -460,6 +461,8 @@ http.sync("/download/test.zip")
 ```
 
 #### 8.2 下载过程控制
+
+　　直接上代码：
 
 ```java
 Ctrl ctrl = http.sync("/download/test.zip")
@@ -477,9 +480,39 @@ ctrl.resume();      // 恢复下载
 ctrl.cancel();      // 取消下载（同时会删除文件，不可恢复）
 ```
 
-#### 8.3 文件断点续传
+#### 8.3 实现断点续传
 
-文档完善中，抢先体验可阅读源码
+　　开启下载时，可以设置下载的失败回调，以便接收诸如网络错误等失败信息，在该回调中可以拿到**断点**，可用于续传：
+
+```java
+http.sync("/download/test.zip")
+        .get()
+        .getBody()
+        .toFolder("D:/download/")
+        .setOnFailure((Failure failure) -> {         // 下载失败回调
+            IOException e = failure.getException();  // 具体的异常信息
+            long doneBytes = failure.getDoneBytes(); // 已下载的字节数（断点），需要保存，用于断点续传
+            File file = failure.getFile();           // 下载保存的文件，需要保存，用于断点续传（可以只保存路径）
+        })
+        .start();
+```
+　　下面代码实现断点续传：
+
+```java
+http.sync("/download/test.zip")
+        .setRangeHeader(doneBytes)                   // 设置断点（已下载的字节数）
+        .get()
+        .getBody()
+        .toFile(file)                                // 下载到同一个文件里
+        .resumeBreakpoint()                          // 开启断点续传
+        .setOnSuccess((File file) -> {
+
+        })
+        .setOnFailure((Failure failure) -> {
+        
+        })
+        .start();
+```
 
 #### 8.4 文件分块下载
 
