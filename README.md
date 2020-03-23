@@ -456,7 +456,7 @@ http.sync("/download/test.zip")
         .setOnSuccess((File file) -> {   // 下载成功回调
             
         })
-        .start();                        // 开始启动下载
+        .start();                        // 启动下载
 ```
 
 #### 8.2 下载过程控制
