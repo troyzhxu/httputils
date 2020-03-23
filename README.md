@@ -468,15 +468,12 @@ Ctrl ctrl = http.sync("/download/test.zip")
         .setOnProcess((Process process) -> {
             System.out.println(process.getRate());
         })
-        .toFolder("D:/download/")        // 指定下载的目录，文件名将根据下载信息自动生成
-        .start();                        // 启动下载
+        .toFolder("D:/download/")
+        .start();   // 该方法返回一个下载控制器
  
-ctrl.status();      // 获得下载状态
-
+ctrl.status();      // 下载状态
 ctrl.pause();       // 暂停下载
-
 ctrl.resume();      // 恢复下载
-
 ctrl.cancel();      // 取消下载（同时会删除文件）
 ```
 
