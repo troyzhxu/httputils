@@ -19,10 +19,6 @@
  * GET|POST|PUT|DELETE
  * 文件上传下载（过程控制|进度监听）
 
-### 联系方式
-
- * 邮箱：zhou.xu@ejlchina.com
-
 ### 当前文档版本[2.1.2]
 #### [查阅[2.1.0]点我](https://gitee.com/ejlchina-zhxu/httputils/blob/master/README-2.1.0.md) | [查阅[2.0.0]点我](https://gitee.com/ejlchina-zhxu/httputils/blob/master/README-2.0.0.md) | [查阅[1.x.x]点我](https://gitee.com/ejlchina-zhxu/httputils/blob/1.x/README.md)
 
@@ -59,6 +55,7 @@
     - [9.1 上传进度监听](#91-上传进度监听)
     - [9.2 上传过程控制](#92-上传过程控制)
 + [后续计划](#后续计划)
++ [联系方式](#联系方式)
 
 ## 安装教程
 
@@ -656,6 +653,10 @@ call.cancel();  // 取消上传
 ## 后续计划
 
 * 多回调执行器配置，单个请求的不同回调可以自由切换执行器
+
+## 联系方式
+
+* 邮箱：zhou.xu@ejlchina.com
 
 ## 参与贡献
 
