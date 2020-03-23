@@ -6,18 +6,13 @@
 
 ## 介绍
 
-　　Http工具包，封装 OkHttp，自动解析，链式用法、异步同步、前后端通用
+　　Http工具包，轻量封装 OkHttp，设计优雅，在解决前后端各种HTTP请求问题的共同，做到了对前后端专有库没有任何依赖。
 
- * 支持异步、同步请求
- * 支持Restfull风格
- * JSON自动封装与解析
- * TCP连接池
- * 请求拦截器
- * Http2
- * 回调线程配置
- * 异步预处理器
- * GET|POST|PUT|DELETE
+ * 链式调用，一点到底
+ * Rest风格占位符、JSON自动封装与解析
+ * 请求拦截器、异步预处理器、回调执行器
  * 文件上传下载（过程控制|进度监听）
+ * TCP连接池、Http2
 
 ### 当前文档版本[2.2.0]
 #### [查阅[2.1.x]点我](https://gitee.com/ejlchina-zhxu/httputils/blob/master/README-2.1.2.md) | [查阅[2.0.x]点我](https://gitee.com/ejlchina-zhxu/httputils/blob/master/README-2.0.0.md) | [查阅[1.0.x]点我](https://gitee.com/ejlchina-zhxu/httputils/blob/1.x/README.md)
