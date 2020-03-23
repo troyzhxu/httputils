@@ -152,7 +152,7 @@ public abstract class HttpTask<C extends HttpTask<?>> {
      * @param rangeStart 表示从 rangeStart 个字节处开始接收，通常是已经下载的字节数，即上次的断点）
      * @return HttpTask 实例
      */
-    public C setRangeHeader(long rangeStart) {
+    public C setRange(long rangeStart) {
     	return addHeader("Range", "bytes=" + rangeStart + "-");
     }
     
@@ -163,7 +163,7 @@ public abstract class HttpTask<C extends HttpTask<?>> {
      * @param rangeEnd 表示接收到 rangeEnd 个字节处
      * @return HttpTask 实例
      */
-    public C setRangeHeader(long rangeStart, long rangeEnd) {
+    public C setRange(long rangeStart, long rangeEnd) {
     	return addHeader("Range", "bytes=" + rangeStart + "-" + rangeEnd);
     }
     
