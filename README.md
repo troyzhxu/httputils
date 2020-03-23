@@ -497,7 +497,7 @@ List<User> users = http.sync("/users")
 
 #### 8.2 下载过程控制
 
-　　还是直接上代码，你说设计够不够优雅？
+　　还是直接上代码：
 
 ```java
 Ctrl ctrl = http.sync("/download/test.zip")
@@ -587,17 +587,32 @@ static void download(long totalSize, int index) {
 
 ### 9 文件上传
 
-　　`HttpUtils`并没有把文件的下载排除在常规的请求之外，同一套API，它优雅的设计使得下载与常规请求融合的毫无违和感，一个最简单的示例：
+　　一个简单文件上传的示例：
 
 ```java
 http.sync("/upload")
-        
+        .addFileParam("test", "D:/download/test.zip")
         .post()
 ```
 
 #### 9.1 上传进度监听
 
-文档完善中，抢先体验可阅读源码
+　　直接上代码：
+
+```java
+http.sync("/upload")
+        .addFileParam("test", "D:/download/test.zip")
+        .setStepBytes(1024)   // 设置每下载 1024 个字节执行一次进度回调（不设置默认为 8192）  
+ //     .setStepRate(0.01)    // 设置每下载 1% 执行一次进度回调（不设置以 StepBytes 为准）  
+        .setOnProcess((Process process) -> {           // 上传进度回调
+            long doneBytes = process.getDoneBytes();   // 已发送字节数
+            long totalBytes = process.getTotalBytes(); // 总共的字节数
+            double rate = process.getRate();           // 已发送的比例
+            boolean isDone = process.isDone();         // 是否发送完成
+        })
+        .post()
+```
+　　咦！怎么感觉和下载的进度回调的一样？没错！`HttpUtils`还是使用同一套API处理上传和下载的进度回调，区别只在于上传是在`get/post`方法之前使用这些API，下载是在`getBody`方法之后使用。很好理解：`get/post`之前是准备发送请求时期，有上传的含义，而`getBody`之后，已是报文响应的时段，当然是下载。
 
 #### 9.2 上传过程控制
 
