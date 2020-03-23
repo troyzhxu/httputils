@@ -206,11 +206,13 @@ public interface HttpResult {
 	Headers getHeaders();
 
 	/**
+	 * @param name 头名称
 	 * @return 响应头
 	 */
 	List<String> getHeaders(String name);
 
 	/**
+	 * @param name 头名称
 	 * @return 响应头
 	 */
 	String getHeader(String name);

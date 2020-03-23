@@ -40,7 +40,7 @@ public class Download {
 	/**
 	 * 设置缓冲区大小，默认 2K（2048）
 	 * @param buffSize 缓冲区大小（单位：字节）
-	 * @return
+	 * @return Download
 	 */
 	public Download setBuffSize(int buffSize) {
 		if (buffSize > 0) {
@@ -61,6 +61,7 @@ public class Download {
 	
 	/**
 	 * 设置文件指针，从文件的 seekBytes 位置追加内容
+	 * @param seekBytes 跨越的字节数
 	 * @return Download
 	 */
 	public Download setFilePointer(long seekBytes) {
@@ -132,10 +133,10 @@ public class Download {
 		public static final int STATUS__ERROR = 4;
 		
 		/**
-		 * @set {@link #STATUS__CANCELED}
-		 * @set {@link #STATUS__DOWNLOADING}
-		 * @set {@link #STATUS__PAUSED}
-		 * @set {@link #STATUS__DONE}
+		 * @see #STATUS__CANCELED
+		 * @see #STATUS__DOWNLOADING
+		 * @see #STATUS__PAUSED
+		 * @see #STATUS__DONE
 		 * @return 下载状态
 		 */
 		public int status() {
