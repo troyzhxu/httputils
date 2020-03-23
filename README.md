@@ -467,14 +467,14 @@ http.async("/download/test.zip")
 http.sync("/download/test.zip")
         .get()
         .getBody()
+        .setStepBytes(1024)   // 设置每下载 1024 个字节执行一次进度回调（不设置默认为 8192）  
+ //     .setStepRate(0.01)    // 设置每下载 1% 执行一次进度回调（不设置以 StepBytes 为准）  
         .setOnProcess((Process process) -> {           // 下载进度回调
             long doneBytes = process.getDoneBytes();   // 已下载字节数
             long totalBytes = process.getTotalBytes(); // 总共的字节数
             double rate = process.getRate();           // 已下载的比例
             boolean isDone = process.isDone();         // 是否下载完成
         })
-        .setStepBytes(1024)   // 设置每下载 1024 个字节执行一次进度回调（不设置默认为 8192）  
- //     .setStepRate(0.01)    // 设置每下载 1% 执行一次进度回调（不设置以 StepBytes 为准）  
         .toFolder("D:/download/")        // 指定下载的目录，文件名将根据下载信息自动生成
  //     .toFile("D:/download/test.zip")  // 指定下载的路径，若文件已存在则覆盖
         .setOnSuccess((File file) -> {   // 下载成功回调
@@ -488,10 +488,10 @@ http.sync("/download/test.zip")
 List<User> users = http.sync("/users")
         .get()
         .getBody()
+        .setStepBytes(2)
         .setOnProcess((Process process) -> {
             System.out.println(process.getRate());
         })
-        .setStepBytes(1)
         .toList(User.class);
 ```
 
