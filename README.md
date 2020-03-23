@@ -439,7 +439,7 @@ List<User> users = HttpUtils.sync("/users")
 
 ### 8 文件下载
 
-　　`HttpUtils`并没有把文件的下载排除在常规的请求之外，使用同一套API，它优雅的设计使得下载与常规请求融合的毫无违和感，一个最简单的示例：
+　　`HttpUtils`并没有把文件的下载排除在常规的请求之外，同一套API，它优雅的设计使得下载与常规请求融合的毫无违和感，一个最简单的示例：
 
 ```java
 http.sync("/download/test.zip")
