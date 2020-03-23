@@ -482,7 +482,7 @@ http.sync("/download/test.zip")
         })
         .start();
 ```
-　　值得一提的是：由于`HttpUtils`并没有把下载做的很特别，这里设置的进度回调不只对下载文件起用作，即使对响应JSON的常规请求，只要设置了进度回调，它都会告诉你报文传输的进度（提前是服务器响应的报文有`Content-Length`头），例如：
+　　值得一提的是：由于`HttpUtils`并没有把下载做的很特别，这里设置的进度回调不只对下载文件起用作，即使对响应JSON的常规请求，只要设置了进度回调，它也会告诉你报文传输的进度（提前是服务器响应的报文有`Content-Length`头），例如：
 
 ```java
 List<User> users = http.sync("/users")
@@ -594,14 +594,23 @@ http.sync("/upload")
         .addFileParam("test", "D:/download/test.zip")
         .post()
 ```
+　　异步上传也是完全一样：
+
+```java
+http.async("/upload")
+        .addFileParam("test", "D:/download/test.zip")
+        .post()
+```
 
 #### 9.1 上传进度监听
 
-　　直接上代码：
+　　`HttpUtils`的上传进度监听，监听的是所有请求报问题的发送进度，示例代码：
 
 ```java
 http.sync("/upload")
-        .addFileParam("test", "D:/download/test.zip")
+        .addBodyParam("name", "Jack")
+        .addBodyParam("age", 20)
+        .addFileParam("avatar", "D:/image/avatar.jpg")
         .setStepBytes(1024)   // 设置每下载 1024 个字节执行一次进度回调（不设置默认为 8192）  
  //     .setStepRate(0.01)    // 设置每下载 1% 执行一次进度回调（不设置以 StepBytes 为准）  
         .setOnProcess((Process process) -> {           // 上传进度回调
@@ -613,6 +622,19 @@ http.sync("/upload")
         .post()
 ```
 　　咦！怎么感觉和下载的进度回调的一样？没错！`HttpUtils`还是使用同一套API处理上传和下载的进度回调，区别只在于上传是在`get/post`方法之前使用这些API，下载是在`getBody`方法之后使用。很好理解：`get/post`之前是准备发送请求时段，有上传的含义，而`getBody`之后，已是报文响应的时段，当然是下载。
+
+　　同样的，上传进度回调也不只对上传文件起用作，即使是普通的提交表单，只要设置了进度回调，它也会老老实实地告诉你报文发送的进度，例如：
+
+```java
+http.sync("/users")
+        .addBodyParam("name", "Jack")
+        .addBodyParam("age", 20)
+        .setStepBytes(1)
+        .setOnProcess((Process process) -> {
+            System.out.println(process.getRate());
+        })
+        .post()
+```
 
 #### 9.2 上传过程控制
 
