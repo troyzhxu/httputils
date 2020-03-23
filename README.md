@@ -461,8 +461,8 @@ http.async("/download/test.zip")
 http.sync("/download/test.zip")
         .get()
         .getBody()
-        .setStepBytes(1024)   // 设置每下载 1024 个字节执行一次进度回调（不设置默认为 8192）  
- //     .setStepRate(0.01)    // 设置每下载 1% 执行一次进度回调（不设置以 StepBytes 为准）  
+        .setStepBytes(1024)   // 设置每接收 1024 个字节执行一次进度回调（不设置默认为 8192）  
+ //     .setStepRate(0.01)    // 设置每接收 1% 执行一次进度回调（不设置以 StepBytes 为准）  
         .setOnProcess((Process process) -> {           // 下载进度回调
             long doneBytes = process.getDoneBytes();   // 已下载字节数
             long totalBytes = process.getTotalBytes(); // 总共的字节数
@@ -476,7 +476,7 @@ http.sync("/download/test.zip")
         })
         .start();
 ```
-　　值得一提的是：由于`HttpUtils`并没有把下载做的很特别，这里设置的进度回调不只对下载文件起用作，即使对响应JSON的常规请求，只要设置了进度回调，它也会告诉你报文传输的进度（提前是服务器响应的报文有`Content-Length`头），例如：
+　　值得一提的是：由于`HttpUtils`并没有把下载做的很特别，这里设置的进度回调不只对下载文件起用作，即使对响应JSON的常规请求，只要设置了进度回调，它也会告诉你报文接收的进度（提前是服务器响应的报文有`Content-Length`头），例如：
 
 ```java
 List<User> users = http.sync("/users")
@@ -491,7 +491,7 @@ List<User> users = http.sync("/users")
 
 #### 8.2 下载过程控制
 
-　　还是直接上代码：
+　　过于简单：还是直接上代码：
 
 ```java
 Ctrl ctrl = http.sync("/download/test.zip")
@@ -539,7 +539,7 @@ http.sync("/download/test.zip")
 
 ```java
 long doneBytes = ...    // 拿到保存的断点
-File file =  ...        // 拿到保存的文件
+File file =  ...        // 待续传的文件
 
 http.sync("/download/test.zip")
         .setRange(doneBytes)                         // 设置断点（已下载的字节数）
@@ -558,7 +558,7 @@ http.sync("/download/test.zip")
 
 #### 8.4 实现分块下载
 
-　　当文件很大时，有时候我们会考虑分块下载，与断点续传的思路是一样的：
+　　当文件很大时，有时候我们会考虑分块下载，与断点续传的思路是一样的，示例代码：
 
 ```java
 static String url = "http://api.demo.com/download/test.zip"
@@ -617,8 +617,8 @@ http.sync("/upload")
         .addBodyParam("name", "Jack")
         .addBodyParam("age", 20)
         .addFileParam("avatar", "D:/image/avatar.jpg")
-        .setStepBytes(1024)   // 设置每下载 1024 个字节执行一次进度回调（不设置默认为 8192）  
- //     .setStepRate(0.01)    // 设置每下载 1% 执行一次进度回调（不设置以 StepBytes 为准）  
+        .setStepBytes(1024)   // 设置每发送 1024 个字节执行一次进度回调（不设置默认为 8192）  
+ //     .setStepRate(0.01)    // 设置每发送 1% 执行一次进度回调（不设置以 StepBytes 为准）  
         .setOnProcess((Process process) -> {           // 上传进度回调
             long doneBytes = process.getDoneBytes();   // 已发送字节数
             long totalBytes = process.getTotalBytes(); // 总共的字节数
@@ -659,13 +659,3 @@ call.cancel();  // 取消上传
 2.  新建 Feat_xxx 分支
 3.  提交代码
 4.  新建 Pull Request
-
-
-## 码云特技
-
-1.  使用 Readme\_XXX.md 来支持不同的语言，例如 Readme\_en.md, Readme\_zh.md
-2.  码云官方博客 [blog.gitee.com](https://blog.gitee.com)
-3.  你可以 [https://gitee.com/explore](https://gitee.com/explore) 这个地址来了解码云上的优秀开源项目
-4.  [GVP](https://gitee.com/gvp) 全称是码云最有价值开源项目，是码云综合评定出的优秀开源项目
-5.  码云官方提供的使用手册 [https://gitee.com/help](https://gitee.com/help)
-6.  码云封面人物是一档用来展示码云会员风采的栏目 [https://gitee.com/gitee-stars/](https://gitee.com/gitee-stars/)
