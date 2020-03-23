@@ -514,6 +514,16 @@ ctrl.pause();       // 暂停下载
 ctrl.resume();      // 恢复下载
 ctrl.cancel();      // 取消下载（同时会删除文件，不可恢复）
 ```
+　　无论是同步还是异步发起的下载请求，都可以做以上控制：
+
+```java
+http.async("/download/test.zip")
+        .setOnResponse((HttpResult result) -> {
+            // 拿到过程控制对象
+            Ctrl ctrl = result.getBody().toFolder("D:/download/").start();
+        })
+        .get();
+```
 
 #### 8.3 实现断点续传
 
@@ -606,7 +616,7 @@ http.async("/upload")
 
 #### 9.1 上传进度监听
 
-　　`HttpUtils`的上传进度监听，监听的是所有请求报问题的发送进度，示例代码：
+　　`HttpUtils`的上传进度监听，监听的是所有请求报文体的发送进度，示例代码：
 
 ```java
 http.sync("/upload")
@@ -625,22 +635,23 @@ http.sync("/upload")
 ```
 　　咦！怎么感觉和下载的进度回调的一样？没错！`HttpUtils`还是使用同一套API处理上传和下载的进度回调，区别只在于上传是在`get/post`方法之前使用这些API，下载是在`getBody`方法之后使用。很好理解：`get/post`之前是准备发送请求时段，有上传的含义，而`getBody`之后，已是报文响应的时段，当然是下载。
 
-　　同样的，上传进度回调也不只对上传文件起用作，即使是普通的提交表单，只要设置了进度回调，它也会老老实实地告诉你报文发送的进度，例如：
+#### 9.2 上传过程控制
+
+　　上传文件的过程控制很简单，和
 
 ```java
-http.sync("/users")
-        .addBodyParam("name", "Jack")
-        .addBodyParam("age", 20)
-        .setStepBytes(1)
+HttpCall call = http.async("/upload")
+        .addFileParam("test", "D:/download/test.zip")
         .setOnProcess((Process process) -> {
             System.out.println(process.getRate());
         })
         .post()
+
+
+
 ```
 
-#### 9.2 上传过程控制
 
-文档完善中，抢先体验可阅读源码
 
 ## 计划开发
 
