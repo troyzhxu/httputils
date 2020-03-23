@@ -557,23 +557,41 @@ http.sync("/download/test.zip")
 　　当文件很大时，有时候我们会考虑分块下载，与断点续传的思路是一样的：
 
 ```java
-Body body = http.sync("/download/test.zip").get().getBody();
-long totalSize = body.getContentLength();            // 先获取需要下载的文件大小
-body.close();                                        // 直接关闭（不下载）
+String url = "/download/test.zip";        // 服务器文件地址
+String filePath = "D:/download/test.zip"; // 下载后保存路径
 
-long size = 10 * 1024 * 1024;                        // 单次下载 10M  
+long totalSize = http.sync(url).get().getBody()
+        .close()                          // 因为这次请求只是为了获得文件大小，不消费报文体，所以直接关闭
+        .getContentLength(); 
 
-for (int i = 0; i * size < totalSize; i++) {         // 循环下载
-    long start = i * size;
+long size = 3 * 1024 * 1024;              // 每块下载 3M  
+
+doPartDownload(0);                        // 从第 0 块开始下载
+
+void doPartDownload(int index) {
+    long start = index * size;
     long end = Math.min(start + size, totalSize);
-    http.sync("/download/test.zip")
-            .setRange(start, end)                    // 设置单次下载的范围
+    http.sync(url)
+            .setRange(start, end)         // 设置本次下载的范围
             .get()
             .getBody()
-            .toFile("D:/download/test.zip")          // 下载到同一个文件里
-            .setAppended()                           // 开启文件追加模式
+            .setRangeIgnored()            // 设置进度回调忽略Range,即每次下载比例都是从0到1
+            .setOnProcess((Process process) -> {
+                System.out.println("进度：" + process.getRate());
+            })
+            .toFile(filePath)             // 下载到同一个文件里
+            .setAppended()                // 开启文件追加模式
+            .setOnSuccess((File file) -> {
+                if (end < totalSize) {
+                    // 若未下载完，则继续下载下一块
+                    download(index + 1, totalSize, size); 
+                } else {
+                    System.out.println("下载完成");
+                }
+            })
             .start();
 }
+
 ```
 
 ### 9 文件上传

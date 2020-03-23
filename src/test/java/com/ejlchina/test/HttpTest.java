@@ -32,6 +32,50 @@ public class HttpTest {
 		System.out.println(Long.parseLong("12"));
 	}
 	
+	HTTP http = HTTP.builder().build();
+	String url = "http://47.100.7.202/wxcode.zip";
+	
+	@Test
+	public void testBlockDownload() {
+		Body body = http.sync(url).get().getBody().close();
+		long totalSize = body.getContentLength();            // 先获取需要下载的文件大小
+
+		long size = 3 * 1024 * 1024;                        // 单次下载 3M  
+
+		System.out.println("totalSize = " + totalSize + ", size = " + size);
+		
+//		download(0, totalSize, size);
+//		
+//		sleep(50000);
+	}
+	
+
+	public void download(int index, long totalSize, long size) {
+		System.out.println("下载次数：" + index);
+	    long start = index * size;
+	    long end = Math.min(start + size, totalSize);
+	    http.sync(url)
+	            .setRange(start, end)                    // 设置单次下载的范围
+	            .get()
+	            .getBody()
+	            .setStepRate(0.1)
+	            .setRangeIgnored()
+	            .setOnProcess((Process process) -> {
+	                System.out.println("进度：" + process.getRate());
+	            })
+	            .toFile("D:/download/wxcode.zip")          // 下载到同一个文件里
+	            .setAppended()                             // 开启文件追加模式
+	            .setOnSuccess((File file) -> {
+	            	if (end < totalSize) {
+	            		download(index + 1, totalSize, size);
+	            	} else {
+	            		System.out.println("下载完成");
+	            	}
+	            })
+	            .start();
+	}
+	
+	
 	@Test
 	public void testUpload() {
 		String data = "0123456789abcdefghijklmnopqrstuvwsyz0123456789abcdefghijklmnopqrstuvwsyz0123456789abcdefghijklmnopqrstuvwsyz0123456789abcdefghijklmnopqrstuvwsyz0123456789abcdefghijklmnopqrstuvwsyz";
