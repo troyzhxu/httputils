@@ -473,15 +473,9 @@ Ctrl ctrl = http.sync("/download/test.zip")
  
 ctrl.status();      // 获得下载状态
 
-sleep(1000);
-
 ctrl.pause();       // 暂停下载
 
-sleep(1000); 
-
 ctrl.resume();      // 恢复下载
-
-sleep(1000);
 
 ctrl.cancel();      // 取消下载（同时会删除文件）
 ```
