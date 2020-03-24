@@ -164,6 +164,7 @@ public class HttpTest {
 		return System.currentTimeMillis() - t0;
 	}
 
+	
 	@Test
 	public void testToList() {
 		long t0 = System.currentTimeMillis();
@@ -172,7 +173,9 @@ public class HttpTest {
 				.baseUrl("http://tst-api-mini.cdyun.vip/ejlchina")
 				.build();
 		
-		HttpResult result = http.sync("/comm/provinces").get();
+		HttpResult result = http.sync("/comm/provinces")
+				.setRange(0)
+				.get();
 		
 		print(t0, "status: " + result.getStatus(), true);
 		print(t0, "headers: " + result.getHeaders(), true);

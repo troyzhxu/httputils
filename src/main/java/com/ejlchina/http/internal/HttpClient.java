@@ -121,6 +121,11 @@ public class HttpClient implements HTTP {
         return MediaType.parse("application/octet-stream");
     }
 
+	
+	public Executor getOkExecutor() {
+		return client.dispatcher().executorService();
+	}
+
 	public Executor getCallbackExecutor() {
 		if (callbackExecutor == null) {
 			callbackExecutor = new Executor() {
