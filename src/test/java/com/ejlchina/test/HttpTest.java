@@ -350,7 +350,7 @@ public class HttpTest {
 					});
 				})
 				.baseUrl("http://localhost:8080")
-				.mainExecutor((Runnable run) -> {
+				.callbackExecutor((Runnable run) -> {
 					runOnUiThread(run);
 				})
 				.addPreprocessor((PreChain process) -> {

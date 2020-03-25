@@ -337,7 +337,7 @@ public class HttpClient implements HTTP {
 	     * @param executor 回调执行器
 	     * @return Builder
 	     */
-		public Builder mainExecutor(Executor executor) {
+		public Builder callbackExecutor(Executor executor) {
 			this.mainExecutor = executor;
 			return this;
 		}
