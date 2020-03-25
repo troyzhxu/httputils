@@ -353,25 +353,25 @@ public class HttpTest {
 				.callbackExecutor((Runnable run) -> {
 					runOnUiThread(run);
 				})
-				.addPreprocessor((PreChain process) -> {
+				.addPreprocessor((PreChain chain) -> {
 					new Thread(() -> {
 						try {
 							Thread.sleep(100);
 						} catch (InterruptedException e) {
 							e.printStackTrace();
 						}
-						process.getTask().addHeader("Token", "yyyyy");
+						chain.getTask().addHeader("Token", "yyyyy");
 				
-						process.proceed();
+						chain.proceed();
 						
 					}).start();
 				})
-				.addPreprocessor((PreChain process) -> {
+				.addPreprocessor((PreChain chain) -> {
 					new Thread(() -> {
 
-						process.getTask().addUrlParam("actor", "Alice");
+						chain.getTask().addUrlParam("actor", "Alice");
 				
-						process.proceed();
+						chain.proceed();
 				
 					}).start();
 				})
