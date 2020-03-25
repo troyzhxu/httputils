@@ -116,6 +116,7 @@ public class HttpTest {
 				.toFolder("D:/WorkSpace/download/")
 //				.toFile("D:\\WorkSpace\\download\\CocosDashboard-v1.0.1-win32-031816(9).exe")
 				.setAppended() // 启用 断点续传
+				.runOnIO()
 				.setOnSuccess((File file) -> {
 					print(t0, "下载成功：" + file.getAbsolutePath(), true);
 				})
@@ -349,7 +350,7 @@ public class HttpTest {
 					});
 				})
 				.baseUrl("http://localhost:8080")
-				.callbackExecutor((Runnable run) -> {
+				.mainExecutor((Runnable run) -> {
 					runOnUiThread(run);
 				})
 				.addPreprocessor((PreChain process) -> {

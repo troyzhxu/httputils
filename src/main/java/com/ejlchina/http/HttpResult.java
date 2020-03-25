@@ -66,7 +66,7 @@ public interface HttpResult {
 	     * 在IO线程执行
 	     * @return Body
 	     */
-		Body setOnIO();
+		Body runOnIO();
 		
 		/**
 		 * 设置报文体接收进度回调

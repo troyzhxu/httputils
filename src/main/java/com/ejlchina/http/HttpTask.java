@@ -121,7 +121,7 @@ public abstract class HttpTask<C extends HttpTask<?>> {
      * 在IO线程执行
      * @return HttpTask 实例
      */
-    public C setOnIO() {
+    public C runOnIO() {
     	nextOnIO = true;
     	return (C) this;
     }

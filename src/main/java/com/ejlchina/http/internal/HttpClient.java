@@ -41,7 +41,7 @@ public class HttpClient implements HTTP {
 		this.client = builder.client;
 		this.baseUrl = builder.baseUrl;
 		this.mediaTypes = builder.mediaTypes;
-		this.executor = new TaskExecutor(client.dispatcher().executorService(), builder.callbackExecutor);
+		this.executor = new TaskExecutor(client.dispatcher().executorService(), builder.mainExecutor);
 		this.preprocessors = builder.preprocessors.toArray(new Preprocessor[builder.preprocessors.size()]);
 		this.tagCalls = Collections.synchronizedList(new LinkedList<>());
 	}
@@ -259,7 +259,7 @@ public class HttpClient implements HTTP {
 		
 		private Configurator configurator;
 		
-		private Executor callbackExecutor;
+		private Executor mainExecutor;
 
 		private List<Preprocessor> preprocessors;
 		
@@ -337,8 +337,8 @@ public class HttpClient implements HTTP {
 	     * @param executor 回调执行器
 	     * @return Builder
 	     */
-		public Builder callbackExecutor(Executor executor) {
-			this.callbackExecutor = executor;
+		public Builder mainExecutor(Executor executor) {
+			this.mainExecutor = executor;
 			return this;
 		}
 		
