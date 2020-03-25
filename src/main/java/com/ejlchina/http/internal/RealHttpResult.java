@@ -1,7 +1,6 @@
 package com.ejlchina.http.internal;
 
 import java.util.List;
-import java.util.concurrent.Executor;
 
 import com.ejlchina.http.HttpResult;
 
@@ -14,7 +13,7 @@ public class RealHttpResult implements HttpResult {
 	private State state;
 	private Response response;
 	private Exception error;
-	private Executor callbackExecutor;
+	private TaskExecutor taskExecutor;
 	
 	public RealHttpResult() {
 	}
@@ -23,13 +22,13 @@ public class RealHttpResult implements HttpResult {
 		this.state = state;
 	}
 	
-	public RealHttpResult(Response response, Executor callbackExecutor) {
-		this(callbackExecutor);
+	public RealHttpResult(Response response, TaskExecutor taskExecutor) {
+		this(taskExecutor);
 		response(response);
 	}
 	
-	public RealHttpResult(Executor callbackExecutor) {
-		this.callbackExecutor = callbackExecutor;
+	public RealHttpResult(TaskExecutor taskExecutor) {
+		this.taskExecutor = taskExecutor;
 	}
 	
 	public RealHttpResult(State state, Exception error) {
@@ -88,7 +87,7 @@ public class RealHttpResult implements HttpResult {
 	@Override
 	public Body getBody() {
 		if (response != null) {
-			return new ResultBody(response, callbackExecutor);
+			return new ResultBody(response, taskExecutor);
 		}
 		return null;
 	}

@@ -29,8 +29,8 @@ public class HttpClient implements HTTP {
 	private String baseUrl;
 	// 媒体类型
 	private Map<String, String> mediaTypes;
-	// 回调执行器
-	private Executor callbackExecutor;
+	// 执行器
+	private TaskExecutor executor;
 	// 预处理器
 	private Preprocessor[] preprocessors;
 
@@ -41,7 +41,7 @@ public class HttpClient implements HTTP {
 		this.client = builder.client;
 		this.baseUrl = builder.baseUrl;
 		this.mediaTypes = builder.mediaTypes;
-		this.callbackExecutor = builder.callbackExecutor;
+		this.executor = new TaskExecutor(client.dispatcher().executorService(), builder.callbackExecutor);
 		this.preprocessors = builder.preprocessors.toArray(new Preprocessor[builder.preprocessors.size()]);
 		this.tagCalls = Collections.synchronizedList(new LinkedList<>());
 	}
@@ -121,21 +121,8 @@ public class HttpClient implements HTTP {
         return MediaType.parse("application/octet-stream");
     }
 
-	
-	public Executor getOkExecutor() {
-		return client.dispatcher().executorService();
-	}
-
-	public Executor getCallbackExecutor() {
-		if (callbackExecutor == null) {
-			callbackExecutor = new Executor() {
-				@Override
-				public void execute(Runnable command) {
-					command.run();
-				}
-			};
-		}
-		return callbackExecutor;
+	public TaskExecutor getExecutor() {
+		return executor;
 	}
 
 	public void preprocess(HttpTask<? extends HttpTask<?>> httpTask, Runnable request) {

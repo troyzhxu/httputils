@@ -12,7 +12,6 @@ import java.net.HttpURLConnection;
 import java.net.URLDecoder;
 import java.nio.charset.Charset;
 import java.util.List;
-import java.util.concurrent.Executor;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
@@ -29,15 +28,16 @@ import okio.Buffer;
 public class ResultBody implements Body {
 	
 	private Response response;
-	private Executor callbackExecutor;
+	private TaskExecutor taskExecutor;
+	private boolean onIO = false;
 	private OnCallback<Process> onProcess;
 	private long stepBytes = 0;
 	private double stepRate = -1;
 	private boolean rangeIgnored = false;
 
-	ResultBody(Response response, Executor callbackExecutor) {
+	ResultBody(Response response, TaskExecutor taskExecutor) {
 		this.response = response;
-		this.callbackExecutor = callbackExecutor;
+		this.taskExecutor = taskExecutor;
 	}
 
 	@Override
@@ -49,6 +49,12 @@ public class ResultBody implements Body {
 	public long getContentLength() {
 		return response.body().contentLength();
 	}
+	
+	@Override
+    public Body setOnIO() {
+    	onIO = true;
+    	return this;
+    }
 
 	@Override
 	public Body setOnProcess(OnCallback<Process> onProcess) {
@@ -90,7 +96,7 @@ public class ResultBody implements Body {
 				stepBytes = Process.DEFAULT_STEP_BYTES;
 			}
 			return new ProcessInputStream(input, onProcess, totalBytes, stepBytes, 
-					rangeIgnored ? 0 : rangeStart, callbackExecutor);
+					rangeIgnored ? 0 : rangeStart, taskExecutor.getExecutor(onIO));
 		}
 		return input;
 	}
@@ -178,7 +184,7 @@ public class ResultBody implements Body {
 			}
 		}
 		long rangeStart = getRangeStart();
-		return new Download(file, toByteStream(), callbackExecutor, rangeStart);
+		return new Download(file, toByteStream(), taskExecutor, rangeStart);
 	}
 	
 	@Override

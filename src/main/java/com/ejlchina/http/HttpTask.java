@@ -39,6 +39,7 @@ public abstract class HttpTask<C extends HttpTask<?>> {
     protected HttpClient httpClient;
     protected boolean nothrow;
     protected String tag;
+    protected boolean nextOnIO = false;
     
     private String urlPath;
     private Map<String, String> headers;
@@ -49,9 +50,10 @@ public abstract class HttpTask<C extends HttpTask<?>> {
     private Map<String, FilePara> files;
     private String requestJson;
     private OnCallback<Process> onProcess;
+    private boolean pOnIO;
 	private long stepBytes = 0;
 	private double stepRate = -1;
-
+	
     
     public HttpTask(HttpClient httpClient, String url) {
     	this.httpClient = httpClient;
@@ -115,6 +117,16 @@ public abstract class HttpTask<C extends HttpTask<?>> {
     	return (C) this;
     }
 
+    /**
+     * 在IO线程执行
+     * @return HttpTask 实例
+     */
+    public C setOnIO() {
+    	nextOnIO = true;
+    	return (C) this;
+    }
+    
+    
 	/**
      * 添加请求头
      * @param name 请求头名
@@ -174,6 +186,8 @@ public abstract class HttpTask<C extends HttpTask<?>> {
 	 */
 	public C setOnProcess(OnCallback<Process> onProcess) {
 		this.onProcess = onProcess;
+		pOnIO = nextOnIO;
+		nextOnIO = false;
 		return (C) this;
 	}
 	
@@ -478,7 +492,6 @@ public abstract class HttpTask<C extends HttpTask<?>> {
 
     }
     
-    
     protected Call prepareCall(String method) {
     	assertNotConflict("GET".equals(method));
         Request.Builder builder = new Request.Builder()
@@ -496,7 +509,7 @@ public abstract class HttpTask<C extends HttpTask<?>> {
 					stepBytes = Process.DEFAULT_STEP_BYTES;
 				}
 				reqBody = new ProcessRequestBody(reqBody, onProcess, 
-						httpClient.getCallbackExecutor(), 
+						httpClient.getExecutor().getExecutor(pOnIO), 
 						contentLength, stepBytes);
 			}
 		}

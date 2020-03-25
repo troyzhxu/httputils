@@ -25,7 +25,11 @@ public class AsyncHttpTask extends HttpTask<AsyncHttpTask> {
     private OnCallback<HttpResult> onResponse;
     private OnCallback<Exception> onException;
     private OnCallback<State> onComplete;
-
+    private boolean rOnIO;
+    private boolean eOnIO;
+    private boolean cOnIO;
+    
+    
 	public AsyncHttpTask(HttpClient client, String url) {
 		super(client, url);
 	}
@@ -38,6 +42,8 @@ public class AsyncHttpTask extends HttpTask<AsyncHttpTask> {
 	 */
     public AsyncHttpTask setOnException(OnCallback<Exception> onException) {
         this.onException = onException;
+        eOnIO = nextOnIO;
+        nextOnIO = false;
         return this;
     }
 
@@ -48,6 +54,8 @@ public class AsyncHttpTask extends HttpTask<AsyncHttpTask> {
 	 */
     public AsyncHttpTask setOnComplete(OnCallback<State> onComplete) {
         this.onComplete = onComplete;
+        cOnIO = nextOnIO;
+        nextOnIO = false;
         return this;
     }
     
@@ -58,6 +66,8 @@ public class AsyncHttpTask extends HttpTask<AsyncHttpTask> {
 	 */
     public AsyncHttpTask setOnResponse(OnCallback<HttpResult> onResponse) {
         this.onResponse = onResponse;
+        rOnIO = nextOnIO;
+        nextOnIO = false;
         return this;
     }
     
@@ -240,7 +250,7 @@ public class AsyncHttpTask extends HttpTask<AsyncHttpTask> {
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-            	HttpResult result = new RealHttpResult(response, httpClient.getCallbackExecutor());
+            	HttpResult result = new RealHttpResult(response, httpClient.getExecutor());
             	doOnResponse(result);
             	httpCall.setResult(result);
             }
@@ -251,30 +261,37 @@ public class AsyncHttpTask extends HttpTask<AsyncHttpTask> {
     
 
 	private void doOnResponse(HttpResult result) {
-		httpClient.getCallbackExecutor().execute(() -> {
-			if (onComplete != null) {
-			    onComplete.on(State.RESPONSED);
-			}
-			if (onResponse != null) {
+		TaskExecutor executor = httpClient.getExecutor();
+		if (onComplete != null) {
+			executor.getExecutor(cOnIO).execute(() -> {
+				onComplete.on(State.RESPONSED);
+			});
+		}
+		if (onResponse != null) {
+			executor.getExecutor(rOnIO).execute(() -> {
 				onResponse.on(result);
-			}
-		});
+			});
+		}
 	}
 	
 	private void doOnException(State state, Exception e) {
-		httpClient.getCallbackExecutor().execute(() -> {
-			if (onComplete != null) {
-	            onComplete.on(state);
-	        }
-			// 请求取消不作为一种异常来处理
-			if (state != State.CANCELED) {
-				if (onException != null) {
-				    onException.on(e);
-				} else if (!nothrow) {
-					throw new HttpException(e.getMessage(), e);
-				}
-			}
-		});
+		TaskExecutor executor = httpClient.getExecutor();
+		if (onComplete != null) {
+			executor.getExecutor(cOnIO).execute(() -> {
+		    	onComplete.on(state);
+			});
+		}
+		// 请求取消不作为一种异常来处理
+		if (state == State.CANCELED) {
+			return;
+		}
+		if (onException != null) {
+			executor.getExecutor(eOnIO).execute(() -> {
+				onException.on(e);
+			});
+		} else if (!nothrow) {
+			throw new HttpException(e.getMessage(), e);
+		}
 	}
 	
 }

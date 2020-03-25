@@ -62,6 +62,12 @@ public interface HttpResult {
 		 */
 		long getContentLength();
 
+	    /**
+	     * 在IO线程执行
+	     * @return Body
+	     */
+		Body setOnIO();
+		
 		/**
 		 * 设置报文体接收进度回调
 		 * @param onProcess 进度回调函数

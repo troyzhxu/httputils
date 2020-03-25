@@ -5,9 +5,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.RandomAccessFile;
-import java.util.concurrent.Executor;
 
 import com.ejlchina.http.internal.HttpException;
+import com.ejlchina.http.internal.TaskExecutor;
 
 import okhttp3.internal.Util;
 
@@ -22,7 +22,7 @@ public class Download {
 	private InputStream input;
 	private OnCallback<File> onSuccess;
 	private OnCallback<Failure> onFailure;
-	private Executor callbackExecutor;
+	private TaskExecutor taskExecutor;
 	private long doneBytes;
 	private int buffSize = 0;
 	private long seekBytes = 0;
@@ -30,10 +30,14 @@ public class Download {
 	private volatile int status;
 	private Object lock = new Object();
 	
-	public Download(File file, InputStream input, Executor executor, long skipBytes) {
+	protected boolean nextOnIO = false;
+    private boolean sOnIO;
+    private boolean fOnIO;
+	
+	public Download(File file, InputStream input, TaskExecutor taskExecutor, long skipBytes) {
 		this.file = file;
 		this.input = input;
-		this.callbackExecutor = executor;
+		this.taskExecutor = taskExecutor;
 		this.seekBytes = skipBytes;
 	}
 
@@ -69,6 +73,15 @@ public class Download {
 		return this;
 	}
 	
+    /**
+     * 在IO线程执行
+     * @return Download
+     */
+    public Download setOnIO() {
+    	nextOnIO = true;
+    	return this;
+    }
+    
 	/**
 	 * 设置下载成功回调
 	 * @param onSuccess 成功回调函数
@@ -76,6 +89,8 @@ public class Download {
 	 */
 	public Download setOnSuccess(OnCallback<File> onSuccess) {
 		this.onSuccess = onSuccess;
+		sOnIO = nextOnIO;
+		nextOnIO = false;
 		return this;
 	}
 	
@@ -86,6 +101,8 @@ public class Download {
 	 */
 	public Download setOnFailure(OnCallback<Failure> onFailure) {
 		this.onFailure = onFailure;
+		fOnIO = nextOnIO;
+		nextOnIO = false;
 		return this;
 	}
 	
@@ -99,9 +116,10 @@ public class Download {
 		}
 		RandomAccessFile raFile = randomAccessFile();
 		status = Ctrl.STATUS__DOWNLOADING;
-		new Thread(() -> {
-			doDownload(raFile);
-		}).start();
+		taskExecutor.getExecutor(true)
+			.execute(() -> {
+				doDownload(raFile);
+			});
 		return new Ctrl();
 	}
 	
@@ -255,9 +273,10 @@ public class Download {
 				status = Ctrl.STATUS__ERROR;
 			}
 			if (onFailure != null) {
-				callbackExecutor.execute(() -> {
-					onFailure.on(new Failure(e));
-				});
+				taskExecutor.getExecutor(fOnIO)
+					.execute(() -> {
+						onFailure.on(new Failure(e));
+					});
 			} else {
 				throw new HttpException("流传输失败", e);
 			}
@@ -268,11 +287,12 @@ public class Download {
 				file.delete();
 			}
 		}
-		if (status == Ctrl.STATUS__DONE 
+		if (status == Ctrl.STATUS__DONE
 				&& onSuccess != null) {
-			callbackExecutor.execute(() -> {
-				onSuccess.on(file);
-			});
+			taskExecutor.getExecutor(sOnIO)
+				.execute(() -> {
+					onSuccess.on(file);
+				});
 		}
 	}
 
