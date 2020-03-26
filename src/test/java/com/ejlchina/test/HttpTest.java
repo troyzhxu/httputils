@@ -7,7 +7,6 @@ import java.util.concurrent.TimeUnit;
 
 import org.junit.Test;
 
-import com.ejlchina.http.Download.Ctrl;
 import com.ejlchina.http.Download.Failure;
 import com.ejlchina.http.HTTP;
 import com.ejlchina.http.HttpCall;
@@ -27,6 +26,34 @@ import okhttp3.Request;
 
 public class HttpTest {
 
+	
+	@Test
+	public void testExecutor() {
+		HTTP http = HTTP.builder()
+				.callbackExecutor((Runnable command) -> {
+					System.out.println("主线程执行");
+					command.run();
+				}).build();
+		
+		http.async("http://47.100.7.202/ejl-test.zip")
+				.addBodyParam("name", "Jack")
+//				.runOnIO()
+				.setOnProcess((Process process) -> {
+					System.out.println("process： " + process.getRate());
+				})
+//				.runOnIO()
+				.setOnResponse((HttpResult result) -> {
+					System.out.println("status： " + result.close().getStatus());
+				})
+				.runOnIO()
+				.setOnComplete((State state) -> {
+					System.out.println("state： " + state);
+				})
+				.post();
+		
+		sleep(3000);
+	}
+	
 	
 	public static void main(String[] args) {
 	    long totalSize = HttpUtils.sync("/download/test.zip").get().getBody()
@@ -98,15 +125,15 @@ public class HttpTest {
 				})
 				.build();
 		
-//		String url = "https://download.cocos.com/CocosDashboard/v1.0.1/CocosDashboard-v1.0.1-win32-031816.exe";
-		String url = "http://47.100.7.202/ejl-test.zip";
+		String url = "https://download.cocos.com/CocosDashboard/v1.0.1/CocosDashboard-v1.0.1-win32-031816.exe";
+//		String url = "http://47.100.7.202/ejl-test.zip";
 
 		long t0 = System.currentTimeMillis();
 		
 		// TODO: 只有 调用了 setSkipBytes 和使用 toFile 方法，才能启用 断点续传
-		Ctrl ctrl = 
+//		Ctrl ctrl = 
 		http.sync(url)
-				.setRange(24771214)
+//				.setRange(24771214)
 				.get()
 				.getBody()
 				.setOnProcess((Process process) -> {
@@ -115,7 +142,7 @@ public class HttpTest {
 				.setStepRate(0.1)
 				.toFolder("D:/WorkSpace/download/")
 //				.toFile("D:\\WorkSpace\\download\\CocosDashboard-v1.0.1-win32-031816(9).exe")
-				.setAppended() // 启用 断点续传
+//				.setAppended() // 启用 断点续传
 				.runOnIO()
 				.setOnSuccess((File file) -> {
 					print(t0, "下载成功：" + file.getAbsolutePath(), true);
@@ -127,8 +154,8 @@ public class HttpTest {
 		
 		sleep(10000);
 		
-		ctrl.status();
-		ctrl.pause();
+//		ctrl.status();
+//		ctrl.pause();
 //		System.out.println("暂停");
 //		sleep(5000);
 //		
