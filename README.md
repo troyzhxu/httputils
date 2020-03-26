@@ -267,8 +267,8 @@ System.out.println(call.isCanceled());     // true
 * `addFileParam(String name, String type, String fileName, byte[] content)` 上传文件
 
 * `setTag(String tag)` 为HTTP任务添加标签
-* `setRangeHeader(long rangeStart)` 设置Range头信息，用于断点续传
-* `setRangeHeader(long rangeStart, long rangeEnd)` 设置Range头信息，用于分块下载
+* `setRange(long rangeStart)` 设置Range头信息，用于断点续传
+* `setRange(long rangeStart, long rangeEnd)` 设置Range头信息，用于分块下载
 
 ### 5 使用标签
 
