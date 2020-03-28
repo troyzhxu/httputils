@@ -125,6 +125,10 @@ public class HttpClient implements HTTP {
 		return executor;
 	}
 
+	public OkHttpClient getOkClient() {
+		return client;
+	}
+
 	public void preprocess(HttpTask<? extends HttpTask<?>> httpTask, Runnable request) {
     	if (preprocessors.length > 0) {
     		RealPreChain process = new RealPreChain(preprocessors, 
