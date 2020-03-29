@@ -20,6 +20,8 @@ import okhttp3.Call;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.WebSocket;
+import okhttp3.WebSocketListener;
 
 public class HttpClient implements HTTP {
 
@@ -109,10 +111,14 @@ public class HttpClient implements HTTP {
 		
 	}
 	
-	public Call callRequest(Request request) {
+	public Call request(Request request) {
     	return client.newCall(request);
     }
     
+	public WebSocket webSocket(Request request, WebSocketListener listener) {
+		return client.newWebSocket(request, listener);
+	}
+	
 	public MediaType getMediaType(String type) {
         String mediaType = mediaTypes.get(type);
         if (mediaType != null) {

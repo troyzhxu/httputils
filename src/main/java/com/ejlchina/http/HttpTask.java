@@ -118,14 +118,22 @@ public abstract class HttpTask<C extends HttpTask<?>> {
     }
 
     /**
-     * 在IO线程执行
+     * 下一个回调在IO线程执行
      * @return HttpTask 实例
      */
+    @Deprecated
     public C runOnIO() {
+    	return nextOnIO();
+    }
+    
+    /**
+     * 下一个回调在IO线程执行
+     * @return HttpTask 实例
+     */
+    public C nextOnIO() {
     	nextOnIO = true;
     	return (C) this;
     }
-    
     
 	/**
      * 添加请求头
@@ -527,7 +535,7 @@ public abstract class HttpTask<C extends HttpTask<?>> {
         	builder.delete(reqBody);
         	break;
         }
-		return httpClient.callRequest(builder.build());
+		return httpClient.request(builder.build());
 	}
 
 	private long contentLength(RequestBody reqBody) {
