@@ -34,11 +34,14 @@ public class Download {
     private boolean sOnIO;
     private boolean fOnIO;
 	
+    private Ctrl ctrl;
+    
 	public Download(File file, InputStream input, TaskExecutor taskExecutor, long skipBytes) {
 		this.file = file;
 		this.input = input;
 		this.taskExecutor = taskExecutor;
 		this.seekBytes = skipBytes;
+		this.ctrl = new Ctrl();
 	}
 
 	/**
@@ -120,9 +123,17 @@ public class Download {
 			.execute(() -> {
 				doDownload(raFile);
 			});
-		return new Ctrl();
+		return ctrl;
 	}
 	
+	/**
+	 * 获取下载控制器
+	 * @return Ctrl
+	 */
+	public Ctrl getCtrl() {
+		return ctrl;
+	}
+
 	public class Ctrl {
 		
 		/**
