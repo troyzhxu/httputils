@@ -25,7 +25,13 @@ public interface HttpResult {
 		return new RealHttpResult(null, response, taskExecutor);
 	}
 
+	/**
+	 * 获取所属的 Http请求任务
+	 * @return HttpTask
+	 */
+	HttpTask<?> getTask();
 
+	
 	public enum State {
 		
 		/**

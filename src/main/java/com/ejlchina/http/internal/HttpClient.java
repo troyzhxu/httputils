@@ -12,6 +12,7 @@ import java.util.concurrent.Executor;
 
 import com.ejlchina.http.Configurator;
 import com.ejlchina.http.Download;
+import com.ejlchina.http.GlobalCallback;
 import com.ejlchina.http.HTTP;
 import com.ejlchina.http.HttpCall;
 import com.ejlchina.http.HttpTask;
@@ -46,7 +47,8 @@ public class HttpClient implements HTTP {
 		this.baseUrl = builder.baseUrl;
 		this.mediaTypes = builder.mediaTypes;
 		this.executor = new TaskExecutor(client.dispatcher().executorService(), 
-				builder.mainExecutor, builder.downloadListener);
+				builder.mainExecutor, builder.downloadListener, 
+				builder.globalCallback);
 		this.preprocessors = builder.preprocessors.toArray(new Preprocessor[builder.preprocessors.size()]);
 		this.tagCalls = Collections.synchronizedList(new LinkedList<>());
 	}
@@ -276,6 +278,7 @@ public class HttpClient implements HTTP {
 		
 		private OnCallback<Download> downloadListener;
 		
+		private GlobalCallback globalCallback;
 
 		public Builder() {
 			mediaTypes = new HashMap<>();
@@ -375,6 +378,15 @@ public class HttpClient implements HTTP {
 			return this;
 		}
 		
+		/**
+		 * 设置全局回调处理器
+		 * @param preprocessor 预处理器
+		 * @return Builder
+		 */
+		public Builder globalCallback(GlobalCallback globalCallback) {
+			this.globalCallback = globalCallback;
+			return this;
+		}
 		
 		/**
 		 * 设置下载监听器
@@ -385,7 +397,6 @@ public class HttpClient implements HTTP {
 			this.downloadListener = downloadListener;
 			return this;
 		}
-		
 		
 		public HTTP build() {
 			if (configurator != null || client == null) {

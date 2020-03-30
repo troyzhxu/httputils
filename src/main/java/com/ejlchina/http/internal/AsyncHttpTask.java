@@ -238,57 +238,32 @@ public class AsyncHttpTask extends HttpTask<AsyncHttpTask> {
         OkHttpCall httpCall = new OkHttpCall(call);
         call.enqueue(new Callback() {
             @Override
-            public void onFailure(Call call, IOException e) {
-            	State state = toState(e);
+            public void onFailure(Call call, IOException error) {
+            	State state = toState(error);
             	if (state == State.CANCELED) {
             		httpCall.setResult(new RealHttpResult(AsyncHttpTask.this, state));
             	} else {
-            		doOnException(state, e);
-            		httpCall.setResult(new RealHttpResult(AsyncHttpTask.this, state, e));
+            		TaskExecutor executor = httpClient.getExecutor();
+            		executor.executeOnComplete(AsyncHttpTask.this, onComplete, state, cOnIO);
+            		if (!executor.executeOnException(AsyncHttpTask.this, onException, error, eOnIO)
+            				&& !nothrow) {
+            			throw new HttpException(error.getMessage(), error);
+            		}
+            		httpCall.setResult(new RealHttpResult(AsyncHttpTask.this, state, error));
             	}
             }
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-            	HttpResult result = new RealHttpResult(AsyncHttpTask.this, 
-            			response, httpClient.getExecutor());
-            	doOnResponse(result);
+            	TaskExecutor executor = httpClient.getExecutor();
+            	HttpResult result = new RealHttpResult(AsyncHttpTask.this, response, executor);
+        		executor.executeOnComplete(AsyncHttpTask.this, onComplete, State.RESPONSED, cOnIO);
+        		executor.executeOnResponse(AsyncHttpTask.this, onResponse, result, rOnIO);
             	httpCall.setResult(result);
             }
 			
         });
 		return httpCall;
     }
-    
 
-	private void doOnResponse(HttpResult result) {
-		TaskExecutor executor = httpClient.getExecutor();
-		if (onComplete != null) {
-			executor.execute(() -> {
-				onComplete.on(State.RESPONSED);
-			}, cOnIO);
-		}
-		if (onResponse != null) {
-			executor.execute(() -> {
-				onResponse.on(result);
-			}, rOnIO);
-		}
-	}
-	
-	private void doOnException(State state, Exception e) {
-		TaskExecutor executor = httpClient.getExecutor();
-		if (onComplete != null) {
-			executor.execute(() -> {
-		    	onComplete.on(state);
-			}, cOnIO);
-		}
-		if (onException != null) {
-			executor.execute(() -> {
-				onException.on(e);
-			}, eOnIO);
-		} else if (!nothrow) {
-			throw new HttpException(e.getMessage(), e);
-		}
-	}
-	
 }
