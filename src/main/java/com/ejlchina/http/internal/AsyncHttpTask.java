@@ -240,10 +240,10 @@ public class AsyncHttpTask extends HttpTask<AsyncHttpTask> {
             @Override
             public void onFailure(Call call, IOException e) {
             	State state = toState(e);
-            	doOnException(state, e);
             	if (state == State.CANCELED) {
             		httpCall.setResult(new RealHttpResult(state));
             	} else {
+            		doOnException(state, e);
             		httpCall.setResult(new RealHttpResult(state, e));
             	}
             }
@@ -280,10 +280,6 @@ public class AsyncHttpTask extends HttpTask<AsyncHttpTask> {
 			executor.getExecutor(cOnIO).execute(() -> {
 		    	onComplete.on(state);
 			});
-		}
-		// 请求取消不作为一种异常来处理
-		if (state == State.CANCELED) {
-			return;
 		}
 		if (onException != null) {
 			executor.getExecutor(eOnIO).execute(() -> {
