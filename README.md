@@ -40,6 +40,8 @@
     - [6.3 配置 OkHttpClient](#63-配置-okhttpclient)
     - [6.4 并行预处理器](#64-并行预处理器)
     - [6.5 串行预处理器](#65-串行预处理器)
+    - [6.6 全局回调处理](#66-全局回调处理)
+    - [6.7 全局下载监听](#67-全局下载监听)
   + [7 使用 HttpUtils 类](#7-使用-httputils-类)
   + [8 文件下载](#8-文件下载)
     - [8.1 下载进度监听](#81-下载进度监听)
@@ -403,6 +405,40 @@ HTTP http = HTTP.builder()
         .build();
 ```
 　　串行预处理器实现了让HTTP任务排队串行处理的功能，但值得一提的是：它并没有因此而阻塞任何线程！
+
+#### 6.6 全局回调处理
+
+```java
+HTTP http = HTTP.builder()
+        .globalCallback(new GlobalCallback() {
+            
+            @Override
+            public boolean onResponse(HttpTask<?> task, HttpResult result) {
+                // 所有请求响应后都会走这里
+                
+                return true;    // 返回 true 表示继续执行 task 的 OnResponse 回调
+            }
+            
+            @Override
+            public boolean onComplete(HttpTask<?> task, State state) {
+                // 所有请求执行完都会走这里
+                
+                return true;    // 返回 true 表示继续执行 task 的 OnComplete 回调
+            }
+            
+            @Override
+            public boolean onException(HttpTask<?> task, Exception error) {
+                // 所有请求发生异常都会走这里
+                
+                return true;    // 返回 true 表示继续执行 task 的 OnException 回调
+            }
+        })
+        .build();
+```
+
+#### 6.7 全局下载监听
+
+
 
 ### 7 使用 HttpUtils 类
 

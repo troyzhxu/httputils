@@ -8,9 +8,11 @@ import java.util.concurrent.TimeUnit;
 import org.junit.Test;
 
 import com.ejlchina.http.Download.Failure;
+import com.ejlchina.http.GlobalCallback;
 import com.ejlchina.http.HTTP;
 import com.ejlchina.http.HttpCall;
 import com.ejlchina.http.HttpResult;
+import com.ejlchina.http.HttpTask;
 import com.ejlchina.http.HttpResult.Body;
 import com.ejlchina.http.HttpResult.State;
 import com.ejlchina.http.HttpUtils;
@@ -26,6 +28,32 @@ import okhttp3.Request;
 
 public class HttpTest {
 
+	
+	@Test
+	public void testGlobalCallback() {
+		HTTP http = HTTP.builder()
+				.globalCallback(new GlobalCallback() {
+					
+					@Override
+					public boolean onResponse(HttpTask<?> task, HttpResult result) {
+						
+						return true;
+					}
+					
+					@Override
+					public boolean onComplete(HttpTask<?> task, State state) {
+						
+						return true;
+					}
+					
+					@Override
+					public boolean onException(HttpTask<?> task, Exception error) {
+						
+						return true;
+					}
+				})
+				.build();
+	}
 	
 	@Test
 	public void testExecutor() {
