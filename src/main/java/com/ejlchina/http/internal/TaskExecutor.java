@@ -51,7 +51,7 @@ public class TaskExecutor {
 	public void executeOnComplete(HttpTask<?> task, OnCallback<State> onComplete, State state, boolean onIoThread) {
 		if (globalCallback != null) {
 			execute(() -> {
-				if (globalCallback.onOnComplete(task, state) && onComplete != null) {
+				if (globalCallback.onComplete(task, state) && onComplete != null) {
 					onComplete.on(state);
 				}
 			}, onIoThread);

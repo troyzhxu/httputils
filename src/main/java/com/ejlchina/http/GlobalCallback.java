@@ -31,6 +31,6 @@ public interface GlobalCallback {
 	 * @param state 完成状态
 	 * @return 是否继续执行 task 的完成回调
 	 */
-	boolean onOnComplete(HttpTask<?> task, State state);
+	boolean onComplete(HttpTask<?> task, State state);
 	
 }
