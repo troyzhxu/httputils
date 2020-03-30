@@ -7,6 +7,8 @@ import java.util.concurrent.TimeUnit;
 
 import org.junit.Test;
 
+import com.ejlchina.http.Download;
+import com.ejlchina.http.Download.Ctrl;
 import com.ejlchina.http.Download.Failure;
 import com.ejlchina.http.GlobalCallback;
 import com.ejlchina.http.HTTP;
@@ -51,6 +53,17 @@ public class HttpTest {
 						
 						return true;
 					}
+				})
+				.build();
+	}
+	
+	@Test
+	public void testDownloadListener() {
+		HTTP http = HTTP.builder()
+				.downloadListener((Download download) -> {
+					HttpTask<?> task = download.getTask();
+					Ctrl ctrl = download.getCtrl();
+					
 				})
 				.build();
 	}

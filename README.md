@@ -438,7 +438,16 @@ HTTP http = HTTP.builder()
 
 #### 6.7 全局下载监听
 
-
+```java
+HTTP http = HTTP.builder()
+        .downloadListener((Download download) -> {
+            // 所有下载在开始之前都会先走这里
+            HttpTask<?> task = download.getTask();  // 所属的 Http任务
+            Ctrl ctrl = download.getCtrl();         // 下载控制器
+            
+        })
+        .build();
+```
 
 ### 7 使用 HttpUtils 类
 
