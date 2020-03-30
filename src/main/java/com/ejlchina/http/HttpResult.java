@@ -20,9 +20,28 @@ import okhttp3.Response;
  */
 public interface HttpResult {
 
+	/**
+	 * 构造一个 HttpResult
+	 * 此方法构造的 HttpResult 不可设置进度回调，不可进行下载操作！
+	 * 若需要，请使用方法： {@link #of(Response, TaskExecutor)}
+	 * @param response Response
+	 * @return HttpResult
+	 */
+	static HttpResult of(Response response) {
+		return of(response, null);
+	}
 	
+	/**
+	 * 构造一个 HttpResult
+	 * @param response Response
+	 * @param taskExecutor 任务执行器, 可通过方法 {@link HTTP#getExecutor()} 获得
+	 * @return HttpResult
+	 */
 	static HttpResult of(Response response, TaskExecutor taskExecutor) {
-		return new RealHttpResult(null, response, taskExecutor);
+		if (response != null) {
+			return new RealHttpResult(null, response, taskExecutor);
+		}
+		throw new IllegalArgumentException("response 不能为空");
 	}
 
 	/**

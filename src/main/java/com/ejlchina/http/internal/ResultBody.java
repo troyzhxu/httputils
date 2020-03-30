@@ -61,6 +61,9 @@ public class ResultBody implements Body {
 
 	@Override
 	public Body setOnProcess(OnCallback<Process> onProcess) {
+		if (taskExecutor == null) {
+			throw new IllegalStateException("没有 taskExecutor， 不可设置下载进度回调！");
+		}
 		this.onProcess = onProcess;
 		return this;
 	}
@@ -173,6 +176,9 @@ public class ResultBody implements Body {
 
 	@Override
 	public Download toFile(File file) {
+		if (taskExecutor == null) {
+			throw new IllegalStateException("没有 taskExecutor， 不可进行下载操作！");
+		}
 		if (!file.exists()) {
 			try {
 				File parent = file.getParentFile();
