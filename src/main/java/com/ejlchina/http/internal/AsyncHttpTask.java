@@ -264,28 +264,28 @@ public class AsyncHttpTask extends HttpTask<AsyncHttpTask> {
 	private void doOnResponse(HttpResult result) {
 		TaskExecutor executor = httpClient.getExecutor();
 		if (onComplete != null) {
-			executor.getExecutor(cOnIO).execute(() -> {
+			executor.execute(() -> {
 				onComplete.on(State.RESPONSED);
-			});
+			}, cOnIO);
 		}
 		if (onResponse != null) {
-			executor.getExecutor(rOnIO).execute(() -> {
+			executor.execute(() -> {
 				onResponse.on(result);
-			});
+			}, rOnIO);
 		}
 	}
 	
 	private void doOnException(State state, Exception e) {
 		TaskExecutor executor = httpClient.getExecutor();
 		if (onComplete != null) {
-			executor.getExecutor(cOnIO).execute(() -> {
+			executor.execute(() -> {
 		    	onComplete.on(state);
-			});
+			}, cOnIO);
 		}
 		if (onException != null) {
-			executor.getExecutor(eOnIO).execute(() -> {
+			executor.execute(() -> {
 				onException.on(e);
-			});
+			}, eOnIO);
 		} else if (!nothrow) {
 			throw new HttpException(e.getMessage(), e);
 		}

@@ -135,6 +135,7 @@ public class HttpTest {
 //		Ctrl ctrl = 
 		http.sync(url)
 //				.setRange(24771214)
+				.bind(this)
 				.get()
 				.getBody()
 				.setOnProcess((Process process) -> {

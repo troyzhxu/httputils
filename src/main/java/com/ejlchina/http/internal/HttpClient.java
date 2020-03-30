@@ -11,9 +11,11 @@ import java.util.Queue;
 import java.util.concurrent.Executor;
 
 import com.ejlchina.http.Configurator;
+import com.ejlchina.http.Download;
 import com.ejlchina.http.HTTP;
 import com.ejlchina.http.HttpCall;
 import com.ejlchina.http.HttpTask;
+import com.ejlchina.http.OnCallback;
 import com.ejlchina.http.Preprocessor;
 
 import okhttp3.Call;
@@ -43,7 +45,8 @@ public class HttpClient implements HTTP {
 		this.client = builder.client;
 		this.baseUrl = builder.baseUrl;
 		this.mediaTypes = builder.mediaTypes;
-		this.executor = new TaskExecutor(client.dispatcher().executorService(), builder.mainExecutor);
+		this.executor = new TaskExecutor(client.dispatcher().executorService(), 
+				builder.mainExecutor, builder.downloadListener);
 		this.preprocessors = builder.preprocessors.toArray(new Preprocessor[builder.preprocessors.size()]);
 		this.tagCalls = Collections.synchronizedList(new LinkedList<>());
 	}
@@ -271,6 +274,8 @@ public class HttpClient implements HTTP {
 
 		private List<Preprocessor> preprocessors;
 		
+		private OnCallback<Download> downloadListener;
+		
 
 		public Builder() {
 			mediaTypes = new HashMap<>();
@@ -369,6 +374,18 @@ public class HttpClient implements HTTP {
 			preprocessors.add(new SerialPreprocessor(preprocessor));
 			return this;
 		}
+		
+		
+		/**
+		 * 设置下载监听器
+		 * @param preprocessor 预处理器
+		 * @return Builder
+		 */
+		public Builder downloadListener(OnCallback<Download> downloadListener) {
+			this.downloadListener = downloadListener;
+			return this;
+		}
+		
 		
 		public HTTP build() {
 			if (configurator != null || client == null) {

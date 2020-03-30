@@ -186,8 +186,8 @@ public class ResultBody implements Body {
 						"Cannot create file [" + file.getAbsolutePath() + "]", e);
 			}
 		}
-		long rangeStart = getRangeStart();
-		return new Download(httpTask, file, toByteStream(), taskExecutor, rangeStart);
+		return taskExecutor.download(httpTask, file, toByteStream(), 
+				getRangeStart());
 	}
 	
 	@Override

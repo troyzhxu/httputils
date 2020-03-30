@@ -130,10 +130,9 @@ public class Download {
 		}
 		RandomAccessFile raFile = randomAccessFile();
 		status = Ctrl.STATUS__DOWNLOADING;
-		taskExecutor.getExecutor(true)
-			.execute(() -> {
-				doDownload(raFile);
-			});
+		taskExecutor.execute(() -> {
+			doDownload(raFile);
+		}, true);
 		return ctrl;
 	}
 	
@@ -295,10 +294,9 @@ public class Download {
 				status = Ctrl.STATUS__ERROR;
 			}
 			if (onFailure != null) {
-				taskExecutor.getExecutor(fOnIO)
-					.execute(() -> {
-						onFailure.on(new Failure(e));
-					});
+				taskExecutor.execute(() -> {
+					onFailure.on(new Failure(e));
+				}, fOnIO);
 			} else {
 				throw new HttpException("流传输失败", e);
 			}
@@ -311,10 +309,9 @@ public class Download {
 		}
 		if (status == Ctrl.STATUS__DONE
 				&& onSuccess != null) {
-			taskExecutor.getExecutor(sOnIO)
-				.execute(() -> {
-					onSuccess.on(file);
-				});
+			taskExecutor.execute(() -> {
+				onSuccess.on(file);
+			}, sOnIO);
 		}
 	}
 
