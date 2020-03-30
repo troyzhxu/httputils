@@ -416,21 +416,21 @@ HTTP http = HTTP.builder()
             public boolean onResponse(HttpTask<?> task, HttpResult result) {
                 // 所有请求响应后都会走这里
                 
-                return true;    // 返回 true 表示继续执行 task 的 OnResponse 回调
+                return true;    // 返回 true 表示继续执行 task 的 OnResponse 回调，false 表示不再执行
             }
             
             @Override
             public boolean onComplete(HttpTask<?> task, State state) {
                 // 所有请求执行完都会走这里
                 
-                return true;    // 返回 true 表示继续执行 task 的 OnComplete 回调
+                return true;    // 返回 true 表示继续执行 task 的 OnComplete 回调，false 表示不再执行
             }
             
             @Override
             public boolean onException(HttpTask<?> task, Exception error) {
                 // 所有请求发生异常都会走这里
                 
-                return true;    // 返回 true 表示继续执行 task 的 OnException 回调
+                return true;    // 返回 true 表示继续执行 task 的 OnException 回调，false 表示不再执行
             }
         })
         .build();
