@@ -38,23 +38,37 @@ public class HttpTest {
 					
 					@Override
 					public boolean onResponse(HttpTask<?> task, HttpResult result) {
-						
-						return true;
+						System.out.println("全局 onResponse: " + result.getStatus());
+						return false;
 					}
 					
 					@Override
 					public boolean onComplete(HttpTask<?> task, State state) {
-						
+						System.out.println("全局 onComplete: " + state);
 						return true;
 					}
 					
 					@Override
 					public boolean onException(HttpTask<?> task, Exception error) {
-						
+						System.out.println("全局 onException: " + error.getMessage());
 						return true;
 					}
 				})
 				.build();
+		
+		http.async("http://xxx.baidu.com")
+			.setOnResponse((HttpResult result) -> {
+				System.out.println("单例 onResponse: " + result.getStatus());
+			})
+			.setOnComplete((State state) -> {
+				System.out.println("单例 onComplete: " + state);
+			})
+			.setOnException((Exception error) -> {
+				System.out.println("单例 onException: " + error.getMessage());
+			})
+			.get();
+		
+		sleep(2000);
 	}
 	
 	@Test
@@ -62,10 +76,46 @@ public class HttpTest {
 		HTTP http = HTTP.builder()
 				.downloadListener((Download download) -> {
 					HttpTask<?> task = download.getTask();
+					System.out.println("URL = " + task.getUrl());
+					System.out.println("TAG = " + task.getTag());
 					Ctrl ctrl = download.getCtrl();
+					
+					new Thread(() -> {
+						sleep(3000);
+						ctrl.pause();
+						sleep(3000);
+						ctrl.resume();
+						sleep(3000);
+						ctrl.cancel();
+					}).start();
 					
 				})
 				.build();
+		
+		String url = "https://download.cocos.com/CocosDashboard/v1.0.1/CocosDashboard-v1.0.1-win32-031816.exe";
+
+		long t0 = System.currentTimeMillis();
+		
+
+		http.sync(url)
+				.setTag("ASD")
+				.get()
+				.getBody()
+				.setOnProcess((Process process) -> {
+					print(t0, process.getDoneBytes() + "/" + process.getTotalBytes() + "\t" + process.getRate(), false);
+				})
+				.setStepRate(0.01)
+				.toFolder("D:/download/")
+				.nextOnIO()
+				.setOnSuccess((File file) -> {
+					print(t0, "下载成功：" + file.getAbsolutePath(), true);
+				})
+				.setOnFailure((Failure failure) -> {
+					print(t0, "下载失败：" + failure.getDoneBytes() + ", path = " + failure.getFile().getAbsolutePath(), true);
+				})
+				.start();
+		
+		sleep(20000);
 	}
 	
 	@Test
@@ -169,7 +219,6 @@ public class HttpTest {
 
 		long t0 = System.currentTimeMillis();
 		
-		// TODO: 只有 调用了 setSkipBytes 和使用 toFile 方法，才能启用 断点续传
 //		Ctrl ctrl = 
 		http.sync(url)
 //				.setRange(24771214)
