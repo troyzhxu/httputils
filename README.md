@@ -657,7 +657,8 @@ call.cancel();  // 取消上传
  ```java
 HTTP http = HTTP.builder()
         .callbackExecutor((Runnable run) -> {
-            new Handler(Looper.getMainLooper()).post(run);   // 在主线程执行
+            // 在主线程执行，实际编码中可以吧 Handler 提出来，不需要每次执行回调都重新创建
+            new Handler(Looper.getMainLooper()).post(run);
         })
         .build();
 ```
