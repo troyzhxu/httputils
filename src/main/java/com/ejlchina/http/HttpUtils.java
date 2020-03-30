@@ -2,6 +2,12 @@ package com.ejlchina.http;
 
 import com.ejlchina.http.internal.AsyncHttpTask;
 import com.ejlchina.http.internal.SyncHttpTask;
+import com.ejlchina.http.internal.TaskExecutor;
+
+import okhttp3.Call;
+import okhttp3.Request;
+import okhttp3.WebSocket;
+import okhttp3.WebSocketListener;
 
 /**
  * Http 工具类，封装 OkHttp
@@ -69,4 +75,31 @@ public class HttpUtils {
         return getHttp().cancel(tag);
     }
 
+    /**
+     * OkHttp 原生请求 （该请求不经过 预处理器）
+     * @param request 请求
+     * @return Call
+     */
+    public static Call request(Request request) {
+    	return getHttp().request(request);
+    }
+    
+    /**
+     * Websocket（该请求不经过 预处理器）
+     * @param request 请求
+     * @param listener 监听器
+     * @return
+     */
+    public static WebSocket webSocket(Request request, WebSocketListener listener) {
+    	return getHttp().webSocket(request, listener);
+    }
+    
+    /**
+     * 获取任务执行器
+     * @return TaskExecutor
+     */
+    public static TaskExecutor getExecutor() {
+    	return getHttp().getExecutor();
+    }
+    
 }
