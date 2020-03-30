@@ -694,7 +694,7 @@ http.async("/users")
             // 在 IO 线程执行
         })
         .setOnException((Exception e) -> {
-            // 在主线程执行（没有指明 runOnIO 则在回调执行器里执行）
+            // 在主线程执行（没有指明 nextOnIO 则在回调执行器里执行）
         })
         .nextOnIO()          // 指定下一个回调在 IO 线程执行
         .setOnComplete((State state) -> {
