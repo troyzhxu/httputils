@@ -272,6 +272,9 @@ System.out.println(call.isCanceled());     // true
 * `setTag(String tag)` 为HTTP任务添加标签
 * `setRange(long rangeStart)` 设置Range头信息，用于断点续传
 * `setRange(long rangeStart, long rangeEnd)` 设置Range头信息，用于分块下载
+* `setRange(long rangeStart, long rangeEnd)` 设置Range头信息，用于分块下载
+
+* `bind(Object object)` 绑定一个对象，可用于实现Android里的生命周期绑定
 
 ### 5 使用标签
 
