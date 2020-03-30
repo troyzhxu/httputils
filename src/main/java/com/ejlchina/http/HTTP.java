@@ -2,6 +2,7 @@ package com.ejlchina.http;
 
 import com.ejlchina.http.internal.AsyncHttpTask;
 import com.ejlchina.http.internal.SyncHttpTask;
+import com.ejlchina.http.internal.TaskExecutor;
 import com.ejlchina.http.internal.HttpClient.Builder;
 
 import okhttp3.Call;
@@ -51,6 +52,12 @@ public interface HTTP {
      * @return
      */
     WebSocket webSocket(Request request, WebSocketListener listener);
+    
+    /**
+     * 获取任务执行器
+     * @return TaskExecutor
+     */
+    TaskExecutor getExecutor();
     
     /**
      * HTTP 构建器

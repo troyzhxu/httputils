@@ -7,15 +7,23 @@ import java.util.List;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.ejlchina.http.internal.RealHttpResult;
+import com.ejlchina.http.internal.TaskExecutor;
 
 import okhttp3.Headers;
 import okhttp3.MediaType;
+import okhttp3.Response;
 
 
 /**
  * Http 执行结果
  */
 public interface HttpResult {
+
+	
+	static HttpResult of(Response response, TaskExecutor taskExecutor) {
+		return new RealHttpResult(response, taskExecutor);
+	}
 
 
 	public enum State {
