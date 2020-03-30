@@ -35,13 +35,24 @@ public class Download {
     private boolean fOnIO;
 	
     private Ctrl ctrl;
+    private HttpTask<?> httpTask;
     
-	public Download(File file, InputStream input, TaskExecutor taskExecutor, long skipBytes) {
+	public Download(HttpTask<?> httpTask, File file, InputStream input, TaskExecutor taskExecutor, long skipBytes) {
+		this.httpTask = httpTask;
 		this.file = file;
 		this.input = input;
 		this.taskExecutor = taskExecutor;
 		this.seekBytes = skipBytes;
 		this.ctrl = new Ctrl();
+	}
+	
+	
+	/**
+	 * 获取所属的 Http请求任务
+	 * @return HttpTask
+	 */
+	public HttpTask<?> getTask() {
+		return httpTask;
 	}
 
 	/**

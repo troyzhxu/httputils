@@ -55,7 +55,7 @@ public class SyncHttpTask extends HttpTask<SyncHttpTask> {
     }
     
     private HttpResult request(String method) {
-    	RealHttpResult result = new RealHttpResult(httpClient.getExecutor());
+    	RealHttpResult result = new RealHttpResult(this, httpClient.getExecutor());
     	httpClient.preprocess(this, () -> {
         	Call call = prepareCall(method);
             try {

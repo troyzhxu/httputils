@@ -17,6 +17,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.ejlchina.http.Download;
+import com.ejlchina.http.HttpTask;
 import com.ejlchina.http.HttpResult.Body;
 import com.ejlchina.http.OnCallback;
 import com.ejlchina.http.Process;
@@ -34,8 +35,10 @@ public class ResultBody implements Body {
 	private long stepBytes = 0;
 	private double stepRate = -1;
 	private boolean rangeIgnored = false;
+	private HttpTask<?> httpTask;
 
-	ResultBody(Response response, TaskExecutor taskExecutor) {
+	ResultBody(HttpTask<?> httpTask, Response response, TaskExecutor taskExecutor) {
+		this.httpTask = httpTask;
 		this.response = response;
 		this.taskExecutor = taskExecutor;
 	}
@@ -184,7 +187,7 @@ public class ResultBody implements Body {
 			}
 		}
 		long rangeStart = getRangeStart();
-		return new Download(file, toByteStream(), taskExecutor, rangeStart);
+		return new Download(httpTask, file, toByteStream(), taskExecutor, rangeStart);
 	}
 	
 	@Override

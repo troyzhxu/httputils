@@ -22,7 +22,7 @@ public interface HttpResult {
 
 	
 	static HttpResult of(Response response, TaskExecutor taskExecutor) {
-		return new RealHttpResult(response, taskExecutor);
+		return new RealHttpResult(null, response, taskExecutor);
 	}
 
 

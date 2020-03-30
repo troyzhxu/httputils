@@ -54,6 +54,8 @@ public abstract class HttpTask<C extends HttpTask<?>> {
 	private long stepBytes = 0;
 	private double stepRate = -1;
 	
+	private Object object;
+	
     
     public HttpTask(HttpClient httpClient, String url) {
     	this.httpClient = httpClient;
@@ -96,6 +98,14 @@ public abstract class HttpTask<C extends HttpTask<?>> {
     public Map<String, String> getHeaders() {
 		return headers;
 	}
+    
+    /**
+     * 获得被绑定的对象
+     * @return Object
+     */
+    public Object getBound() {
+    	return object;
+    }
 
 	/**
      * 设置在发生异常时不向上抛出，设置后：
@@ -132,6 +142,15 @@ public abstract class HttpTask<C extends HttpTask<?>> {
      */
     public C nextOnIO() {
     	nextOnIO = true;
+    	return (C) this;
+    }
+    
+    /**
+     * 绑定一个对象
+     * @return HttpTask 实例
+     */
+    public C bind(Object object) {
+    	this.object = object;
     	return (C) this;
     }
     

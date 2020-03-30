@@ -3,6 +3,7 @@ package com.ejlchina.http.internal;
 import java.util.List;
 
 import com.ejlchina.http.HttpResult;
+import com.ejlchina.http.HttpTask;
 
 import okhttp3.Headers;
 import okhttp3.Response;
@@ -14,26 +15,29 @@ public class RealHttpResult implements HttpResult {
 	private Response response;
 	private Exception error;
 	private TaskExecutor taskExecutor;
+	private HttpTask<?> httpTask;
 	
-	public RealHttpResult() {
-	}
 	
-	public RealHttpResult(State state) {
+	public RealHttpResult(HttpTask<?> httpTask, State state) {
+		this.httpTask = httpTask;
 		this.state = state;
 	}
 	
-	public RealHttpResult(Response response, TaskExecutor taskExecutor) {
-		this(taskExecutor);
+	public RealHttpResult(HttpTask<?> httpTask, Response response, TaskExecutor taskExecutor) {
+		this(httpTask, taskExecutor);
 		response(response);
 	}
 	
-	public RealHttpResult(TaskExecutor taskExecutor) {
+	public RealHttpResult(HttpTask<?> httpTask, TaskExecutor taskExecutor) {
+		this.httpTask = httpTask;
 		this.taskExecutor = taskExecutor;
 	}
 	
-	public RealHttpResult(State state, Exception error) {
+	public RealHttpResult(HttpTask<?> httpTask, State state, Exception error) {
+		this.httpTask = httpTask;
 		exception(state, error);
 	}
+	
 	
 	public void exception(State state, Exception error) {
 		this.state = state;
@@ -87,7 +91,7 @@ public class RealHttpResult implements HttpResult {
 	@Override
 	public Body getBody() {
 		if (response != null) {
-			return new ResultBody(response, taskExecutor);
+			return new ResultBody(httpTask, response, taskExecutor);
 		}
 		return null;
 	}

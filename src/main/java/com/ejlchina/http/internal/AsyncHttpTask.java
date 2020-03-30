@@ -165,7 +165,7 @@ public class AsyncHttpTask extends HttpTask<AsyncHttpTask> {
 		@Override
 		public synchronized HttpResult getResult() {
 			if (canceled) {
-				return new RealHttpResult(State.CANCELED);
+				return new RealHttpResult(AsyncHttpTask.this, State.CANCELED);
 			}
 			if (call == null) {
 				try {
@@ -177,7 +177,7 @@ public class AsyncHttpTask extends HttpTask<AsyncHttpTask> {
 			if (call != null) {
 				return call.getResult();
 			}
-			return new RealHttpResult(State.CANCELED);
+			return new RealHttpResult(AsyncHttpTask.this, State.CANCELED);
 		}
 
     }
@@ -241,16 +241,17 @@ public class AsyncHttpTask extends HttpTask<AsyncHttpTask> {
             public void onFailure(Call call, IOException e) {
             	State state = toState(e);
             	if (state == State.CANCELED) {
-            		httpCall.setResult(new RealHttpResult(state));
+            		httpCall.setResult(new RealHttpResult(AsyncHttpTask.this, state));
             	} else {
             		doOnException(state, e);
-            		httpCall.setResult(new RealHttpResult(state, e));
+            		httpCall.setResult(new RealHttpResult(AsyncHttpTask.this, state, e));
             	}
             }
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-            	HttpResult result = new RealHttpResult(response, httpClient.getExecutor());
+            	HttpResult result = new RealHttpResult(AsyncHttpTask.this, 
+            			response, httpClient.getExecutor());
             	doOnResponse(result);
             	httpCall.setResult(result);
             }
