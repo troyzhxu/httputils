@@ -77,7 +77,17 @@ public class HttpClient implements HTTP {
 		}
 		return count;
 	}
+	
+	@Override
+	public Call request(Request request) {
+    	return client.newCall(request);
+    }
     
+	@Override
+	public WebSocket webSocket(Request request, WebSocketListener listener) {
+		return client.newWebSocket(request, listener);
+	}
+	
 	public int getTagCallCount() {
 		return tagCalls.size();
 	}
@@ -109,14 +119,6 @@ public class HttpClient implements HTTP {
 			this.task = task;
 		}
 		
-	}
-	
-	public Call request(Request request) {
-    	return client.newCall(request);
-    }
-    
-	public WebSocket webSocket(Request request, WebSocketListener listener) {
-		return client.newWebSocket(request, listener);
 	}
 	
 	public MediaType getMediaType(String type) {
