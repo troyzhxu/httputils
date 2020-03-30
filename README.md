@@ -702,7 +702,7 @@ http.async("/users")
         })
         .post();
 ```
-　　无论是哪一个回调，都可以使用`runOnIO()`方法自由切换。同样，对于文件下载也是一样：
+　　无论是哪一个回调，都可以使用`nextOnIO()`方法自由切换。同样，对于文件下载也是一样：
 
 ```java
 http.sync("/download/test.zip")
