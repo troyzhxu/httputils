@@ -2,6 +2,7 @@ package com.ejlchina.test;
 
 
 import java.io.File;
+import java.lang.ref.WeakReference;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -83,7 +84,7 @@ public class HttpTest {
 	}
 	
 	
-	
+	WeakReference w;
 	
 	@Test
 	public void testD() {

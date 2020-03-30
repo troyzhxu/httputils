@@ -49,6 +49,7 @@
   + [9 文件上传](#9-文件上传)
     - [9.1 上传进度监听](#91-上传进度监听)
     - [9.2 上传过程控制](#92-上传过程控制)
+  + [10 执行线程自由切换（for Android）](#10-执行线程自由切换for-android)
 + [后续计划](#后续计划)
 + [联系方式](#联系方式)
 
@@ -60,12 +61,12 @@
 <dependency>
      <groupId>com.ejlchina</groupId>
      <artifactId>httputils</artifactId>
-     <version>2.2.0</version>
+     <version>2.2.1</version>
 </dependency>
 ```
 ### Gradle
 
-`compile 'com.ejlchina:httputils:2.2.0'`
+`compile 'com.ejlchina:httputils:2.2.1'`
 
 ## 使用说明
 
@@ -338,7 +339,7 @@ HTTP http = HTTP.builder()
 
 #### 6.3 配置 OkHttpClient
 
-　　与其他封装`OkHttp`的框架不同，`HttpUtils`并不会遮蔽`OkHttp`本身就很好用的功能，如下：
+　　与其他封装 OkHttp 的框架不同，HttpUtils 并不会遮蔽 OkHttp 本身就很好用的功能，如下：
 
 ```java
 HTTP http = HTTP.builder()
@@ -384,7 +385,7 @@ HTTP http = HTTP.builder()
 
 　　普通预处理器都是可并行处理的，然而有时我们希望某个预处理器同时只处理一个任务。比如 当`Token`过期时我们需要去刷新获取新`Token`，而刷新`Token`这个操作只能有一个任务去执行，因为如果`n`个任务同时执行的话，那么必有`n-1`个任务刚刷新得到的`Token`可能就立马失效了，而这是我们所不希望的。
 
-　　为了解决这个问题，`HttpUtils`提供了串行预处理器，它可以让HTTP任务排好队，一个一个地进入预处理器：
+　　为了解决这个问题，HttpUtils 提供了串行预处理器，它可以让 HTTP 任务排好队，一个一个地进入预处理器：
 
 ```java
 HTTP http = HTTP.builder()
@@ -433,7 +434,7 @@ List<User> users = HttpUtils.sync("/users")
 
 ### 8 文件下载
 
-　　`HttpUtils`并没有把文件的下载排除在常规的请求之外，同一套API，它优雅的设计使得下载与常规请求融合的毫无违和感，一个最简单的示例：
+　　HttpUtils 并没有把文件的下载排除在常规的请求之外，同一套API，它优雅的设计使得下载与常规请求融合的毫无违和感，一个最简单的示例：
 
 ```java
 http.sync("/download/test.zip")
@@ -476,7 +477,7 @@ http.sync("/download/test.zip")
         })
         .start();
 ```
-　　值得一提的是：由于`HttpUtils`并没有把下载做的很特别，这里设置的进度回调不只对下载文件起用作，即使对响应JSON的常规请求，只要设置了进度回调，它也会告诉你报文接收的进度（提前是服务器响应的报文有`Content-Length`头），例如：
+　　值得一提的是：由于 HttpUtils 并没有把下载做的很特别，这里设置的进度回调不只对下载文件起用作，即使对响应JSON的常规请求，只要设置了进度回调，它也会告诉你报文接收的进度（提前是服务器响应的报文有`Content-Length`头），例如：
 
 ```java
 List<User> users = http.sync("/users")
@@ -521,7 +522,7 @@ http.async("/download/test.zip")
 
 #### 8.3 实现断点续传
 
-　　`HttpUtils`对断点续传并没有再做更高层次的封装，因为这是app该去做的事情，它在设计上使各种网络问题的处理变简单的同时力求纯粹。下面的例子可以看到，`HttpUtils`通过一个失败回调拿到**断点**，便将复杂的问题变得简单：
+　　HttpUtils 对断点续传并没有再做更高层次的封装，因为这是app该去做的事情，它在设计上使各种网络问题的处理变简单的同时力求纯粹。下面的例子可以看到，HttpUtils 通过一个失败回调拿到**断点**，便将复杂的问题变得简单：
 
 ```java
 http.sync("/download/test.zip")
@@ -610,7 +611,7 @@ http.async("/upload")
 
 #### 9.1 上传进度监听
 
-　　`HttpUtils`的上传进度监听，监听的是所有请求报文体的发送进度，示例代码：
+　　HttpUtils 的上传进度监听，监听的是所有请求报文体的发送进度，示例代码：
 
 ```java
 http.sync("/upload")
@@ -627,7 +628,7 @@ http.sync("/upload")
         })
         .post()
 ```
-　　咦！怎么感觉和下载的进度回调的一样？没错！`HttpUtils`还是使用同一套API处理上传和下载的进度回调，区别只在于上传是在`get/post`方法之前使用这些API，下载是在`getBody`方法之后使用。很好理解：`get/post`之前是准备发送请求时段，有上传的含义，而`getBody`之后，已是报文响应的时段，当然是下载。
+　　咦！怎么感觉和下载的进度回调的一样？没错！HttpUtils 还是使用同一套API处理上传和下载的进度回调，区别只在于上传是在`get/post`方法之前使用这些API，下载是在`getBody`方法之后使用。很好理解：`get/post`之前是准备发送请求时段，有上传的含义，而`getBody`之后，已是报文响应的时段，当然是下载。
 
 #### 9.2 上传过程控制
 
@@ -645,9 +646,84 @@ call.cancel();  // 取消上传
 ```
 　　上传就没有暂停和继续这个功能啦，应该没人有这个需求吧?
 
+### 10 执行线程自由切换（for Android）
+
+　　在 Android 开发中，经常会把某些代码放到特点的线程去执行，比如网络请求响应后的页面更新在主线程（UI线程）执行，而保存文件则在IO线程操作。HttpUtils 为这类问题提供了良好的方案。
+
+　　在 **默认** 情况下，**所有回调** 函数都会 **在 IO 线程** 执行。为什么会设计如此呢？这是因为 HttpUtils 只是纯粹的 Java 领域 Http工具包，本身对 Android 不会有任何依赖，因此也不知 Android 的 UI 线程为何物。这么设计也让它在 Android 之外有更多的可能性。
+
+　　但是在 Android 里使用  HttpUtils 的话，UI线程的问题能否优雅的解决呢？当然可以！简单粗暴的方法就是配置一个 回调执行器：
+
+ ```java
+HTTP http = HTTP.builder()
+        .callbackExecutor((Runnable run) -> {
+            new Handler(Looper.getMainLooper()).post(run);   // 在主线程执行
+        })
+        .build();
+```
+　　上述代码便实现了让 **所有** 的 **回调函数** 都在 **主线程** 执行的目的，如：
+
+```java
+http.async("/users")
+        .addBodyParam("name", "Jack")
+        .setOnProcess((Process process) -> {
+            // 在主线程执行
+        })
+        .setOnResponse((HttpResult result) -> {
+            // 在主线程执行
+        })
+        .setOnException((Exception e) -> {
+            // 在主线程执行
+        })
+        .setOnComplete((State state) -> {
+            // 在主线程执行
+        })
+        .post();
+```
+　　但是，如果同时还想让某些回调放在IO线程，实现 **自由切换**，怎么办呢?HttpUtils 给出了非常灵活的方法，如下：
+
+```java
+http.async("/users")
+        .addBodyParam("name", "Jack")
+        .setOnProcess((Process process) -> {
+            // 在主线程执行
+        })
+        .runOnIO()          // 指定下一个回调在 IO 线程执行
+        .setOnResponse((HttpResult result) -> {
+            // 在 IO 线程执行
+        })
+        .setOnException((Exception e) -> {
+            // 在主线程执行（没有指明 runOnIO 则在回调执行器里执行）
+        })
+        .runOnIO()          // 指定下一个回调在 IO 线程执行
+        .setOnComplete((State state) -> {
+            // 在 IO 线程执行
+        })
+        .post();
+```
+　　无论是哪一个回调，都可以使用`runOnIO()`方法自由切换。同样，对于文件下载也是一样：
+
+```java
+http.sync("/download/test.zip")
+        .get()
+        .getBody()
+        .setOnProcess((Process process) -> {
+            // 在主线程执行
+        })
+        .toFolder("D:/download/")
+        .runOnIO()          // 指定下一个回调在 IO 线程执行
+        .setOnSuccess((File file) -> {
+            // 在 IO 线程执行
+        })
+        .setOnFailure((Failure failure) -> {
+            // 在主线程执行
+        })
+        .start();
+```
+
 ## 后续计划
 
-* 多回调执行器配置，单个请求的不同回调可以自由切换执行器
+* 生命周期绑定
 
 ## 联系方式
 
