@@ -80,7 +80,7 @@ public interface HttpResult {
 	     * 在IO线程执行
 	     * @return Body
 	     */
-		Body runOnIO();
+		Body nextOnIO();
 		
 		/**
 		 * 设置报文体接收进度回调

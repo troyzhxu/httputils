@@ -2,7 +2,6 @@ package com.ejlchina.test;
 
 
 import java.io.File;
-import java.lang.ref.WeakReference;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -38,15 +37,15 @@ public class HttpTest {
 		
 		http.async("http://47.100.7.202/ejl-test.zip")
 				.addBodyParam("name", "Jack")
-//				.runOnIO()
+//				.nextOnIO()
 				.setOnProcess((Process process) -> {
 					System.out.println("process： " + process.getRate());
 				})
-//				.runOnIO()
+//				.nextOnIO()
 				.setOnResponse((HttpResult result) -> {
 					System.out.println("status： " + result.close().getStatus());
 				})
-				.runOnIO()
+				.nextOnIO()
 				.setOnComplete((State state) -> {
 					System.out.println("state： " + state);
 				})
@@ -83,8 +82,6 @@ public class HttpTest {
 	            .start();
 	}
 	
-	
-	WeakReference w;
 	
 	@Test
 	public void testD() {
@@ -145,7 +142,7 @@ public class HttpTest {
 				.toFolder("D:/WorkSpace/download/")
 //				.toFile("D:\\WorkSpace\\download\\CocosDashboard-v1.0.1-win32-031816(9).exe")
 //				.setAppended() // 启用 断点续传
-				.runOnIO()
+				.nextOnIO()
 				.setOnSuccess((File file) -> {
 					print(t0, "下载成功：" + file.getAbsolutePath(), true);
 				})

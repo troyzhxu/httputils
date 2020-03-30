@@ -131,15 +131,6 @@ public abstract class HttpTask<C extends HttpTask<?>> {
      * 下一个回调在IO线程执行
      * @return HttpTask 实例
      */
-    @Deprecated
-    public C runOnIO() {
-    	return nextOnIO();
-    }
-    
-    /**
-     * 下一个回调在IO线程执行
-     * @return HttpTask 实例
-     */
     public C nextOnIO() {
     	nextOnIO = true;
     	return (C) this;

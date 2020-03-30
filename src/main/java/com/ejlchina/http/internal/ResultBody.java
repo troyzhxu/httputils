@@ -54,7 +54,7 @@ public class ResultBody implements Body {
 	}
 	
 	@Override
-    public Body runOnIO() {
+    public Body nextOnIO() {
     	onIO = true;
     	return this;
     }

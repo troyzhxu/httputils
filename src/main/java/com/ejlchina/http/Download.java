@@ -91,7 +91,7 @@ public class Download {
      * 在IO线程执行
      * @return Download
      */
-    public Download runOnIO() {
+    public Download nextOnIO() {
     	nextOnIO = true;
     	return this;
     }
