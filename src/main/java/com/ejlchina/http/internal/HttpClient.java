@@ -93,6 +93,10 @@ public class HttpClient implements HTTP {
 		return client.newWebSocket(request, listener);
 	}
 	
+	public OkHttpClient getOkClient() {
+		return client;
+	}
+	
 	public int getTagCallCount() {
 		return tagCalls.size();
 	}
