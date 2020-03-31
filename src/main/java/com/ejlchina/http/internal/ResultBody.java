@@ -63,7 +63,7 @@ public class ResultBody implements Body {
     }
 
 	@Override
-	public synchronized Body setOnProcess(OnCallback<Process> onProcess) {
+	public Body setOnProcess(OnCallback<Process> onProcess) {
 		if (taskExecutor == null) {
 			throw new IllegalStateException("没有 taskExecutor， 不可设置下载进度回调！");
 		}
@@ -222,7 +222,7 @@ public class ResultBody implements Body {
 	}
 	
 	@Override
-	public synchronized Body cache() {
+	public Body cache() {
 		if (onProcess != null) {
 			throw new IllegalStateException("设置了下载进度回调，不可再开启缓存！");
 		}
@@ -233,10 +233,11 @@ public class ResultBody implements Body {
 	@Override
 	public Body close() {
 		response.close();
+		data = null;
 		return this;
 	}
 	
-	private synchronized byte[] cacheBytes() {
+	private byte[] cacheBytes() {
 		if (data == null) {
 			data = bodyToBytes();
 		}
