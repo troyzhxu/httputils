@@ -2,6 +2,7 @@ package com.ejlchina.test;
 
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -10,13 +11,12 @@ import org.junit.Test;
 import com.ejlchina.http.Download;
 import com.ejlchina.http.Download.Ctrl;
 import com.ejlchina.http.Download.Failure;
-import com.ejlchina.http.GlobalCallback;
 import com.ejlchina.http.HTTP;
 import com.ejlchina.http.HttpCall;
 import com.ejlchina.http.HttpResult;
-import com.ejlchina.http.HttpTask;
 import com.ejlchina.http.HttpResult.Body;
 import com.ejlchina.http.HttpResult.State;
+import com.ejlchina.http.HttpTask;
 import com.ejlchina.http.HttpUtils;
 import com.ejlchina.http.Preprocessor.PreChain;
 import com.ejlchina.http.Process;
@@ -57,36 +57,28 @@ public class HttpTest {
 	@Test
 	public void testGlobalCallback() {
 		HTTP http = HTTP.builder()
-				.globalCallback(new GlobalCallback() {
-					
-					@Override
-					public boolean onResponse(HttpTask<?> task, HttpResult result) {
-						System.out.println("全局 onResponse: " + result.getStatus());
-						return false;
-					}
-					
-					@Override
-					public boolean onComplete(HttpTask<?> task, State state) {
-						System.out.println("全局 onComplete: " + state);
-						return true;
-					}
-					
-					@Override
-					public boolean onException(HttpTask<?> task, Exception error) {
-						System.out.println("全局 onException: " + error.getMessage());
-						return true;
-					}
+				.responseListener((HttpTask<?> task, HttpResult result) -> {
+					System.out.println("全局 onResponse: " + result.getStatus());
+					return true;
+				})
+				.completeListener((HttpTask<?> task, State state) -> {
+					System.out.println("全局 onComplete: " + state);
+					return true;
+				})
+				.exceptionListener((HttpTask<?> task, IOException error) -> {
+					System.out.println("全局 onException: " + error.getMessage());
+					return false;
 				})
 				.build();
 		
-		http.async("http://xxx.baidu.com")
+		http.async("http://www.baidu.com")
 			.setOnResponse((HttpResult result) -> {
 				System.out.println("单例 onResponse: " + result.getStatus());
 			})
 			.setOnComplete((State state) -> {
 				System.out.println("单例 onComplete: " + state);
 			})
-			.setOnException((Exception error) -> {
+			.setOnException((IOException error) -> {
 				System.out.println("单例 onException: " + error.getMessage());
 			})
 			.get();
@@ -110,7 +102,7 @@ public class HttpTest {
 						sleep(3000);
 						ctrl.cancel();
 					}).start();
-					
+					return true;
 				})
 				.build();
 		
@@ -396,7 +388,7 @@ public class HttpTest {
 				.setOnResponse((HttpResult result) -> {
 					System.out.println(result);
 				})
-				.setOnException((Exception e) -> {
+				.setOnException((IOException e) -> {
 					System.out.println("异常捕获：" + e.getMessage());
 				})
 				.setOnComplete((State state) -> {
@@ -578,7 +570,7 @@ public class HttpTest {
 //					User user = result.getBody().toBean(User.class);
 //					System.out.println("user = " + user);
 				})
-				.setOnException((Exception e) -> {
+				.setOnException((IOException e) -> {
 					e.printStackTrace();
 				})
 				// 发起  GET 请求

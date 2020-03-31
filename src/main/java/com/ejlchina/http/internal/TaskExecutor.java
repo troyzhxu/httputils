@@ -1,30 +1,35 @@
 package com.ejlchina.http.internal;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.concurrent.Executor;
 
 import com.ejlchina.http.Download;
-import com.ejlchina.http.GlobalCallback;
 import com.ejlchina.http.HttpResult;
+import com.ejlchina.http.HttpResult.State;
 import com.ejlchina.http.HttpTask;
 import com.ejlchina.http.OnCallback;
 import com.ejlchina.http.TaskListener;
-import com.ejlchina.http.HttpResult.State;
 
 public class TaskExecutor {
 
 	private Executor ioExecutor;
 	private Executor mainExecutor;
 	private TaskListener<Download> downloadListener;
-	private GlobalCallback globalCallback;
+	private TaskListener<HttpResult> responseListener;
+	private TaskListener<IOException> exceptionListener;
+	private TaskListener<State> completeListener;
 	
 	public TaskExecutor(Executor ioExecutor, Executor mainExecutor, TaskListener<Download> downloadListener, 
-			GlobalCallback globalCallback) {
+			TaskListener<HttpResult> responseListener, TaskListener<IOException> exceptionListener, 
+			TaskListener<State> completeListener) {
 		this.ioExecutor = ioExecutor;
 		this.mainExecutor = mainExecutor;
 		this.downloadListener = downloadListener;
-		this.globalCallback = globalCallback;
+		this.responseListener = responseListener;
+		this.exceptionListener = exceptionListener;
+		this.completeListener = completeListener;
 	}
 
 	public Executor getExecutor(boolean onIoThread) {
@@ -37,7 +42,7 @@ public class TaskExecutor {
 	public Download download(HttpTask<?> httpTask, File file, InputStream input, long skipBytes) {
 		Download download = new Download(file, input, this, skipBytes);
 		if (downloadListener != null) {
-			downloadListener.on(httpTask, download);
+			downloadListener.listen(httpTask, download);
 		}
 		return download;
 	}
@@ -50,22 +55,10 @@ public class TaskExecutor {
 		executor.execute(command);
 	}
 	
-	public void executeOnComplete(HttpTask<?> task, OnCallback<State> onComplete, State state, boolean onIoThread) {
-		if (globalCallback != null) {
-			execute(() -> {
-				if (globalCallback.onComplete(task, state) && onComplete != null) {
-					onComplete.on(state);
-				}
-			}, onIoThread);
-		} else if (onComplete != null) {
-			execute(() -> { onComplete.on(state); }, onIoThread);
-		}
-	}
-	
 	public void executeOnResponse(HttpTask<?> task, OnCallback<HttpResult> onResponse, HttpResult result, boolean onIoThread) {
-		if (globalCallback != null) {
+		if (responseListener != null) {
 			execute(() -> {
-				if (globalCallback.onResponse(task, result) && onResponse != null) {
+				if (responseListener.listen(task, result) && onResponse != null) {
 					onResponse.on(result);
 				}
 			}, onIoThread);
@@ -74,10 +67,10 @@ public class TaskExecutor {
 		}
 	}
 
-	public boolean executeOnException(HttpTask<?> task, OnCallback<Exception> onException, Exception error, boolean onIoThread) {
-		if (globalCallback != null) {
+	public boolean executeOnException(HttpTask<?> task, OnCallback<IOException> onException, IOException error, boolean onIoThread) {
+		if (exceptionListener != null) {
 			execute(() -> {
-				if (globalCallback.onException(task, error) && onException != null) {
+				if (exceptionListener.listen(task, error) && onException != null) {
 					onException.on(error);
 				}
 			}, onIoThread);
@@ -87,6 +80,18 @@ public class TaskExecutor {
 			return true;
 		}
 		return false;
+	}
+	
+	public void executeOnComplete(HttpTask<?> task, OnCallback<State> onComplete, State state, boolean onIoThread) {
+		if (completeListener != null) {
+			execute(() -> {
+				if (completeListener.listen(task, state) && onComplete != null) {
+					onComplete.on(state);
+				}
+			}, onIoThread);
+		} else if (onComplete != null) {
+			execute(() -> { onComplete.on(state); }, onIoThread);
+		}
 	}
 
 }

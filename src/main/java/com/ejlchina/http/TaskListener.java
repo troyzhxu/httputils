@@ -8,7 +8,13 @@ package com.ejlchina.http;
 public interface TaskListener<T> {
 
 	
-	void on(HttpTask<?> task, T data);
+	/**
+	 * 全局任务监听
+	 * @param task 所属的 HttpTask
+	 * @param data 监听内容
+	 * @return 是否继续执行 task 对应的回调函数
+	 */
+	boolean listen(HttpTask<?> task, T data);
 
 	
 }

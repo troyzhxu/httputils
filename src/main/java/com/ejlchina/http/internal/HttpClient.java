@@ -1,5 +1,6 @@
 package com.ejlchina.http.internal;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -12,9 +13,10 @@ import java.util.concurrent.Executor;
 
 import com.ejlchina.http.Configurator;
 import com.ejlchina.http.Download;
-import com.ejlchina.http.GlobalCallback;
 import com.ejlchina.http.HTTP;
 import com.ejlchina.http.HttpCall;
+import com.ejlchina.http.HttpResult;
+import com.ejlchina.http.HttpResult.State;
 import com.ejlchina.http.HttpTask;
 import com.ejlchina.http.Preprocessor;
 import com.ejlchina.http.TaskListener;
@@ -48,7 +50,8 @@ public class HttpClient implements HTTP {
 		this.mediaTypes = builder.mediaTypes;
 		this.executor = new TaskExecutor(client.dispatcher().executorService(), 
 				builder.mainExecutor, builder.downloadListener, 
-				builder.globalCallback);
+				builder.responseListener, builder.exceptionListener, 
+				builder.completeListener);
 		this.preprocessors = builder.preprocessors.toArray(new Preprocessor[builder.preprocessors.size()]);
 		this.tagCalls = Collections.synchronizedList(new LinkedList<>());
 	}
@@ -282,7 +285,11 @@ public class HttpClient implements HTTP {
 		
 		private TaskListener<Download> downloadListener;
 		
-		private GlobalCallback globalCallback;
+		private TaskListener<HttpResult> responseListener;
+		
+		private TaskListener<IOException> exceptionListener;
+		
+		private TaskListener<State> completeListener;
 
 		public Builder() {
 			mediaTypes = new HashMap<>();
@@ -383,22 +390,42 @@ public class HttpClient implements HTTP {
 		}
 		
 		/**
-		 * 设置全局回调处理器
-		 * @param preprocessor 预处理器
+		 * 设置全局响应监听
+		 * @param listener 监听器
 		 * @return Builder
 		 */
-		public Builder globalCallback(GlobalCallback globalCallback) {
-			this.globalCallback = globalCallback;
+		public Builder responseListener(TaskListener<HttpResult> listener) {
+			this.responseListener = listener;
+			return this;
+		}
+		
+		/**
+		 * 设置全局异常监听
+		 * @param listener 监听器
+		 * @return Builder
+		 */
+		public Builder exceptionListener(TaskListener<IOException> listener) {
+			this.exceptionListener = listener;
+			return this;
+		}
+		
+		/**
+		 * 设置全局完成监听
+		 * @param listener 监听器
+		 * @return Builder
+		 */
+		public Builder completeListener(TaskListener<State> listener) {
+			this.completeListener = listener;
 			return this;
 		}
 		
 		/**
 		 * 设置下载监听器
-		 * @param preprocessor 预处理器
+		 * @param listener 监听器
 		 * @return Builder
 		 */
-		public Builder downloadListener(TaskListener<Download> downloadListener) {
-			this.downloadListener = downloadListener;
+		public Builder downloadListener(TaskListener<Download> listener) {
+			this.downloadListener = listener;
 			return this;
 		}
 		

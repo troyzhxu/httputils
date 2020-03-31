@@ -578,7 +578,7 @@ public abstract class HttpTask<C extends HttpTask<?>> {
 		return body;
 	}
 
-	protected State toState(Exception e) {
+	protected State toState(IOException e) {
 		if (e instanceof SocketTimeoutException) {
 		    return State.TIMEOUT;
 		} else if (e instanceof UnknownHostException || e instanceof ConnectException) {

@@ -23,7 +23,7 @@ public class AsyncHttpTask extends HttpTask<AsyncHttpTask> {
 
 	
     private OnCallback<HttpResult> onResponse;
-    private OnCallback<Exception> onException;
+    private OnCallback<IOException> onException;
     private OnCallback<State> onComplete;
     private boolean rOnIO;
     private boolean eOnIO;
@@ -40,7 +40,7 @@ public class AsyncHttpTask extends HttpTask<AsyncHttpTask> {
 	 * @param onException 请求异常回调
 	 * @return HttpTask 实例
 	 */
-    public AsyncHttpTask setOnException(OnCallback<Exception> onException) {
+    public AsyncHttpTask setOnException(OnCallback<IOException> onException) {
         this.onException = onException;
         eOnIO = nextOnIO;
         nextOnIO = false;
