@@ -32,6 +32,29 @@ public class HttpTest {
 
 	
 	@Test
+	public void testCache() {
+		HTTP http = HTTP.builder().build();
+		
+		Body body = http.sync("http://xxx.cdyun.vip/comm/provinces")
+				.get()
+				.getBody()
+				.cache()
+				;
+		
+		
+		System.out.println("result = " + body.toString());
+		System.out.println("result = " + body.toJsonArray());
+		System.out.println("result = " + body.toBytes());
+		
+		body.close();
+		
+		System.out.println("result = " + body.toString());
+		System.out.println("result = " + body.toJsonArray());
+		System.out.println("result = " + body.toBytes());
+	}
+	
+	
+	@Test
 	public void testGlobalCallback() {
 		HTTP http = HTTP.builder()
 				.globalCallback(new GlobalCallback() {
@@ -287,7 +310,7 @@ public class HttpTest {
 		long t0 = System.currentTimeMillis();
 		
 		HTTP http = HTTP.builder()
-				.baseUrl("http://tst-api-mini.cdyun.vip/ejlchina")
+				.baseUrl("http://xxx.cdyun.vip/ejlchina")
 				.build();
 		
 		HttpResult result = http.sync("/comm/provinces")
