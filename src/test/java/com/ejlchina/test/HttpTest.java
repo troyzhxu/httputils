@@ -97,8 +97,7 @@ public class HttpTest {
 	@Test
 	public void testDownloadListener() {
 		HTTP http = HTTP.builder()
-				.downloadListener((Download download) -> {
-					HttpTask<?> task = download.getTask();
+				.downloadListener((HttpTask<?> task, Download download) -> {
 					System.out.println("URL = " + task.getUrl());
 					System.out.println("TAG = " + task.getTag());
 					Ctrl ctrl = download.getCtrl();

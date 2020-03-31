@@ -444,9 +444,8 @@ HTTP http = HTTP.builder()
 
 ```java
 HTTP http = HTTP.builder()
-        .downloadListener((Download download) -> {
+        .downloadListener((HttpTask<?> task, Download download) -> {
             // 所有下载在开始之前都会先走这里
-            HttpTask<?> task = download.getTask();  // 所属的 Http任务
             Ctrl ctrl = download.getCtrl();         // 下载控制器
             
         })
