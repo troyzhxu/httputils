@@ -146,7 +146,7 @@ http.async("/users/{id}")             // http://api.demo.com/users/1
         .setOnResponse((HttpResult result) -> {
             // 响应回调
         })
-        .setOnException((Exception e) -> {
+        .setOnException((IOException e) -> {
             // 异常回调
         })
         .setOnComplete((State state) -> {
@@ -414,28 +414,20 @@ HTTP http = HTTP.builder()
 
 ```java
 HTTP http = HTTP.builder()
-        .globalCallback(new GlobalCallback() {
+        .responseListener((HttpTask<?> task, HttpResult result) -> {
+            // 所有请求响应后都会走这里
             
-            @Override
-            public boolean onResponse(HttpTask<?> task, HttpResult result) {
-                // 所有请求响应后都会走这里
-                
-                return true;    // 返回 true 表示继续执行 task 的 OnResponse 回调，false 表示不再执行
-            }
+            return true; // 返回 true 表示继续执行 task 的 OnResponse 回调，false 表示不再执行
+        })
+        .completeListener((HttpTask<?> task, State state) -> {
+            // 所有请求执行完都会走这里
             
-            @Override
-            public boolean onComplete(HttpTask<?> task, State state) {
-                // 所有请求执行完都会走这里
-                
-                return true;    // 返回 true 表示继续执行 task 的 OnComplete 回调，false 表示不再执行
-            }
+            return true; // 返回 true 表示继续执行 task 的 OnComplete 回调，false 表示不再执行
+        })
+        .exceptionListener((HttpTask<?> task, IOException error) -> {
+            // 所有请求发生异常都会走这里
             
-            @Override
-            public boolean onException(HttpTask<?> task, Exception error) {
-                // 所有请求发生异常都会走这里
-                
-                return true;    // 返回 true 表示继续执行 task 的 OnException 回调，false 表示不再执行
-            }
+            return true; // 返回 true 表示继续执行 task 的 OnException 回调，false 表示不再执行
         })
         .build();
 ```
