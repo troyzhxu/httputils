@@ -102,7 +102,6 @@ public class HttpTest {
 						sleep(3000);
 						ctrl.cancel();
 					}).start();
-					return true;
 				})
 				.build();
 		

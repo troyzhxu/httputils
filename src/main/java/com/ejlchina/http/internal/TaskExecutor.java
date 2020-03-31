@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.concurrent.Executor;
 
+import com.ejlchina.http.DownListener;
 import com.ejlchina.http.Download;
 import com.ejlchina.http.HttpResult;
 import com.ejlchina.http.HttpResult.State;
@@ -16,12 +17,12 @@ public class TaskExecutor {
 
 	private Executor ioExecutor;
 	private Executor mainExecutor;
-	private TaskListener<Download> downloadListener;
+	private DownListener downloadListener;
 	private TaskListener<HttpResult> responseListener;
 	private TaskListener<IOException> exceptionListener;
 	private TaskListener<State> completeListener;
 	
-	public TaskExecutor(Executor ioExecutor, Executor mainExecutor, TaskListener<Download> downloadListener, 
+	public TaskExecutor(Executor ioExecutor, Executor mainExecutor, DownListener downloadListener, 
 			TaskListener<HttpResult> responseListener, TaskListener<IOException> exceptionListener, 
 			TaskListener<State> completeListener) {
 		this.ioExecutor = ioExecutor;

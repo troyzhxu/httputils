@@ -12,7 +12,7 @@ import java.util.Queue;
 import java.util.concurrent.Executor;
 
 import com.ejlchina.http.Configurator;
-import com.ejlchina.http.Download;
+import com.ejlchina.http.DownListener;
 import com.ejlchina.http.HTTP;
 import com.ejlchina.http.HttpCall;
 import com.ejlchina.http.HttpResult;
@@ -283,7 +283,7 @@ public class HttpClient implements HTTP {
 
 		private List<Preprocessor> preprocessors;
 		
-		private TaskListener<Download> downloadListener;
+		private DownListener downloadListener;
 		
 		private TaskListener<HttpResult> responseListener;
 		
@@ -424,7 +424,7 @@ public class HttpClient implements HTTP {
 		 * @param listener 监听器
 		 * @return Builder
 		 */
-		public Builder downloadListener(TaskListener<Download> listener) {
+		public Builder downloadListener(DownListener listener) {
 			this.downloadListener = listener;
 			return this;
 		}
