@@ -9,16 +9,18 @@ import com.ejlchina.http.GlobalCallback;
 import com.ejlchina.http.HttpResult;
 import com.ejlchina.http.HttpTask;
 import com.ejlchina.http.OnCallback;
+import com.ejlchina.http.TaskListener;
 import com.ejlchina.http.HttpResult.State;
 
 public class TaskExecutor {
 
 	private Executor ioExecutor;
 	private Executor mainExecutor;
-	private OnCallback<Download> downloadListener;
+	private TaskListener<Download> downloadListener;
 	private GlobalCallback globalCallback;
 	
-	public TaskExecutor(Executor ioExecutor, Executor mainExecutor, OnCallback<Download> downloadListener, GlobalCallback globalCallback) {
+	public TaskExecutor(Executor ioExecutor, Executor mainExecutor, TaskListener<Download> downloadListener, 
+			GlobalCallback globalCallback) {
 		this.ioExecutor = ioExecutor;
 		this.mainExecutor = mainExecutor;
 		this.downloadListener = downloadListener;
@@ -33,9 +35,9 @@ public class TaskExecutor {
 	}
 
 	public Download download(HttpTask<?> httpTask, File file, InputStream input, long skipBytes) {
-		Download download = new Download(httpTask, file, input, this, skipBytes);
+		Download download = new Download(file, input, this, skipBytes);
 		if (downloadListener != null) {
-			downloadListener.on(download);
+			downloadListener.on(httpTask, download);
 		}
 		return download;
 	}

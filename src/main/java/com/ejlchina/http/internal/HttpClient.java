@@ -16,8 +16,8 @@ import com.ejlchina.http.GlobalCallback;
 import com.ejlchina.http.HTTP;
 import com.ejlchina.http.HttpCall;
 import com.ejlchina.http.HttpTask;
-import com.ejlchina.http.OnCallback;
 import com.ejlchina.http.Preprocessor;
+import com.ejlchina.http.TaskListener;
 
 import okhttp3.Call;
 import okhttp3.MediaType;
@@ -280,7 +280,7 @@ public class HttpClient implements HTTP {
 
 		private List<Preprocessor> preprocessors;
 		
-		private OnCallback<Download> downloadListener;
+		private TaskListener<Download> downloadListener;
 		
 		private GlobalCallback globalCallback;
 
@@ -397,7 +397,7 @@ public class HttpClient implements HTTP {
 		 * @param preprocessor 预处理器
 		 * @return Builder
 		 */
-		public Builder downloadListener(OnCallback<Download> downloadListener) {
+		public Builder downloadListener(TaskListener<Download> downloadListener) {
 			this.downloadListener = downloadListener;
 			return this;
 		}
