@@ -215,6 +215,12 @@ public interface HttpResult {
 		Download toFolder(File dir);
 
 		/**
+		 * 缓存自己，缓存后可 重复使用 toXXX 类方法
+		 * @return Body
+		 */
+		Body cache();
+		
+		/**
 		 * 关闭报文体
 		 * 未对报文体做任何消费时使用，比如只读取长度
 		 * @return Body

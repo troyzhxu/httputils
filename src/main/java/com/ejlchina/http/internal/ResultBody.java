@@ -2,6 +2,7 @@ package com.ejlchina.http.internal;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -36,6 +37,8 @@ public class ResultBody implements Body {
 	private double stepRate = -1;
 	private boolean rangeIgnored = false;
 	private HttpTask<?> httpTask;
+	private boolean cached = false;
+	private byte[] data;
 
 	ResultBody(HttpTask<?> httpTask, Response response, TaskExecutor taskExecutor) {
 		this.httpTask = httpTask;
@@ -60,9 +63,12 @@ public class ResultBody implements Body {
     }
 
 	@Override
-	public Body setOnProcess(OnCallback<Process> onProcess) {
+	public synchronized Body setOnProcess(OnCallback<Process> onProcess) {
 		if (taskExecutor == null) {
 			throw new IllegalStateException("没有 taskExecutor， 不可设置下载进度回调！");
+		}
+		if (cached) {
+			throw new IllegalStateException("开启缓存后，不可设置下载进度回调！");
 		}
 		this.onProcess = onProcess;
 		return this;
@@ -88,7 +94,12 @@ public class ResultBody implements Body {
 	
 	@Override
 	public InputStream toByteStream() {
-		InputStream input = response.body().byteStream();
+		InputStream input;
+		if (cached) {
+			input = new ByteArrayInputStream(cacheBytes());
+		} else {
+			input = response.body().byteStream();
+		}
 		if (onProcess != null) {
 			long rangeStart = getRangeStart();
 			long totalBytes = getContentLength();
@@ -109,27 +120,15 @@ public class ResultBody implements Body {
 
 	@Override
 	public byte[] toBytes() {
-		if (onProcess != null) {
-			Buffer buffer = new Buffer();
-			try {
-				return buffer.readFrom(toByteStream()).readByteArray();
-			} catch (IOException e) {
-				throw new HttpException("报文体转化字节数组出错", e);
-			} finally {
-				response.close();
-				buffer.close();
-			}
+		if (cached) {
+			return cacheBytes();
 		}
-		try {
-			return response.body().bytes();
-		} catch (IOException e) {
-			throw new HttpException("报文体转化字节数组出错", e);
-		}
+		return bodyToBytes();
 	}
 
 	@Override
 	public Reader toCharStream() {
-		if (onProcess != null) {
+		if (cached || onProcess != null) {
 			return new InputStreamReader(toByteStream());
 		}
 		return response.body().charStream();
@@ -137,7 +136,7 @@ public class ResultBody implements Body {
 	  
 	@Override
 	public String toString() {
-		if (onProcess != null) {
+		if (cached || onProcess != null) {
 			MediaType contentType = getContentType();
 			Charset charset = contentType != null ? contentType.charset(UTF_8) : UTF_8;
 			return new String(toBytes(), charset);
@@ -223,9 +222,44 @@ public class ResultBody implements Body {
 	}
 	
 	@Override
+	public synchronized Body cache() {
+		if (onProcess != null) {
+			throw new IllegalStateException("设置了下载进度回调，不可再开启缓存！");
+		}
+		cached = true;
+		return this;
+	}
+	
+	@Override
 	public Body close() {
 		response.close();
 		return this;
+	}
+	
+	private synchronized byte[] cacheBytes() {
+		if (data == null) {
+			data = bodyToBytes();
+		}
+		return data;
+	}
+	
+	private byte[] bodyToBytes() {
+		if (onProcess != null) {
+			Buffer buffer = new Buffer();
+			try {
+				return buffer.readFrom(toByteStream()).readByteArray();
+			} catch (IOException e) {
+				throw new HttpException("报文体转化字节数组出错", e);
+			} finally {
+				response.close();
+				buffer.close();
+			}
+		}
+		try {
+			return response.body().bytes();
+		} catch (IOException e) {
+			throw new HttpException("报文体转化字节数组出错", e);
+		}
 	}
 	
 	private long getRangeStart() {
