@@ -14,8 +14,10 @@
  * 文件上传下载（过程控制、进度监听）
  * TCP连接池、Http2
 
-### 当前文档版本[2.3.0]（近期发布到中央仓库）
+### 当前文档版本[2.3.0]
 #### [查阅[2.1.x]点我](https://gitee.com/ejlchina-zhxu/httputils/blob/master/README-2.1.2.md) | [查阅[2.0.x]点我](https://gitee.com/ejlchina-zhxu/httputils/blob/master/README-2.0.0.md) | [查阅[1.0.x]点我](https://gitee.com/ejlchina-zhxu/httputils/blob/1.x/README.md)
+
+### 后世：[OkHttps, V2.3.0 之后重命名为 OkHttps](https://gitee.com/ejlchina-zhxu/okhttps)
 
 ## 目录
 
