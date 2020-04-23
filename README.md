@@ -4,6 +4,8 @@
 [![License](https://img.shields.io/hexpm/l/plug.svg)](https://gitee.com/ejlchina-zhxu/httputils/blob/master/LICENSE)
 [![Troy.Zhou](https://img.shields.io/badge/%E4%BD%9C%E8%80%85-ejlchina-orange.svg)](https://github.com/ejlchina)
 
+## [自 v2.3.0 后更命名为 OkHttps 点我跳转](https://gitee.com/ejlchina-zhxu/okhttps)
+
 ## 介绍
 
 　　HttpUtils 是近期开源的对 OkHttp 轻量封装的框架，它独创的异步预处理器，特色的标签，灵活的上传下载进度监听与过程控制功能，在轻松解决很多原本另人头疼问题的同时，设计上也力求纯粹与优雅。
@@ -16,8 +18,6 @@
 
 ### 当前文档版本[2.3.0]
 #### [查阅[2.1.x]点我](https://gitee.com/ejlchina-zhxu/httputils/blob/master/README-2.1.2.md) | [查阅[2.0.x]点我](https://gitee.com/ejlchina-zhxu/httputils/blob/master/README-2.0.0.md) | [查阅[1.0.x]点我](https://gitee.com/ejlchina-zhxu/httputils/blob/1.x/README.md)
-
-### 后世：[OkHttps, V2.3.0 之后重命名为 OkHttps](https://gitee.com/ejlchina-zhxu/okhttps)
 
 ## 目录
 
