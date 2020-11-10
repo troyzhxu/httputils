@@ -6,6 +6,8 @@
 
 ## [自 v2.3.0 后更命名为 OkHttps 点我跳转](https://gitee.com/ejlchina-zhxu/okhttps)
 
+## 文档：[http://okhttps.ejlchina.com/](http://okhttps.ejlchina.com/)
+
 ## 介绍
 
 　　HttpUtils 是近期开源的对 OkHttp 轻量封装的框架，它独创的异步预处理器，特色的标签，灵活的上传下载进度监听与过程控制功能，在轻松解决很多原本另人头疼问题的同时，设计上也力求纯粹与优雅。
