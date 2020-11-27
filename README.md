@@ -5,6 +5,10 @@
 [![Troy.Zhou](https://img.shields.io/badge/%E4%BD%9C%E8%80%85-ejlchina-orange.svg)](https://github.com/ejlchina)
 
 ## [自 v2.3.0 后更命名为 OkHttps 点我跳转](https://github.com/ejlchina/okhttps)
+## 本仓库已不再更新维护！！！
+## HttpUtils 的功能，OkHttps 都有，并且更加强大，推荐请使用 OkHttps ！
+## 新仓库地址：[https://github.com/ejlchina/okhttps](https://github.com/ejlchina/okhttps)
+
 
 ## 文档：[http://okhttps.ejlchina.com/](http://okhttps.ejlchina.com/)
 
