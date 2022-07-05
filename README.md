@@ -2,15 +2,15 @@
 
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.ejlchina/httputils/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.ejlchina/httputils/)
 [![License](https://img.shields.io/hexpm/l/plug.svg)](https://gitee.com/ejlchina-zhxu/httputils/blob/master/LICENSE)
-[![Troy.Zhou](https://img.shields.io/badge/%E4%BD%9C%E8%80%85-ejlchina-orange.svg)](https://github.com/ejlchina)
+[![Troy.Zhou](https://img.shields.io/badge/%E4%BD%9C%E8%80%85-troyzhxu-orange.svg)](https://github.com/troyzhxu)
 
-## [自 v2.3.0 后更命名为 OkHttps 点我跳转](https://github.com/ejlchina/okhttps)
+## [自 v2.3.0 后更命名为 OkHttps 点我跳转](https://github.com/troyzhxu/okhttps)
 ## 本仓库已不再更新维护！！！
 ## HttpUtils 的功能，OkHttps 都有，并且更加强大，推荐请使用 OkHttps ！
-## 新仓库地址：[https://github.com/ejlchina/okhttps](https://github.com/ejlchina/okhttps)
+## 新仓库地址：[https://github.com/troyzhxu/okhttps](https://github.com/troyzhxu/okhttps)
 
 
-## 文档：[http://okhttps.ejlchina.com/](http://okhttps.ejlchina.com/)
+## 文档：[http://ok.zhxu.cn/](http://ok.zhxu.cn/)
 
 ## 介绍
 
