@@ -10,7 +10,7 @@
 ## 新仓库地址：[https://github.com/troyzhxu/okhttps](https://github.com/troyzhxu/okhttps)
 
 
-## 文档：[http://ok.zhxu.cn/](http://ok.zhxu.cn/)
+## 文档：[https://ok.zhxu.cn/](https://ok.zhxu.cn/)
 
 ## 介绍
 
